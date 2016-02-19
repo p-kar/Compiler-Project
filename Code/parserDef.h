@@ -136,9 +136,9 @@ typedef enum _NONTERMINAL NONTERMINAL;
 // structure to maintain RHS occurences
 struct _rhsOcc
 {
-    int ntid;
-    int i;
-    int j;
+    int ntid;   //non terminal id
+    int i;      //rule number
+    int j;      //occurence index
 };
 typedef struct _rhsOcc rhsOcc;
 

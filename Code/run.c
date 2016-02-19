@@ -20,8 +20,8 @@ int main(int argc, char const *argv[])
 {
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
-    char filename[] = "./final_grammar.txt";
-    // char filename[] = "./test_grammar.txt";
+    char filename[] = "./Grammar/final_grammar.txt";
+    // char filename[] = "./Grammar/test_grammar.txt";
     FILE* file = fopen(filename, "r");
     char line[1000];
     prodRuleNode** rulelist = initialiseProdRuleList();
