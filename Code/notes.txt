@@ -1,0 +1,11 @@
+# Point to Remember while implementing Follow sets
+1. If there is a rule A -> aA then follow(A) is in follow(A) is redundant (<otherFunctions>,
+    <typedefinitions>, <moreFields>, <declarations>, <otherstmts>, <booleanExpression>).
+    Essentially this means we need to handle right recursions in the grammar.
+2. Check for infinite loop for the case between <parameterlist> and <remaininglist>.
+    <arithmeticRec> and <arithmeticExpression>
+    <idlist> and <moreids>
+    Essentially handle if there arises a cycle while computing follow sets.
+
+# Grammar Errata
+1. Rule no. 15 <fieldDefinition> is repeated twice.
