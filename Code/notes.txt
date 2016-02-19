@@ -6,6 +6,3 @@
     <arithmeticRec> and <arithmeticExpression>
     <idlist> and <moreids>
     Essentially handle if there arises a cycle while computing follow sets.
-
-# Grammar Errata
-1. Rule no. 15 <fieldDefinition> is repeated twice.

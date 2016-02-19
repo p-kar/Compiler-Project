@@ -10,6 +10,9 @@
 #ifndef PARSERSETS_H
 #define PARSERSETS_H
 
+// #define ENABLE_PRINTING_FIRST_SETS
+// #define ENABLE_PRINTING_FOLLOW_SETS
+
 #include "parserUtils.h"
 #include "parserDef.h"
 #include "set.h"
@@ -21,7 +24,9 @@
 set** initialiseSetList();
 bool hasEpsRule(int ntid, prodRuleNode** rulelist);
 void displaySet(set* st);
-set* getFirstSet(int id, prodRuleNode** rulelist, set** sts);
+set* computeFirstSets(int id, prodRuleNode** rulelist, set** firststs);
+set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** followsts, int* rec_stack, int stack_size);
 set** createFirstSets(prodRuleNode** rulelist);
+set** createFollowSets(prodRuleNode** rulelist, set** firststs);
 
 #endif

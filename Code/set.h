@@ -23,7 +23,7 @@ struct _set
 };
 typedef struct _set set;
 
-set* createEmptyNode();
+set* createEmptySet();
 bool isPresent(int value, set *root);
 set* setAdd(int value, set *root);
 // adds the second set to the first set

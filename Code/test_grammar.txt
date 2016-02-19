@@ -1,0 +1,5 @@
+<typeDefinition> ===> TK_RECORD TK_RECORDID <fieldDefinitions> TK_ENDRECORD TK_SEM
+<fieldDefinitions> ===> <fieldDefinition> <fieldDefinition> <moreFields>
+<fieldDefinition> ===> TK_TYPE <primitiveDatatype> TK_COLON TK_FIELDID TK_SEM
+<moreFields> ===> <fieldDefinition> <moreFields>
+<moreFields> ===> TK_EPS

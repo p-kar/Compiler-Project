@@ -117,6 +117,8 @@ TERMINAL getTerminalfromStr(const char* str)
         return TK_RETURN;
     else if(strcmp(str, "TK_EPS") == 0)
         return TK_EPS;
+    else if(strcmp(str, "TK_DOLLAR") == 0)
+        return TK_DOLLAR;
     return TK_ERROR;
 }
 
@@ -164,8 +166,8 @@ NONTERMINAL getNonTerminalfromStr(const char* str)
         return ITERATIVESTMT;
     else if(strcmp(str, "<conditionalStmt>") == 0)
         return CONDITIONALSTMT;
-    else if(strcmp(str, "<conditionalSuffix>") == 0)
-        return CONDITIONALSUFFIX;
+    else if(strcmp(str, "<elsePart>") == 0)
+        return ELSEPART;
     else if(strcmp(str, "<ioStmt>") == 0)
         return IOSTMT;
     else if(strcmp(str, "<funCallStmt>") == 0)
@@ -174,6 +176,8 @@ NONTERMINAL getNonTerminalfromStr(const char* str)
         return ARITHMETICEXPRESSION;
     else if(strcmp(str, "<singleOrRecId>") == 0)
         return SINGLEORRECID;
+    else if(strcmp(str, "<new_24>") == 0)
+        return NEW24;
     else if(strcmp(str, "<outputParameters>") == 0)
         return OUTPUTPARAMETERS;
     else if(strcmp(str, "<inputParameters>") == 0)
@@ -204,18 +208,22 @@ NONTERMINAL getNonTerminalfromStr(const char* str)
         return REMAININGLIST;
     else if(strcmp(str, "<more_ids>") == 0)
         return MOREIDS;
-    else if(strcmp(str, "<arithmeticT>") == 0)
-        return ARITHMETICT;
-    else if(strcmp(str, "<arithmeticT1>") == 0)
-        return ARITHMETICT1;
-    else if(strcmp(str, "<arithmeticE1>") == 0)
-        return ARITHMETICE1;
-    else if(strcmp(str, "<arithmeticF>") == 0)
-        return ARITHMETICF;
-    else if(strcmp(str, "<operator_plusMinus>") == 0)
-        return OPERATORPLUSMINUS;
-    else if(strcmp(str, "<operator_mulDiv>") == 0)
-        return OPERATORMULDIV;
+    else if(strcmp(str, "<term>") == 0)
+        return TERM;
+    else if(strcmp(str, "<expPrime>") == 0)
+        return EXPPRIME;
+    else if(strcmp(str, "<lowPrecedenceOperators>") == 0)
+        return LOWPRECEDENCEOPERATORS;
+    else if(strcmp(str, "<factor>") == 0)
+        return FACTOR;
+    else if(strcmp(str, "<highPrecedenceOperators>") == 0)
+        return HIGHPRECEDENCEOPERATORS;
+    else if(strcmp(str, "<termPrime>") == 0)
+        return TERMPRIME;
+    else if(strcmp(str, "<all>") == 0)
+        return ALL;
+    else if(strcmp(str, "<temp>") == 0)
+        return TEMP;
     return NONTERMERROR;
 }
 
@@ -328,6 +336,8 @@ char* getTerminalStr(TERMINAL termid)
         strcpy(str, "TK_RETURN");
     else if(TK_EPS == termid)
         strcpy(str, "eps");
+    else if(TK_DOLLAR == termid)
+        strcpy(str, "$");
     else
         strcpy(str, "TK_ERROR");
     return str;
@@ -378,14 +388,16 @@ char* getNonTerminalStr(NONTERMINAL ntid)
         strcpy(str, "ITERATIVESTMT");
     else if(ntid == CONDITIONALSTMT)
         strcpy(str, "CONDITIONALSTMT");
-    else if(ntid == CONDITIONALSUFFIX)
-        strcpy(str, "CONDITIONALSUFFIX");
+    else if(ntid == ELSEPART)
+        strcpy(str, "ELSEPART");
     else if(ntid == IOSTMT)
         strcpy(str, "IOSTMT");
     else if(ntid == FUNCALLSTMT)
         strcpy(str, "FUNCALLSTMT");
     else if(ntid == SINGLEORRECID)
         strcpy(str, "SINGLEORRECID");
+    else if(ntid == NEW24)
+        strcpy(str, "NEW24");
     else if(ntid == ARITHMETICEXPRESSION)
         strcpy(str, "ARITHMETICEXPRESSION");
     else if(ntid == SINGLEORRECID)
@@ -420,18 +432,22 @@ char* getNonTerminalStr(NONTERMINAL ntid)
         strcpy(str, "REMAININGLIST");
     else if(ntid == MOREIDS)
         strcpy(str, "MOREIDS");
-    else if(ntid == ARITHMETICT)
-        strcpy(str, "ARITHMETICT");
-    else if(ntid == ARITHMETICT1)
-        strcpy(str, "ARITHMETICT1");
-    else if(ntid == ARITHMETICF)
-        strcpy(str, "ARITHMETICF");
-    else if(ntid == ARITHMETICE1)
-        strcpy(str, "ARITHMETICE1");
-    else if(ntid == OPERATORPLUSMINUS)
-        strcpy(str, "OPERATORPLUSMINUS");
-    else if(ntid == OPERATORMULDIV)
-        strcpy(str, "OPERATORMULDIV");
+    else if(ntid == TERM)
+        strcpy(str, "TERM");
+    else if(ntid == EXPPRIME)
+        strcpy(str, "EXPPRIME");
+    else if(ntid == LOWPRECEDENCEOPERATORS)
+        strcpy(str, "LOWPRECEDENCEOPERATORS");
+    else if(ntid == FACTOR)
+        strcpy(str, "FACTOR");
+    else if(ntid == HIGHPRECEDENCEOPERATORS)
+        strcpy(str, "HIGHPRECEDENCEOPERATORS");
+    else if(ntid == TERMPRIME)
+        strcpy(str, "TERMPRIME");
+   else if(ntid ==  ALL)
+        strcpy(str, "ALL");
+    else if(ntid == TEMP)
+        strcpy(str, "TEMP,");
     else
         strcpy(str, "NONTERMERROR");
     return str;
@@ -460,6 +476,7 @@ prodRuleNode* createProdRuleNode(NONTERMINAL ntid)
     p->prod_rules = NULL;
     p->rhs_occ_cnt = 0;
     p->rhs_occs = NULL;
+    p->follow_set_flag = 0;
     return p;
 }
 

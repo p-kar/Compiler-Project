@@ -9,7 +9,7 @@
 */
 #include "set.h"
 
-set* createEmptyNode()
+set* createEmptySet()
 {
     set* p = (set*) malloc(sizeof(set));
     p->left = NULL;
@@ -32,7 +32,7 @@ set* setAdd(int value, set *root)
 {
     if(root == NULL)
     {
-        set* p = createEmptyNode();
+        set* p = createEmptySet();
         p->val = value;
         return p;
     }
@@ -45,6 +45,7 @@ set* setAdd(int value, set *root)
     return root;
 }
 
+// adds the second set to the first set
 // without TK_EPS
 set* setUnion(set *first, set *second)
 {

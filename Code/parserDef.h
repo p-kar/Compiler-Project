@@ -10,10 +10,12 @@
 #ifndef PARSERDEF_H
 #define PARSERDEF_H
 
+#include <stdbool.h>
+
 #define TERMINAL_OFFSET 112233
 #define NONTERMINAL_OFFSET 0
-#define NUM_TERMINALS 54
-#define NUM_NONTERMINALS 48
+#define NUM_TERMINALS 55
+#define NUM_NONTERMINALS 51
 
 enum _TERMINAL
 {
@@ -70,6 +72,7 @@ enum _TERMINAL
     TK_NE,
     TK_RETURN,
     TK_EPS,
+    TK_DOLLAR,
     TK_ERROR
 };
 typedef enum _TERMINAL TERMINAL;
@@ -100,21 +103,24 @@ enum _NONTERMINAL
     STMT,
     ASSIGNMENTSTMT,
     SINGLEORRECID,
+    NEW24,
     FUNCALLSTMT,
     INPUTPARAMETERS,
     OUTPUTPARAMETERS,
     ITERATIVESTMT,
     CONDITIONALSTMT,
-    CONDITIONALSUFFIX,
+    ELSEPART,
     IOSTMT,
     ALLVAR,
     ARITHMETICEXPRESSION,
-    ARITHMETICE1,
-    ARITHMETICT,
-    ARITHMETICT1,
-    ARITHMETICF,
-    OPERATORPLUSMINUS,
-    OPERATORMULDIV,
+    TERM,
+    EXPPRIME,
+    LOWPRECEDENCEOPERATORS,
+    FACTOR,
+    HIGHPRECEDENCEOPERATORS,
+    TERMPRIME,
+    ALL,
+    TEMP,
     BOOLEANEXPRESSION,
     VAR,
     LOGICALOP,
@@ -144,6 +150,7 @@ struct _prodRuleNode
     int** prod_rules;
     int rhs_occ_cnt;
     rhsOcc* rhs_occs;
+    int follow_set_flag;    // 0 - not visited, 1 - currently computing, 2 - done
 };
 typedef struct _prodRuleNode prodRuleNode;
 
