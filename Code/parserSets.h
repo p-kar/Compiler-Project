@@ -28,5 +28,7 @@ set* computeFirstSets(int id, prodRuleNode** rulelist, set** firststs);
 set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** followsts, int* rec_stack, int stack_size);
 set** createFirstSets(prodRuleNode** rulelist);
 set** createFollowSets(prodRuleNode** rulelist, set** firststs);
+set* getFirstSet(int id, set** firststs);
+set* getFollowSet(int ntid, set** followsts);
 
 #endif

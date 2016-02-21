@@ -444,10 +444,10 @@ char* getNonTerminalStr(NONTERMINAL ntid)
         strcpy(str, "HIGHPRECEDENCEOPERATORS");
     else if(ntid == TERMPRIME)
         strcpy(str, "TERMPRIME");
-   else if(ntid ==  ALL)
+    else if(ntid ==  ALL)
         strcpy(str, "ALL");
     else if(ntid == TEMP)
-        strcpy(str, "TEMP,");
+        strcpy(str, "TEMP");
     else
         strcpy(str, "NONTERMERROR");
     return str;

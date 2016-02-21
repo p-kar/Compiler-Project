@@ -14,6 +14,7 @@
 #include "parserDef.h"
 #include "parserUtils.h"
 #include "parserSets.h"
+#include "parserTable.h"
 #include "set.h"
 
 int main(int argc, char const *argv[])
@@ -33,6 +34,8 @@ int main(int argc, char const *argv[])
     // printAllRules(rulelist);
     set** firststs = createFirstSets(rulelist);
     set** followsts = createFollowSets(rulelist, firststs);
+    parserTable p = populateParserTable(rulelist, firststs, followsts);
+    displayParserTable(p);
     fclose(file);
     return 0;
 }

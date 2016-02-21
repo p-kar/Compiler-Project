@@ -125,7 +125,7 @@ set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** fo
         for (int k = idx; k < stack_size; ++k)
             com_st = setUnion(com_st, followsts[rec_stack[k]]);
         for (int k = idx; k < stack_size; ++k)
-            followsts[rec_stack[k]] = com_st;
+            followsts[rec_stack[k]] = setUnion(followsts[rec_stack[k]], com_st);
         return followsts[id];
     }
     rulelist[id]->follow_set_flag = 1;
@@ -182,4 +182,21 @@ set** createFollowSets(prodRuleNode** rulelist, set** firststs)
     printf("###################\n\n");
     #endif
     return sts;
+}
+
+set* getFirstSet(int id, set** firststs)
+{
+    // ensure that computeFirstSets has been called for that id earlier
+    if(isTerminal(id))
+    {
+        set* st = createEmptySet();
+        st->val = id;
+        return st;
+    }
+    return firststs[id];
+}
+
+set* getFollowSet(int ntid, set** followsts)
+{
+    return followsts[ntid];
 }

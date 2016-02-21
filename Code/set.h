@@ -23,6 +23,8 @@ struct _set
 };
 typedef struct _set set;
 
+// this creates an empty set with a single node
+// creates a node for the BST
 set* createEmptySet();
 bool isPresent(int value, set *root);
 set* setAdd(int value, set *root);
