@@ -8,10 +8,22 @@ MD := mkdir
 #---------------------------------------------------------------------
 # rules
 #---------------------------------------------------------------------
-all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o
+all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o
 	@echo 'compiling and linking final code'
-	@$(CC) -o run run.c ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o
+	@$(CC) -o run run.c ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o
 	@echo 'Built target run'
+
+./Build/stack.o: parserDef.h stack.h stack.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c stack.c -o $@
+	@echo ' Done'
+
+./Build/parserTable.o: ./Build/parserSets.o parserTable.h parserTable.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c parserTable.c -o $@
+	@echo ' Done'
 
 ./Build/parserSets.o: ./Build/set.o parserSets.h parserSets.c
 	@echo -n Building $@...
