@@ -24,7 +24,7 @@ typedef int** parserTable;
 set* getFirstSetsRule(int* prodrule, int rule_length, set** firststs);
 parserTable initialiseParserTable();
 void addRuleinSet(int ntid, int ruleno, set* st, parserTable p);
-parserTable populateParserTable(prodRuleNode** rulelist, set **firststs, set **followsts);
+parserTable populateParserTable(prodRuleNode** rulelist);
 void displayParserTable(parserTable p);
 
 #endif

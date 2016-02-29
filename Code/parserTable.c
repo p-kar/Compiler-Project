@@ -47,8 +47,10 @@ void addRuleinSet(int ntid, int ruleno, set* st, parserTable p)
     addRuleinSet(ntid, ruleno, st->right, p);
 }
 
-parserTable populateParserTable(prodRuleNode** rulelist, set **firststs, set **followsts)
+parserTable populateParserTable(prodRuleNode** rulelist)
 {
+    set **firststs = createFirstSets(rulelist);
+    set **followsts = createFollowSets(rulelist, firststs);
     parserTable p = initialiseParserTable();
     int i, j;
     for (i = 0; i < NUM_NONTERMINALS; ++i)

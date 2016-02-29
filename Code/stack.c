@@ -13,34 +13,50 @@ bool isEmpty(stackNode* st)
 {
     if(st == NULL)
         return true;
+    if(st->val == TK_DOLLAR)
+        return true;
     return false;
 }
 
 // if a pointer has to be returned
 // make a deep copy of the pointer
-int topStack(stackNode* st)
+stackNode* topStack(stackNode* st)
 {
     if(st == NULL)
-        return TK_ERROR;
-    return st->val;
+        return NULL;
+    return st;
 }
 
-stackNode* pushStack(int val, stackNode* st)
+stackNode* pushStack(int val, parseTree node, stackNode* st)
 {
     stackNode* p = (stackNode*) malloc(sizeof(stackNode));
     p->val = val;
+    p->pnode = node;
     p->next = st;
-    return p;
+    st = p;
+    return st;
 }
 
-// remember deallocating memory here so ensure
-// that in the topStack function the pointer is not returned.
 stackNode* popStack(stackNode* st)
 {
     if(st == NULL)
         return st;
     stackNode* p = st;
     st = st->next;
-    free(p);
     return st;
+}
+
+void printStack(stackNode* st)
+{
+    printf("Current Stack:- ");
+    stackNode* p = st;
+    while(p != NULL)
+    {
+        if(isTerminal(p->val))
+            printf("%s ", getTerminalStr(p->val));
+        else
+            printf("%s ", getNonTerminalStr(p->val));
+        p = p->next;
+    }
+    printf("\n");
 }

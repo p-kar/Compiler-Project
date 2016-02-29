@@ -13,18 +13,20 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include "parserDef.h"
+#include "parserUtils.h"
 
 struct _stackNode
 {
     int val;
+    parseTree pnode;
     struct _stackNode* next;
 };
 typedef struct _stackNode stackNode;
 
 bool isEmpty(stackNode* st);
-int topStack(stackNode* st);
-stackNode* pushStack(int val, stackNode* st);
+stackNode* topStack(stackNode* st);
+stackNode* pushStack(int val, parseTree node, stackNode* st);
 stackNode* popStack(stackNode* st);
+void printStack(stackNode* st);
 
 #endif

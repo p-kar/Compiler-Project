@@ -8,12 +8,18 @@ MD := mkdir
 #---------------------------------------------------------------------
 # rules
 #---------------------------------------------------------------------
-all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o
+all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o
 	@echo 'compiling and linking final code'
-	@$(CC) -o run run.c ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o
+	@$(CC) -o run run.c ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o
 	@echo 'Built target run'
 
-./Build/stack.o: parserDef.h stack.h stack.c
+./Build/parser.o: ./Build/stack.o ./Build/parserTable.o parser.h parser.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c parser.c -o $@
+	@echo ' Done'
+
+./Build/stack.o: ./Build/parserUtils.o stack.h stack.c
 	@echo -n Building $@...
 	@if !(test -d ./Build); then $(MD) ./Build; fi
 	@$(CC) -c stack.c -o $@
@@ -37,12 +43,18 @@ all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTabl
 	@$(CC) -c set.c -o $@
 	@echo ' Done'
 
-./Build/parserUtils.o: parserDef.h parserUtils.h parserUtils.c
+./Build/parserUtils.o: ./Build/lexer.o parserDef.h parserUtils.h parserUtils.c
 	@echo -n Building $@...
 	@if !(test -d ./Build); then $(MD) ./Build; fi
 	@$(CC) -c parserUtils.c -o $@
 	@echo ' Done'
 
+./Build/lexer.o: lexerDef.h lexer.h lexer.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c lexer.c -o $@
+	@echo ' Done'
+
 clean:
-	rm -rf run
-	rm -rf ./Build
+	$(RM) run
+	$(RM) ./Build

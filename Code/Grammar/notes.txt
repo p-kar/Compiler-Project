@@ -6,3 +6,6 @@
     <arithmeticRec> and <arithmeticExpression>
     <idlist> and <moreids>
     Essentially handle if there arises a cycle while computing follow sets.
+
+3. Check
+First Set: <global_or_not>,

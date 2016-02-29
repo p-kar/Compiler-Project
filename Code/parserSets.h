@@ -27,6 +27,11 @@ void displaySet(set* st);
 set* computeFirstSets(int id, prodRuleNode** rulelist, set** firststs);
 set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** followsts, int* rec_stack, int stack_size);
 set** createFirstSets(prodRuleNode** rulelist);
+// TODO
+// check follow sets for cycle handling errors ---> I think it is order dependent
+// not sure ---> swap moreids and idlist order, to check
+// can be rectified by adding a element that indicates that the set is empty
+// ensures that the pointed has been allocated a location that is not NULL
 set** createFollowSets(prodRuleNode** rulelist, set** firststs);
 set* getFirstSet(int id, set** firststs);
 set* getFollowSet(int ntid, set** followsts);

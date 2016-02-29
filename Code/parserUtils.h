@@ -16,16 +16,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-TERMINAL getTerminalfromStr(const char* str);
 NONTERMINAL getNonTerminalfromStr(const char* str);
 prodRuleNode* createProdRuleNode(NONTERMINAL ntid);
 prodRuleNode** initialiseProdRuleList();
 prodRuleNode** addProdRule(char* str, prodRuleNode** rulelist);
-void printProdRule(int ntid, prodRuleNode** rulelist);
+prodRuleNode** getRuleList(const char* grammar_file);
+void printProdRule(int ntid, int rno, prodRuleNode** rulelist);
+void printProdRules(int ntid, prodRuleNode** rulelist);
 void printAllRules(prodRuleNode** rulelist);
-bool isTerminal(int termid);
 bool isNonTerminal(int nontermid);
-char* getTerminalStr(TERMINAL termid);
 char* getNonTerminalStr(NONTERMINAL ntid);
+char* getIDStr(int id);
 
 #endif

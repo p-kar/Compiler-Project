@@ -11,31 +11,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "parserDef.h"
 #include "parserUtils.h"
-#include "parserSets.h"
 #include "parserTable.h"
-#include "set.h"
+#include "parser.h"
 
 int main(int argc, char const *argv[])
 {
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
+    char src_filename[] = "./Testcases/testcase2.txt";
     // char filename[] = "./Grammar/test_grammar.txt";
-    FILE* file = fopen(filename, "r");
-    char line[1000];
-    prodRuleNode** rulelist = initialiseProdRuleList();
-    while(fgets(line, sizeof(line), file) != NULL)
-    {
-        line[strlen(line) - 1] = '\0';
-        rulelist = addProdRule(line, rulelist);
-    }
+    prodRuleNode** rulelist = getRuleList(filename);
     // printAllRules(rulelist);
-    set** firststs = createFirstSets(rulelist);
-    set** followsts = createFollowSets(rulelist, firststs);
-    parserTable p = populateParserTable(rulelist, firststs, followsts);
-    displayParserTable(p);
-    fclose(file);
+    parserTable p = populateParserTable(rulelist);
+    parseInputSourceCode(src_filename, rulelist, p);
+    // displayParserTable(p);
     return 0;
 }
