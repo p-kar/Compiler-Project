@@ -12,7 +12,7 @@
 #define LEXERDEF_H
 
 #define MAX_LEXEME_SIZE 650 // doubt here
-#define TERMINAL_OFFSET 1234
+#define TERMINAL_OFFSET 1000
 #define NUM_TERMINALS 56
 
 enum _TERMINAL

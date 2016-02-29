@@ -32,23 +32,23 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
     tokenInfo *t = (tokenInfo*) malloc(sizeof(tokenInfo));
     getNextToken(tfp, t);
     parseTree pTree = createEmptyTreeNode(PROGRAM, -1, 0.0, -1);
-    stackNode* stack = NULL;
-    stack = pushStack(TK_DOLLAR, NULL, stack);  // inserting stack bottom symbol
-    stack = pushStack(PROGRAM, pTree, stack);   // inserting start symbol
-    while(!isEmpty(stack))
+    stackNode* stck = NULL;
+    stck = pushStack(TK_DOLLAR, NULL, stck);  // inserting stack bottom symbol
+    stck = pushStack(PROGRAM, pTree, stck);   // inserting start symbol
+    while(!isEmpty(stck))
     {
         printf("\n");
         printf("Current lexeme: %s\n", getTerminalStr(t->tokenType));
-        printStack(stack);
-        stackNode* top = topStack(stack);
+        printStack(stck);
+        stackNode* top = topStack(stck);
+        stck = popStack(stck);
         parseTreeNode* pnode = top->pnode;
         if(top->val == t->tokenType)
         {
-            stack = popStack(stack);
-            int idx = pnode->child_cnt;
+            int cidx = pnode->child_cnt;
             pnode->child_cnt++;
             pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(pnode->child_cnt));
-            pnode->children[idx] = createEmptyTreeNode(t->tokenType, t->lineNum, 0.0, pnode->nodeid);
+            pnode->children[cidx] = createEmptyTreeNode(t->tokenType, t->lineNum, 0.0, pnode->nodeid);
             getNextToken(tfp, t);
             continue;
         }
@@ -65,7 +65,6 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
         int rno = T[top->val][t->tokenType - TERMINAL_OFFSET];
         int ridx = rulelist[top->val]->rule_length[rno] - 1;
         printProdRule(top->val, rno, rulelist); // for debugging
-        stack = popStack(stack);
         if(rulelist[top->val]->prod_rules[rno][ridx] == TK_EPS)
             continue;
         for (; ridx >= 0; --ridx)
@@ -74,9 +73,13 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
             pnode->child_cnt++;
             pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(pnode->child_cnt));
             pnode->children[idx] = createEmptyTreeNode(rulelist[top->val]->prod_rules[rno][ridx], -1, 0.0, pnode->nodeid);
-            // printf("inserting: %s\n", getIDStr(rulelist[top->val]->prod_rules[rno][ridx]));
-            stack = pushStack(rulelist[top->val]->prod_rules[rno][ridx], pnode->children[idx], stack);
+            int childid = rulelist[top->val]->prod_rules[rno][ridx];
+            // printf("inserting: %d %s\n", childid, getIDStr(rulelist[top->val]->prod_rules[rno][ridx]));
+            stck = pushStack(childid, pnode->children[idx], stck);
+            printStack(stck);
+            printf("%d\n", stck->val);
         }
     }
+    printf("Compiled Successfully: Input source code is syntactically correct.\n");
     return pTree;
 }

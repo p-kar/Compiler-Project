@@ -25,7 +25,7 @@ typedef struct _stackNode stackNode;
 
 bool isEmpty(stackNode* st);
 stackNode* topStack(stackNode* st);
-stackNode* pushStack(int val, parseTree node, stackNode* st);
+stackNode* pushStack(int id, parseTree node, stackNode* st);
 stackNode* popStack(stackNode* st);
 void printStack(stackNode* st);
 

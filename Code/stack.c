@@ -18,19 +18,22 @@ bool isEmpty(stackNode* st)
     return false;
 }
 
-// if a pointer has to be returned
-// make a deep copy of the pointer
 stackNode* topStack(stackNode* st)
 {
     if(st == NULL)
         return NULL;
-    return st;
+    stackNode* p = (stackNode*) malloc(sizeof(stackNode));
+    p->val = st->val;
+    p->pnode = st->pnode;
+    p->next = NULL;
+    return p;
 }
 
-stackNode* pushStack(int val, parseTree node, stackNode* st)
+stackNode* pushStack(int id, parseTree node, stackNode* st)
 {
+    printf("Inserting: %d\n", id);
     stackNode* p = (stackNode*) malloc(sizeof(stackNode));
-    p->val = val;
+    p->val = id;
     p->pnode = node;
     p->next = st;
     st = p;
@@ -41,7 +44,6 @@ stackNode* popStack(stackNode* st)
 {
     if(st == NULL)
         return st;
-    stackNode* p = st;
     st = st->next;
     return st;
 }
@@ -52,10 +54,7 @@ void printStack(stackNode* st)
     stackNode* p = st;
     while(p != NULL)
     {
-        if(isTerminal(p->val))
-            printf("%s ", getTerminalStr(p->val));
-        else
-            printf("%s ", getNonTerminalStr(p->val));
+        printf("%s(%d) ", getIDStr(p->val), p->val);
         p = p->next;
     }
     printf("\n");

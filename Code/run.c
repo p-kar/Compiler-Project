@@ -20,7 +20,7 @@ int main(int argc, char const *argv[])
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
-    char src_filename[] = "./Testcases/testcase2.txt";
+    char src_filename[] = "./Testcases/testcase3.txt";
     // char filename[] = "./Grammar/test_grammar.txt";
     prodRuleNode** rulelist = getRuleList(filename);
     // printAllRules(rulelist);
