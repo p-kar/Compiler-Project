@@ -31,8 +31,8 @@ parserTable initialiseParserTable()
     int i, j;
     for (i = 0; i < NUM_NONTERMINALS; ++i)
         p[i] = (int*) malloc(sizeof(int) * NUM_TERMINALS);
-    for (int i = 0; i < NUM_NONTERMINALS; ++i)
-        for (int j = 0; j < NUM_TERMINALS; ++j)
+    for (i = 0; i < NUM_NONTERMINALS; ++i)
+        for (j = 0; j < NUM_TERMINALS; ++j)
             p[i][j] = -1;
     return p;
 }

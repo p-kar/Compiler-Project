@@ -122,16 +122,17 @@ set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** fo
         for (idx = 0; idx < stack_size; ++idx)
             if(rec_stack[idx] == id)
                 break;
-        for (int k = idx; k < stack_size; ++k)
+        for (k = idx; k < stack_size; ++k)
             com_st = setUnion(com_st, followsts[rec_stack[k]]);
-        for (int k = idx; k < stack_size; ++k)
-            followsts[rec_stack[k]] = setUnion(followsts[rec_stack[k]], com_st);
+        for (k = idx; k < stack_size; ++k)
+            followsts[rec_stack[k]] = com_st;
         return followsts[id];
     }
     rulelist[id]->follow_set_flag = 1;
     followsts[id] = NULL;
     int rhs_cnt = rulelist[id]->rhs_occ_cnt;
-    for (int i = 0; i < rhs_cnt; ++i)
+    int i;
+    for (i = 0; i < rhs_cnt; ++i)
     {
         rhsOcc temp = rulelist[id]->rhs_occs[i];
         bool term_flag = false;
