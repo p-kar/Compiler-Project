@@ -31,7 +31,6 @@ stackNode* topStack(stackNode* st)
 
 stackNode* pushStack(int id, parseTree node, stackNode* st)
 {
-    printf("Inserting: %d\n", id);
     stackNode* p = (stackNode*) malloc(sizeof(stackNode));
     p->val = id;
     p->pnode = node;
@@ -54,7 +53,7 @@ void printStack(stackNode* st)
     stackNode* p = st;
     while(p != NULL)
     {
-        printf("%s(%d) ", getIDStr(p->val), p->val);
+        printf("%s ", getIDStr(p->val));
         p = p->next;
     }
     printf("\n");

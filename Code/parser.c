@@ -47,7 +47,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
         {
             int cidx = pnode->child_cnt;
             pnode->child_cnt++;
-            pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(pnode->child_cnt));
+            pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
             pnode->children[cidx] = createEmptyTreeNode(t->tokenType, t->lineNum, 0.0, pnode->nodeid);
             getNextToken(tfp, t);
             continue;
@@ -71,13 +71,11 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
         {
             int idx = pnode->child_cnt;
             pnode->child_cnt++;
-            pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(pnode->child_cnt));
+            pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
             pnode->children[idx] = createEmptyTreeNode(rulelist[top->val]->prod_rules[rno][ridx], -1, 0.0, pnode->nodeid);
             int childid = rulelist[top->val]->prod_rules[rno][ridx];
             // printf("inserting: %d %s\n", childid, getIDStr(rulelist[top->val]->prod_rules[rno][ridx]));
             stck = pushStack(childid, pnode->children[idx], stck);
-            printStack(stck);
-            printf("%d\n", stck->val);
         }
     }
     printf("Compiled Successfully: Input source code is syntactically correct.\n");
