@@ -226,6 +226,8 @@ char* getNonTerminalStr(NONTERMINAL ntid)
 
 char* getIDStr(int id)
 {
+    if(id == -1)    // for parse tree printing
+        return "ROOT";
     if(isTerminal(id))
         return getTerminalStr(id);
     return getNonTerminalStr(id);

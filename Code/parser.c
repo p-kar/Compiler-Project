@@ -54,12 +54,12 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
         }
         else if(isTerminal(top->val))
         {
-            fprintf(stderr, "Syntax Error. Expected: %s\n", getTerminalStr(top->val));
+            fprintf(stderr, "%sSyntax Error. Expected: %s%s\n", KRED, getTerminalStr(top->val), KNRM);
             return pTree;
         }
         else if(T[top->val][t->tokenType - TERMINAL_OFFSET] == -1)
         {
-            fprintf(stderr, "No rule in the parse table to expand.\n");
+            fprintf(stderr, "%sNo rule in the parse table to expand.%s\n", KRED, KNRM);
             return pTree;
         }
         int rno = T[top->val][t->tokenType - TERMINAL_OFFSET];
@@ -78,6 +78,35 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
             stck = pushStack(childid, pnode->children[idx], stck);
         }
     }
-    printf("Compiled Successfully: Input source code is syntactically correct.\n");
+    printf("%sCompiled Successfully: Input source code is syntactically correct.%s\n", KGRN, KNRM);
     return pTree;
+}
+
+void printParseTreeHelper(parseTree PT, FILE* fp)
+{
+    if(PT == NULL)
+    {
+        fprintf(stderr, "parse tree is NULL\n");
+        return;
+    }
+    if(PT->child_cnt == 0)
+    {
+        if(isTerminal(PT->nodeid))
+            fprintf(fp, "%d\t%d\t%s\t%f\t%s\tyes\t-\n", PT->nodeid, PT->lineno, getIDStr(PT->nodeid), PT->valuelfNumber, getIDStr(PT->parentNodeSymbol));
+        else
+            fprintf(fp, "-\t-\t-\t%f\t%s\tno\t%s\n", PT->valuelfNumber, getIDStr(PT->parentNodeSymbol), getIDStr(PT->nodeid));
+        return;
+    }
+    fprintf(fp, "-\t-\t-\t%f\t%s\tno\t%s\n", PT->valuelfNumber, getIDStr(PT->parentNodeSymbol), getIDStr(PT->nodeid));
+    int idx;
+    for (idx = 0; idx < PT->child_cnt; ++idx)
+        printParseTreeHelper(PT->children[idx], fp);
+}
+
+void printParseTree(parseTree PT, const char* outfile)
+{
+    FILE* fp = fopen(outfile, "w");
+    fprintf(fp, "lexemeCurrentNode\tlineno\ttoken\tvalueIfNumber\tparentNodeSymbol\tisLeafNode\tNodeSymbol\n");
+    printParseTreeHelper(PT, fp);
+    fclose(fp);
 }

@@ -17,9 +17,17 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define KNRM "\x1B[0m"
+#define KRED "\x1B[31m"
+#define KGRN "\x1B[32m"
+#define KYEL "\x1B[33m"
+#define KBLU "\x1B[34m"
+#define KMAG "\x1B[35m"
+#define KCYN "\x1B[36m"
+#define KWHT "\x1B[37m"
+
 parseTreeNode* createEmptyTreeNode(int nodeid, int lineno, float valuelfNumber, NONTERMINAL pntid);
-// the last token that comes in the source code file is TK_EOF
-// add TK_DOLLAR before TK_EOF so that we can use TK_EOF as the loop break condition
 parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist, parserTable T);
+void printParseTree(parseTree PT, const char* outfile);
 
 #endif

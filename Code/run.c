@@ -25,7 +25,8 @@ int main(int argc, char const *argv[])
     prodRuleNode** rulelist = getRuleList(filename);
     // printAllRules(rulelist);
     parserTable p = populateParserTable(rulelist);
-    parseInputSourceCode(src_filename, rulelist, p);
+    parseTree PT = parseInputSourceCode(src_filename, rulelist, p);
+    printParseTree(PT, "ptree.txt");
     // displayParserTable(p);
     return 0;
 }
