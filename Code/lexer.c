@@ -22,6 +22,8 @@ TERMINAL getTerminalfromStr(const char* str)
         return TK_FUNID;
     else if(strcmp(str, "TK_SEM") == 0)
         return TK_SEM;
+    else if(strcmp(str, "TK_COMMENT") == 0)
+        return TK_COMMENT;
     else if(strcmp(str, "TK_INPUT") == 0)
         return TK_INPUT;
     else if(strcmp(str, "TK_PARAMETER") == 0)
@@ -122,6 +124,8 @@ TERMINAL getTerminalfromStr(const char* str)
         return TK_EPS;
     else if(strcmp(str, "TK_DOLLAR") == 0)
         return TK_DOLLAR;
+    else if(strcmp(str, "TK_EOF") == 0)
+        return TK_EOF;
     return TK_ERROR;
 }
 
@@ -142,6 +146,8 @@ char* getTerminalStr(TERMINAL termid)
         strcpy(str, "TK_PARAMETER");
     else if(TK_LIST == termid)
         strcpy(str, "TK_LIST");
+    else if(TK_COMMENT == termid)
+        strcpy(str, "TK_COMMENT");
     else if(TK_SQL == termid)
         strcpy(str, "TK_SQL");
     else if(TK_SQR == termid)
@@ -236,6 +242,8 @@ char* getTerminalStr(TERMINAL termid)
         strcpy(str, "eps");
     else if(TK_DOLLAR == termid)
         strcpy(str, "$");
+    else if(TK_EOF == termid)
+        strcpy(str, "TK_EOF");
     else
         strcpy(str, "TK_ERROR");
     return str;

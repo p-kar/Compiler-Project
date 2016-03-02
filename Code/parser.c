@@ -37,9 +37,11 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
     stck = pushStack(PROGRAM, pTree, stck);   // inserting start symbol
     while(!isEmpty(stck))
     {
+        #ifdef DEBUG_PARSER
         printf("\n");
         printf("Current lexeme: %s\n", getTerminalStr(t->tokenType));
         printStack(stck);
+        #endif
         stackNode* top = topStack(stck);
         stck = popStack(stck);
         parseTreeNode* pnode = top->pnode;
@@ -54,7 +56,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
         }
         else if(isTerminal(top->val))
         {
-            fprintf(stderr, "%sSyntax Error. Expected: %s%s\n", KRED, getTerminalStr(top->val), KNRM);
+            fprintf(stderr, "%sSyntax Error on line <%d>. Expected: %s Received: %s.%s\n", KRED, t->lineNum, getTerminalStr(top->val), getTerminalStr(t->tokenType), KNRM);
             return pTree;
         }
         else if(T[top->val][t->tokenType - TERMINAL_OFFSET] == -1)
@@ -64,7 +66,9 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
         }
         int rno = T[top->val][t->tokenType - TERMINAL_OFFSET];
         int ridx = rulelist[top->val]->rule_length[rno] - 1;
+        #ifdef DEBUG_PARSER
         printProdRule(top->val, rno, rulelist); // for debugging
+        #endif
         if(rulelist[top->val]->prod_rules[rno][ridx] == TK_EPS)
             continue;
         for (; ridx >= 0; --ridx)

@@ -1,3 +1,11 @@
+# @Author:    Pratyush Kar (2013A7PS029P),
+#             Ayush Kataria (2013A7PS028P)
+# @Email:     f2013029@pilani.bits-pilani.ac.in,
+#             f2013028@pilani.bits-pilani.ac.in
+# @Gp Number: 52
+# @File Name: makefile
+# @Date:      2016-02-18 12:47:17
+
 #---------------------------------------------------------------------
 # executables
 #---------------------------------------------------------------------
@@ -10,24 +18,28 @@ MD := mkdir
 #---------------------------------------------------------------------
 define okecho
 	@tput setaf 2
+	@tput bold
 	@echo $1
 	@tput sgr0
 endef
 
 define errorecho
 	@tput setaf 1
+	@tput bold
 	@echo $1
 	@tput sgr0
 endef
 
 define warnecho
 	@tput setaf 3
+	@tput bold
 	@echo $1
 	@tput sgr0
 endef
 
 define notifyecho
 	@tput setaf 6
+	@tput bold
 	@echo $1
 	@tput sgr0
 endef
@@ -37,7 +49,7 @@ endef
 #---------------------------------------------------------------------
 all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o
 	$(call notifyecho, "compiling and linking final code")
-	@$(CC) -o run run.c ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o
+	@$(CC) -o run run.c ./Build/*.o
 	$(call warnecho, "Built target run")
 
 ./Build/parser.o: ./Build/stack.o ./Build/parserTable.o parser.h parser.c

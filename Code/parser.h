@@ -25,6 +25,7 @@
 #define KMAG "\x1B[35m"
 #define KCYN "\x1B[36m"
 #define KWHT "\x1B[37m"
+#define DEBUG_PARSER
 
 parseTreeNode* createEmptyTreeNode(int nodeid, int lineno, float valuelfNumber, NONTERMINAL pntid);
 parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist, parserTable T);
