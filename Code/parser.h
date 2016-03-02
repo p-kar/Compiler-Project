@@ -27,7 +27,7 @@
 #define KWHT "\x1B[37m"
 #define DEBUG_PARSER
 
-parseTreeNode* createEmptyTreeNode(int nodeid, int lineno, float valuelfNumber, NONTERMINAL pntid);
+parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo *tk, NONTERMINAL pntid);
 parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist, parserTable T);
 void printParseTree(parseTree PT, const char* outfile);
 

@@ -96,10 +96,8 @@ typedef struct _prodRuleNode prodRuleNode;
 struct _parseTreeNode
 {
     int nodeid;
-    int lineno;
-    float valuelfNumber;
+    tokenInfo tk;
     NONTERMINAL parentNodeSymbol;
-    bool isLeafNode;
     int child_cnt;
     struct _parseTreeNode** children;
 };
