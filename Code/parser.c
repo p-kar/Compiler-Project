@@ -10,13 +10,13 @@
 
 #include "parser.h"
 
-parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo *tk, NONTERMINAL pntid)
+parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid)
 {
     parseTreeNode *p = (parseTreeNode*) malloc(sizeof(parseTreeNode));
     p->nodeid = nodeid;
-    p->tk.lineNum = tk->lineNum;
-    strcpy(p->tk.lexeme, tk->lexeme);
-    p->tk.tokenType = tk->tokenType;
+    p->tk.lineNum = tk.lineNum;
+    strcpy(p->tk.lexeme, tk.lexeme);
+    p->tk.tokenType = tk.tokenType;
     p->parentNodeSymbol = pntid;
     p->child_cnt = 0;
     p->children = NULL;
@@ -26,11 +26,10 @@ parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo *tk, NONTERMINAL pntid)
 parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist, parserTable T)
 {
     FILE *tfp = fopen(testcaseFile, "r");
-    tokenInfo *t = (tokenInfo*) malloc(sizeof(tokenInfo));
-    getNextToken(tfp, t);
-    tokenInfo *nttk = (tokenInfo*) malloc(sizeof(tokenInfo));
-    nttk->lineNum = -1;
-    nttk->tokenType = TK_ERROR;
+    tokenInfo t = getNextToken(tfp);
+    tokenInfo nttk;
+    nttk.lineNum = -1;
+    nttk.tokenType = TK_ERROR;
     parseTree pTree = createEmptyTreeNode(PROGRAM, nttk, -1);
     stackNode* stck = NULL;
     stck = pushStack(TK_DOLLAR, NULL, stck);  // inserting stack bottom symbol
@@ -39,32 +38,32 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
     {
         #ifdef DEBUG_PARSER
         printf("\n");
-        printf("Current lexeme: %s\n", getTerminalStr(t->tokenType));
+        printf("Current lexeme: %s\n", getTerminalStr(t.tokenType));
         printStack(stck);
         #endif
         stackNode* top = topStack(stck);
         stck = popStack(stck);
         parseTreeNode* pnode = top->pnode;
-        if(top->val == t->tokenType)
+        if(top->val == t.tokenType)
         {
             int cidx = pnode->child_cnt;
             pnode->child_cnt++;
             pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
-            pnode->children[cidx] = createEmptyTreeNode(t->tokenType, t, pnode->nodeid);
-            getNextToken(tfp, t);
+            pnode->children[cidx] = createEmptyTreeNode(t.tokenType, t, pnode->nodeid);
+            t = getNextToken(tfp);
             continue;
         }
         else if(isTerminal(top->val))
         {
-            fprintf(stderr, "%sSyntax Error on line <%d>. Expected: %s Received: %s.%s\n", KRED, t->lineNum, getTerminalStr(top->val), getTerminalStr(t->tokenType), KNRM);
+            fprintf(stderr, "%sSyntax Error on line <%d>. Expected: %s Received: %s.%s\n", KRED, t.lineNum, getTerminalStr(top->val), getTerminalStr(t.tokenType), KNRM);
             return pTree;
         }
-        else if(T[top->val][t->tokenType - TERMINAL_OFFSET] == -1)
+        else if(T[top->val][t.tokenType - TERMINAL_OFFSET] == -1)
         {
             fprintf(stderr, "%sNo rule in the parse table to expand.%s\n", KRED, KNRM);
             return pTree;
         }
-        int rno = T[top->val][t->tokenType - TERMINAL_OFFSET];
+        int rno = T[top->val][t.tokenType - TERMINAL_OFFSET];
         int ridx = rulelist[top->val]->rule_length[rno] - 1;
         #ifdef DEBUG_PARSER
         printProdRule(top->val, rno, rulelist); // for debugging
@@ -78,7 +77,6 @@ parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist
             pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
             pnode->children[idx] = createEmptyTreeNode(rulelist[top->val]->prod_rules[rno][ridx], nttk, pnode->nodeid);
             int childid = rulelist[top->val]->prod_rules[rno][ridx];
-            // printf("inserting: %d %s\n", childid, getIDStr(rulelist[top->val]->prod_rules[rno][ridx]));
             stck = pushStack(childid, pnode->children[idx], stck);
         }
     }
@@ -96,12 +94,12 @@ void printParseTreeHelper(parseTree PT, FILE* fp)
     if(PT->child_cnt == 0)
     {
         if(isTerminal(PT->nodeid))
-            fprintf(fp, "%s\t%d\t%s\t%s\t%s\tyes\t-\n", PT->tk.lexeme, PT->tk.lineNum, getIDStr(PT->nodeid), PT->tk.lexeme, getIDStr(PT->parentNodeSymbol));
+            fprintf(fp, "%s\t%d\t%s\t%s\t%s\tyes\t----\n", PT->tk.lexeme, PT->tk.lineNum, getIDStr(PT->nodeid), PT->tk.lexeme, getIDStr(PT->parentNodeSymbol));
         else
-            fprintf(fp, "-\t-\t-\t%s\t%s\tno\t%s\n", PT->tk.lexeme, getIDStr(PT->parentNodeSymbol), getIDStr(PT->nodeid));
+            fprintf(fp, "----\t----\t----\t----\t%s\tno\t%s\n", getIDStr(PT->parentNodeSymbol), getIDStr(PT->nodeid));
         return;
     }
-    fprintf(fp, "-\t-\t-\t%s\t%s\tno\t%s\n", PT->tk.lexeme, getIDStr(PT->parentNodeSymbol), getIDStr(PT->nodeid));
+    fprintf(fp, "----\t----\t----\t----\t%s\tno\t%s\n", getIDStr(PT->parentNodeSymbol), getIDStr(PT->nodeid));
     int idx;
     for (idx = 0; idx < PT->child_cnt; ++idx)
         printParseTreeHelper(PT->children[idx], fp);

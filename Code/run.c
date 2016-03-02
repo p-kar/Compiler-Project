@@ -26,7 +26,7 @@ int main(int argc, char const *argv[])
     // printAllRules(rulelist);
     parserTable p = populateParserTable(rulelist);
     parseTree PT = parseInputSourceCode(src_filename, rulelist, p);
-    printParseTree(PT, "ptree.txt");
+    printParseTree(PT, "ptree.tsv");
     // displayParserTable(p);
     return 0;
 }

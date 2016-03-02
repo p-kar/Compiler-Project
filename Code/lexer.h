@@ -16,8 +16,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "lexerDef.h"
-
-void getNextToken(FILE *fp,tokenInfo* tk);
+tokenInfo getNextToken(FILE *fp);
 TERMINAL getTerminalfromStr(const char* str);
 bool isTerminal(int termid);
 char* getTerminalStr(TERMINAL termid);

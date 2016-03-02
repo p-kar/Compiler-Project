@@ -10,7 +10,7 @@
 
 #include "lexer.h"
 
-int currLine;
+int currLine=1;
 
 TERMINAL getTerminalfromStr(const char* str)
 {
@@ -308,107 +308,129 @@ TERMINAL findToken(char str[])
         return TK_FIELDID;
 }
 
-void getNextToken(FILE *fp,tokenInfo* tk)
+tokenInfo getNextToken(FILE *fp)
 {
 	//char c;
 	long long int lexCount=0;
 	int currState=1;
-
+	tokenInfo tk;
+	//tk = (tokenInfo*) malloc(sizeof(tokenInfo));
 	while(1)
 	{
+		/*if(bufferIndex==real_k)
+		{
+			bufferIndex =0 ;
+			getStream();
+
+		}
+		char c = buff[vufferIndex];*/
 		char c = fgetc(fp);
 		if(c==EOF)
 		{
 			c = 127;
 		}
-		tk->lexeme[lexCount] = c ;
+		tk.lexeme[lexCount] = c ;
 		lexCount++;
 		switch(currState)
 		{
 			case 1:
 					if(c==',')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_COMMA;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_COMMA;
+						return tk;
 					}
 					else if(c=='[')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_SQL;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_SQL;
+						return tk;
 					}
 					else if(c==']')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_SQR;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_SQR;
+						return tk;
 					}
 					else if(c==':')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_COLON;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_COLON;
+						return tk;
 					}
 					else if(c==';')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_SEM;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_SEM;
+						return tk;
 					}
 					else if(c=='.')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_DOT;
-						return;
+						tk.lineNum = currLine;
+						tk.lexeme[lexCount]='\0';
+						tk.tokenType = TK_DOT;
+						return tk;
 					}
 					else if(c=='(')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_OP;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_OP;
+						return tk;
 					}
 					else if(c==')')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_CL;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_CL;
+						return tk;
 					}
 					else if(c=='+')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_PLUS;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_PLUS;
+						return tk;
 					}
 					else if(c=='-')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_MINUS;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_MINUS;
+						return tk;
 					}
 					else if(c=='*')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_MUL;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_MUL;
+						return tk;
 					}
 					else if(c=='/')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_DIV;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_DIV;
+						return tk;
 					}
 					else if(c=='~')
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_NOT;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_NOT;
+						return tk;
 					}
 					else if(c==127)
 					{
-						tk->lineNum = currLine;
-						tk->tokenType = TK_EOF;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum = currLine;
+						tk.tokenType = TK_EOF;
+						return tk;
 					}
 					else if(c==' '||c=='\t'||c=='\v'||c=='\r')
 					{
@@ -474,10 +496,10 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					}
 					else
 					{
-						tk->tokenType = TK_ERROR;
-						tk->lineNum	 = currLine;
-						sprintf(tk->lexeme,"unrecognized character\n");
-						return;
+						tk.tokenType = TK_ERROR;
+						tk.lineNum	 = currLine;
+						sprintf(tk.lexeme,"unrecognized character\n");
+						return tk;
 					}
 				break;
 
@@ -489,30 +511,31 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk->lexeme, "expected '@' before  '%c'", c);
-                        tk->tokenType = TK_ERROR;
-                        tk->lineNum = currLine;
+						sprintf(tk.lexeme, "expected '@' before  '%c'", c);
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
                         if(c == '\n')
                             currLine++;
-                        return;
+                        return tk;
 					}
 				break;
 			case 12:
 					if(c=='@')
 					{
-						tk->tokenType = TK_OR;
-						tk->lineNum = currLine;
-						return;
+						tk.lexeme[lexCount]='\0';
+						tk.tokenType = TK_OR;
+						tk.lineNum = currLine;
+						return tk;
 					}
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk->lexeme, "expected '@' before  '%c'", c);
-                        tk->tokenType = TK_ERROR;
-                        tk->lineNum = currLine;
+						sprintf(tk.lexeme, "expected '@' before  '%c'", c);
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
                         if(c == '\n')
                             currLine++;
-                        return;
+                        return tk;
 					}
 				break;
 			case 21:
@@ -523,74 +546,85 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk->lexeme, "expected '&' before  '%c'", c);
-                        tk->tokenType = TK_ERROR;
-                        tk->lineNum = currLine;
+						sprintf(tk.lexeme, "expected '&' before  '%c'", c);
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
                         //if(c == '\n')
                         //    currLine++;
-                        return;
+                        return tk;
 					}
 				break;
 			case 22:
 					if(c=='&')
 					{
-						tk->tokenType = TK_AND;
-						tk->lineNum = currLine;
-						return;
+						tk.tokenType = TK_AND;
+						tk.lineNum = currLine;
+						tk.lexeme[lexCount]='\0';
+						return tk;
 					}
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk->lexeme, "expected '&' before  '%c'", c);
-                        tk->tokenType = TK_ERROR;
-                        tk->lineNum = currLine;
+						sprintf(tk.lexeme, "expected '&' before  '%c'", c);
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
                         //if(c == '\n')
                         //    currLine++;
-                        return;
+                        return tk;
 					}
 				break;
 			case 31:
 					if(c=='=')
 					{
-						tk->tokenType = TK_EQ;
-						tk->lineNum = currLine;
-						return;
+						tk.tokenType = TK_EQ;
+						tk.lineNum = currLine;
+						tk.lexeme[lexCount]='\0';
+						return tk;
+					}
+					else if(c==' '||c=='\n'||c=='\t'||c=='\r'||c=='\v')
+					{
+						tk.tokenType = TK_ASSIGNOP;
+						tk.lexeme[lexCount]='\0';
+						tk.lineNum=currLine;
+						return tk;
 					}
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk->lexeme, "expected '=' before  '%c'", c);
-                        tk->tokenType = TK_ERROR;
-                        tk->lineNum = currLine;
+						sprintf(tk.lexeme, "expected '=' before  '%c'", c);
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
                         //if(c == '\n')
                         //    currLine++;
-                        return;
+                        return tk;
 					}
 				break;
 			case 41:
 					if(c=='=')
 					{
-						tk->tokenType = TK_NE;
-						tk->lineNum = currLine;
-						return;
+						tk.tokenType = TK_NE;
+						tk.lineNum = currLine;
+						tk.lexeme[lexCount]='\0';
+						return tk;
 					}
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk->lexeme, "expected '=' before  '%c'", c);
-                        tk->tokenType = TK_ERROR;
-                        tk->lineNum = currLine;
+						sprintf(tk.lexeme, "expected '=' before  '%c'", c);
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
                         //if(c == '\n')
                         //    currLine++;
-                        return;
+                        return tk;
 					}
 				break;
 			case 51:
 					if(c=='=')
 					{
-						tk->tokenType = TK_LE;
-						tk->lineNum = currLine ;
-						return;
+						tk.tokenType = TK_LE;
+						tk.lineNum = currLine ;
+						tk.lexeme[lexCount]='\0';
+						return tk;
 					}
 					else if(c=='-')
 					{
@@ -599,10 +633,10 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						tk->lexeme[lexCount-1]='\0';
-						tk->tokenType = TK_LT;
-						tk->lineNum = currLine;
-						return;
+						tk.lexeme[lexCount-1]='\0';
+						tk.tokenType = TK_LT;
+						tk.lineNum = currLine;
+						return tk;
 					}
 				break;
 			case 52:
@@ -613,47 +647,50 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk->lexeme, "expected '-' before  '%c'", c);
-	                    tk->tokenType = TK_ERROR;
-	                    tk->lineNum = currLine;
+						sprintf(tk.lexeme, "expected '-' before  '%c'", c);
+	                    tk.tokenType = TK_ERROR;
+	                    tk.lineNum = currLine;
 	                     //if(c == '\n')
 	                     //   currLine++;
-	                     return;
+	                     return tk;
 					}
 				break;
 			case 53:
 					if(c=='-')
 					{
-						tk->tokenType = TK_ASSIGNOP;
-						tk->lineNum = currLine;
-						return ;
+						tk.tokenType = TK_ASSIGNOP;
+						tk.lineNum = currLine;
+						tk.lexeme[lexCount]='\0';
+						return tk;
 					}
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk->lexeme, "expected '-' before  '%c'", c);
-	                    tk->tokenType = TK_ERROR;
-	                    tk->lineNum = currLine;
+						sprintf(tk.lexeme, "expected '-' before  '%c'", c);
+	                    tk.tokenType = TK_ERROR;
+	                    tk.lineNum = currLine;
 	                     //if(c == '\n')
 	                     //   currLine++;
-	                     return;
+	                     return tk;
 					}
 				break;
 			case 61:
 					if(c=='=')
 					{
-						tk->tokenType = TK_GE;
-						tk->lineNum = currLine ;
-						return;
+						tk.tokenType = TK_GE;
+						tk.lineNum = currLine ;
+						tk.lexeme[lexCount]='\0';
+						return tk;
 					}
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						tk->lexeme[lexCount-1]='\0';
+						tk.lexeme[lexCount-1]='\0';
+
 						// buffer position wala panga
-						tk->tokenType = TK_GT;
-						tk->lineNum = currLine;
-						return;
+						tk.tokenType = TK_GT;
+						tk.lineNum = currLine;
+						return tk;
 					}
 				break;
 			case 71:
@@ -662,11 +699,16 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 						currLine++;
 						currState=1;
 						lexCount=0;
+						//tk.tokenType= TK_COMMENT;
+						//tk.lineNum = currLine ;
+						//tk.lexeme[lexCount]='\0';
+						//return tk;
 					}
 					else if(c==127)
 					{
-						tk->tokenType = TK_EOF;
-						return ;
+						tk.tokenType = TK_EOF;
+						tk.lexeme[0]='\0';
+						return tk ;
 					}
 				break;
 			case 81:
@@ -677,10 +719,10 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						tk->tokenType = TK_ERROR ;
-						tk->lexeme[lexCount-1]= '\0';
-						tk->lineNum = currLine ;
-						return;
+						tk.tokenType = TK_ERROR ;
+						tk.lexeme[lexCount-1]= '\0';
+						tk.lineNum = currLine ;
+						return tk;
 					}
 				break;
 			case 82:
@@ -691,20 +733,20 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					else if(!(c>='b' && c<='d') )
 					{
 						fseek(fp,-1,SEEK_CUR);
-						tk->tokenType	= TK_ID;
-						tk->lineNum = currLine;
-						tk->lexeme[lexCount-1]='\0';
-						return;
+						tk.tokenType	= TK_ID;
+						tk.lineNum = currLine;
+						tk.lexeme[lexCount-1]='\0';
+						return tk;
 					}
 				break;
 			case 83:
 					if(!(c>='2' && c<='7') )
 					{
 						fseek(fp,-1,SEEK_CUR);
-						tk->tokenType = TK_ID;
-						tk->lineNum = currLine ;
-						tk->lexeme[lexCount-1]='\0';
-						return;
+						tk.tokenType = TK_ID;
+						tk.lineNum = currLine ;
+						tk.lexeme[lexCount-1]='\0';
+						return tk;
 					}
 				break;
 			case 91:
@@ -712,10 +754,10 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					{
 						//buffer thing
 						fseek(fp,-1,SEEK_CUR);
-						tk->lexeme[lexCount-1] = '\0';
-						tk->tokenType = findToken(tk->lexeme);
-						tk->lineNum = currLine ;
-						return;
+						tk.lexeme[lexCount-1] = '\0';
+						tk.tokenType = findToken(tk.lexeme);
+						tk.lineNum = currLine ;
+						return tk;
 					}
 				break;
 			case 101:
@@ -723,9 +765,9 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					{
 						if(lexCount>20)
 						{
-							tk->tokenType = TK_ERROR ;
-							sprintf(tk->lexeme,"overflow");
-							return;
+							tk.tokenType = TK_ERROR ;
+							sprintf(tk.lexeme,"overflow");
+							return tk;
 						}
 					}
 					else if(c=='.')
@@ -737,10 +779,10 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 						// buffer position wala problem
 						//  managing the lexemee
 						fseek(fp,-1,SEEK_CUR);
-						tk->lexeme[lexCount-1] = '\0';
-						tk->tokenType = TK_NUM;
-						tk->lineNum = currLine ;
-						return ;
+						tk.lexeme[lexCount-1] = '\0';
+						tk.tokenType = TK_NUM;
+						tk.lineNum = currLine ;
+						return tk;
 
 					}
 				break;
@@ -752,27 +794,27 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						tk->tokenType = TK_ERROR;
-						tk->lineNum = currLine;
-						sprintf(tk->lexeme,"expected numeric constant after '.' ");
-						return;
+						tk.tokenType = TK_ERROR;
+						tk.lineNum = currLine;
+						sprintf(tk.lexeme,"expected numeric constant after '.' ");
+						return tk;
 					}
 				break;
 			case 103:
 					if(c>='0' && c<='9')
 					{
-						tk->tokenType = TK_RNUM;
-						tk->lineNum = currLine ;
-						tk->lexeme[lexCount] = '\0';
-						return ;
+						tk.tokenType = TK_RNUM;
+						tk.lineNum = currLine ;
+						tk.lexeme[lexCount] = '\0';
+						return tk;
 					}
 					else
 					{
 						fseek(fp,-1,SEEK_CUR);
-						tk->lexeme[lexCount-1]='\0';
-						tk->tokenType = TK_ERROR ;
-						sprintf(tk->lexeme,"illegal real constant");
-						return;
+						tk.lexeme[lexCount-1]='\0';
+						tk.tokenType = TK_ERROR ;
+						sprintf(tk.lexeme,"illegal real constant");
+						return tk;
 					}
 				break;
 			case 111:
@@ -785,25 +827,59 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					{
 						// buffer wala problem;
 						fseek(fp,-1,SEEK_CUR);
-						tk->tokenType = TK_ERROR;
-						tk->lineNum = currLine;
-						sprintf(tk->lexeme,"expect an alphabetic character after '_'");
-						return;
+						tk.tokenType = TK_ERROR;
+						tk.lineNum = currLine;
+						sprintf(tk.lexeme,"expect an alphabetic character after '_'");
+						return tk;
 					}
 				break;
 			case 112:
-					if( !( (c>='a' && c<='z')||
+					if(c>='0' && c<='9')
+					{
+						currState = 113 ;
+					}
+					else if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
+					{
+						//fseek(fp,-1,SEEK_CUR);
+						 	tk.lexeme[lexCount-1] = '\0';
+						 	tk.lineNum = currLine;
+						 	if(strcmp(tk.lexeme,"_main")==0)
+						 		tk.tokenType = TK_MAIN;
+						 	else
+						 		tk.tokenType = TK_FUNID;
+						 	return tk;
+					}
+					else if( !( (c>='a' && c<='z')||
 						 (c>='A' && c<='Z') ||
 						 (c>='0' && c<='9') ) )
 						 {
 						 	fseek(fp,-1,SEEK_CUR);
-						 	tk->lexeme[lexCount-1] = '\0';
-						 	tk->lineNum = currLine;
-						 	if(strcmp(tk->lexeme,"_main")==0)
-						 		tk->tokenType = TK_MAIN;
+						 	sprintf(tk.lexeme,"expect a ' ' here");
+						 	tk.tokenType = TK_ERROR ;
+						 	tk.lineNum = currLine;
+						 	return tk;
+
+						 }
+				break;
+			case 113:
+				if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
+					{
+						//fseek(fp,-1,SEEK_CUR);
+						 	tk.lexeme[lexCount-1] = '\0';
+						 	tk.lineNum = currLine;
+						 	if(strcmp(tk.lexeme,"_main")==0)
+						 		tk.tokenType = TK_MAIN;
 						 	else
-						 		tk->tokenType = TK_FUNID;
-						 	return;
+						 		tk.tokenType = TK_FUNID;
+						 	return tk;
+					}
+				else if( !(c>='0' && c<='9') )
+						 {
+						 	fseek(fp,-1,SEEK_CUR);
+						 	sprintf(tk.lexeme,"error , expect a numeric value here");
+						 	tk.tokenType = TK_ERROR ;
+						 	tk.lineNum = currLine;
+						 	return tk;
 
 						 }
 				break;
@@ -816,14 +892,14 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 					{
 						//buffer stuff
 						fseek(fp,-1,SEEK_CUR);
-						tk->tokenType = TK_ERROR ;
-						tk->lineNum = currLine ;
-						sprintf(tk->lexeme,"error");
+						tk.tokenType = TK_ERROR ;
+						tk.lineNum = currLine ;
+						sprintf(tk.lexeme,"error");
 						if(c=='\n')
 						{
 							currLine++;
 						}
-						return ;
+						return tk;
 					}
 				break;
 			case 122:
@@ -832,10 +908,10 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 						//buffer wala problem
 						// some bullshit about lexeme
 						fseek(fp,-1,SEEK_CUR);
-						tk->lexeme[lexCount-1]='\0';
-						tk->tokenType = TK_RECORDID;
-						tk->lineNum = currLine ;
-						return;
+						tk.lexeme[lexCount-1]='\0';
+						tk.tokenType = TK_RECORDID;
+						tk.lineNum = currLine ;
+						return tk;
 					}
 				break;
 			default:
@@ -844,3 +920,255 @@ void getNextToken(FILE *fp,tokenInfo* tk)
 		}
 	}
 }
+
+char* find(TERMINAL k)
+{
+	if(k == TK_MAIN)
+	{
+		return "TK_MAIN";
+	}
+    else if(k == TK_END)
+    {
+    	return "TK_END";
+    }
+    else if(k == TK_FUNID)
+    {
+    	return "TK_FUNID";
+    }
+    else if(k == TK_SEM)
+    {
+    	return "TK_SEM";
+    }
+    else if(k == TK_INPUT)
+    {
+    	return "TK_INPUT";
+    }
+    else if(k == TK_PARAMETER)
+    {
+    	return "TK_PARAMETER";
+    }
+    else if(k == TK_LIST)
+    {
+    	return "TK_LIST";
+    }
+    else if(k == TK_SQL)
+    {
+    	return "TK_SQL";
+    }
+    else if(k == TK_SQR)
+    {
+    	return "TK_SQR";
+    }
+    else if(k == TK_OUTPUT)
+    {
+    	return "TK_OUTPUT";
+    }
+    else if(k == TK_ID)
+    {
+    	return "TK_ID";
+    }
+    else if(k == TK_INT)
+    {
+    	return "TK_INT";
+    }
+    else if(k == TK_REAL)
+    {
+    	return "TK_REAL";
+    }
+    else if(k == TK_RECORD)
+    {
+    	return "TK_RECORD";
+    }
+    else if(k == TK_RECORDID)
+    {
+    	return "TK_RECORDID";
+    }
+    else if(k == TK_COMMA)
+    {
+    	return "TK_COMMA";
+    }
+    else if(k == TK_ENDRECORD)
+    {
+    	return "TK_ENDRECORD";
+    }
+    else if(k == TK_TYPE)
+    {
+    	return "TK_TYPE";
+    }
+    else if(k == TK_COLON)
+    {
+    	return "TK_COLON";
+    }
+    else if(k == TK_FIELDID)
+    {
+    	return "TK_FIELDID";
+    }
+    else if(k == TK_GLOBAL)
+    {
+    	return "TK_GLOBAL";
+    }
+    else if(k == TK_ASSIGNOP)
+    {
+    	return "TK_ASSIGNOP";
+    }
+    else if(k == TK_DOT)
+    {
+    	return "TK_DOT";
+    }
+    else if(k == TK_CALL)
+    {
+    	return "TK_CALL";
+    }
+    else if(k == TK_WITH)
+    {
+    	return "TK_WITH";
+    }
+    else if(k == TK_PARAMETERS)
+    {
+    	return "TK_PARAMETERS";
+    }
+    else if(k == TK_WHILE)
+    {
+    	return "TK_WHILE";
+    }
+    else if(k == TK_OP)
+    {
+    	return "TK_OP";
+    }
+    else if(k == TK_CL)
+    {
+    	return "TK_CL";
+    }
+    else if(k == TK_ENDWHILE)
+    {
+    	return "TK_ENDWHILE";
+    }
+    else if(k == TK_IF)
+    {
+    	return "TK_IF";
+    }
+    else if(k == TK_THEN)
+    {
+    	return "TK_THEN";
+    }
+    else if(k == TK_ELSE)
+    {
+    	return "TK_ELSE";
+    }
+    else if(k == TK_ENDIF)
+    {
+    	return "TK_ENDIF";
+    }
+    else if(k == TK_READ)
+    {
+    	return "TK_READ";
+    }
+    else if(k == TK_WRITE)
+    {
+    	return "TK_WRITE";
+    }
+    else if(k == TK_PLUS)
+    {
+    	return "TK_PLUS";
+    }
+    else if(k == TK_MUL)
+    {
+    	return "TK_MUL";
+    }
+    else if(k == TK_MINUS)
+    {
+    	return "TK_MINUS";
+    }
+    else if(k == TK_DIV)
+    {
+    	return "TK_DIV";
+    }
+    else if(k == TK_NOT)
+    {
+    	return "TK_NOT";
+    }
+    else if(k == TK_NUM)
+    {
+    	return "TK_NUM";
+    }
+    else if(k == TK_RNUM)
+    {
+    	return "TK_RNUM";
+    }
+    else if(k == TK_AND)
+    {
+    	return "TK_AND";
+    }
+    else if(k == TK_OR)
+    {
+    	return "TK_OR";
+    }
+    else if(k == TK_LT)
+    {
+    	return "TK_LT";
+    }
+    else if(k == TK_LE)
+    {
+    	return "TK_LE";
+    }
+    else if(k == TK_EQ)
+    {
+    	return "TK_EQ";
+    }
+    else if(k == TK_GT)
+    {
+    	return "TK_GT";
+    }
+    else if(k == TK_GE)
+    {
+    	return "TK_GE";
+    }
+    else if(k == TK_NE)
+    {
+    	return "TK_NE";
+    }
+    else if(k == TK_RETURN)
+    {
+    	return "TK_RETURN";
+    }
+    else if(k == TK_ERROR)
+    {
+    	return "TK_ERROR";
+    }
+    else if(k == TK_EOF)
+    {
+    	return "TK_EOF";
+    }
+    else if(k==TK_COMMENT)
+    {
+    	return "TK_COMMENT";
+    }
+}
+
+/*int main()
+{
+	//printf("ok\n");
+	FILE* fp,*fp1;
+	fp = fopen("inp.txt","r");
+	fp1 = fopen("out.txt","w");
+	tokenInfo t;
+	//t = (tokenInfo*) malloc(sizeof(tokenInfo));
+	//printf("ok\n");
+	t= getNextToken(fp);
+	//printf("ok\n");
+	//printf("%s\n",t.lexeme);
+	//printf("%d\n",t.lineNum);
+	//printf("%s\n\n",find(t.tokenType) );
+
+	while(t.tokenType!=TK_EOF)
+	{
+		fprintf(fp1,"%s\n",t.lexeme);
+		fprintf(fp1,"%d\n",t.lineNum);
+		fprintf(fp1,"%s\n\n",find(t.tokenType) );
+		//tokenInfo *tk = (tokenInfo*) malloc(sizeof(tokenInfo));
+		t = getNextToken(fp);
+	}
+*/
+
+// 	return 0;
+// }
