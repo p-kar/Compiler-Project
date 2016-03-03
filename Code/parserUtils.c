@@ -107,10 +107,6 @@ NONTERMINAL getNonTerminalfromStr(const char* str)
         return HIGHPRECEDENCEOPERATORS;
     else if(strcmp(str, "<termPrime>") == 0)
         return TERMPRIME;
-    else if(strcmp(str, "<all>") == 0)
-        return ALL;
-    else if(strcmp(str, "<temp>") == 0)
-        return TEMP;
     return NONTERMERROR;
 }
 
@@ -213,10 +209,6 @@ char* getNonTerminalStr(NONTERMINAL ntid)
         strcpy(str, "<highPrecedenceOperators>");
     else if(ntid == TERMPRIME)
         strcpy(str, "<termPrime>");
-    else if(ntid ==  ALL)
-        strcpy(str, "<all>");
-    else if(ntid == TEMP)
-        strcpy(str, "<temp>");
     else
         strcpy(str, "<NONTERMERROR>");
     return str;

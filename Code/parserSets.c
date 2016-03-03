@@ -93,7 +93,7 @@ set** createFirstSets(prodRuleNode** rulelist)
     for (i = 0; i < NUM_NONTERMINALS; ++i)
     {
         char* token = getNonTerminalStr(i);
-        printf("<%s> ===> ", token);
+        printf("%s ===> ", token);
         displaySet(sts[i]);
         printf("\n");
     }
@@ -102,7 +102,7 @@ set** createFirstSets(prodRuleNode** rulelist)
     return sts;
 }
 
-set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** followsts, int* rec_stack, int stack_size)
+set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** followsts, int** rec_stack, int stack_size)
 {
     if(rulelist[id]->rhs_occ_cnt == 0)
     {
@@ -120,12 +120,12 @@ set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** fo
         int idx;
         // to find the start of the cycle
         for (idx = 0; idx < stack_size; ++idx)
-            if(rec_stack[idx] == id)
+            if((*rec_stack)[idx] == id)
                 break;
         for (k = idx; k < stack_size; ++k)
-            com_st = setUnion(com_st, followsts[rec_stack[k]]);
+            com_st = setUnion(com_st, followsts[(*rec_stack)[k]]);
         for (k = idx; k < stack_size; ++k)
-            followsts[rec_stack[k]] = com_st;
+            followsts[(*rec_stack)[k]] = com_st;
         return followsts[id];
     }
     rulelist[id]->follow_set_flag = 1;
@@ -150,8 +150,8 @@ set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** fo
         }
         if(term_flag)
             continue;
-        rec_stack = (int*) realloc(rec_stack, sizeof(int) * (stack_size + 1));
-        rec_stack[stack_size] = temp.ntid;
+        (*rec_stack) = (int*) realloc((*rec_stack), sizeof(int) * (stack_size + 1));
+        (*rec_stack)[stack_size] = temp.ntid;
         set* flst = computeFollowSets(temp.ntid, rulelist, firststs, followsts, rec_stack, stack_size + 1);
         followsts[id] = setUnion(followsts[id], flst);
     }
@@ -169,14 +169,14 @@ set** createFollowSets(prodRuleNode** rulelist, set** firststs)
         rec_stack = (int*) malloc(sizeof(int));
         rec_stack[0] = i;
         int stack_size = 1;
-        computeFollowSets(i, rulelist, firststs, sts, rec_stack, stack_size);
+        computeFollowSets(i, rulelist, firststs, sts, &rec_stack, stack_size);
     }
     #ifdef ENABLE_PRINTING_FOLLOW_SETS
     printf("FOLLOW SETS\n###################\n\n");
     for (i = 0; i < NUM_NONTERMINALS - 1; ++i)
     {
         char* token = getNonTerminalStr(i);
-        printf("<%s> ===> ", token);
+        printf("%s ===> ", token);
         displaySet(sts[i]);
         printf("\n");
     }

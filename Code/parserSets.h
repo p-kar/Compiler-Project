@@ -25,7 +25,7 @@ set** initialiseSetList();
 bool hasEpsRule(int ntid, prodRuleNode** rulelist);
 void displaySet(set* st);
 set* computeFirstSets(int id, prodRuleNode** rulelist, set** firststs);
-set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** followsts, int* rec_stack, int stack_size);
+set* computeFollowSets(int id, prodRuleNode** rulelist, set **firststs, set** followsts, int** rec_stack, int stack_size);
 set** createFirstSets(prodRuleNode** rulelist);
 // TODO
 // check follow sets for cycle handling errors ---> I think it is order dependent
