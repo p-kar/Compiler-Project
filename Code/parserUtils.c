@@ -251,16 +251,16 @@ prodRuleNode* createProdRuleNode(NONTERMINAL ntid)
     return p;
 }
 
-prodRuleNode** initialiseProdRuleList()
+grammar initialiseProdRuleList()
 {
-    prodRuleNode** rulelist = (prodRuleNode**) malloc(sizeof(prodRuleNode*) * NUM_NONTERMINALS);
+    grammar rulelist = (grammar) malloc(sizeof(prodRuleNode*) * NUM_NONTERMINALS);
     int i;
     for (i = 0; i < NUM_NONTERMINALS; ++i)
         rulelist[i] = createProdRuleNode(i);
     return rulelist;
 }
 
-void printProdRule(int ntid, int rno, prodRuleNode** rulelist)
+void printProdRule(int ntid, int rno, grammar rulelist)
 {
     if(rulelist == NULL)
         return;
@@ -284,7 +284,7 @@ void printProdRule(int ntid, int rno, prodRuleNode** rulelist)
     printf("\n");
 }
 
-void printProdRules(int ntid, prodRuleNode** rulelist)
+void printProdRules(int ntid, grammar rulelist)
 {
     if(rulelist == NULL)
         return;
@@ -306,14 +306,14 @@ void printProdRules(int ntid, prodRuleNode** rulelist)
     }
 }
 
-void printAllRules(prodRuleNode** rulelist)
+void printAllRules(grammar rulelist)
 {
     int i;
     for (i = 0; i < NUM_NONTERMINALS; ++i)
         printProdRules(i, rulelist);
 }
 
-prodRuleNode** addProdRule(char* str, prodRuleNode** rulelist)
+grammar addProdRule(char* str, grammar rulelist)
 {
     char* token;
     token = strtok(str, " \n");
@@ -351,11 +351,11 @@ prodRuleNode** addProdRule(char* str, prodRuleNode** rulelist)
     return rulelist;
 }
 
-prodRuleNode** getRuleList(const char* grammar_filename)
+grammar getRuleList(const char* grammar_filename)
 {
     FILE* file = fopen(grammar_filename, "r");
     char line[1000];
-    prodRuleNode** rulelist = initialiseProdRuleList();
+    grammar rulelist = initialiseProdRuleList();
     while(fgets(line, sizeof(line), file) != NULL)
     {
         line[strlen(line) - 1] = '\0';

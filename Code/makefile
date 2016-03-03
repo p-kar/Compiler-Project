@@ -47,12 +47,12 @@ endef
 #---------------------------------------------------------------------
 # rules
 #---------------------------------------------------------------------
-all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTable.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o
+all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o
 	$(call notifyecho, "compiling and linking final code")
 	@$(CC) -o run run.c ./Build/*.o
 	$(call warnecho, "Built target run")
 
-./Build/parser.o: ./Build/stack.o ./Build/parserTable.o parser.h parser.c
+./Build/parser.o: ./Build/stack.o ./Build/parserSets.o parser.h parser.c
 	@echo -n Building $@...
 	@if !(test -d ./Build); then $(MD) ./Build; fi
 	@$(CC) -c parser.c -o $@
@@ -62,12 +62,6 @@ all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/parserTabl
 	@echo -n Building $@...
 	@if !(test -d ./Build); then $(MD) ./Build; fi
 	@$(CC) -c stack.c -o $@
-	$(call okecho, " Done")
-
-./Build/parserTable.o: ./Build/parserSets.o parserTable.h parserTable.c
-	@echo -n Building $@...
-	@if !(test -d ./Build); then $(MD) ./Build; fi
-	@$(CC) -c parserTable.c -o $@
 	$(call okecho, " Done")
 
 ./Build/parserSets.o: ./Build/set.o parserSets.h parserSets.c

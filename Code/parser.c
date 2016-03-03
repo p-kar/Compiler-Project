@@ -10,6 +10,82 @@
 
 #include "parser.h"
 
+set* getFirstSetsRule(int* prodrule, int rule_length, set** firststs)
+{
+    set* st = NULL;
+    int i;
+    for (i = 0; i < rule_length; ++i)
+    {
+        set* fst = getFirstSet(prodrule[i], firststs);
+        st = setUnion(st, getFirstSet(prodrule[i], firststs));
+        if(!isPresent(TK_EPS, fst))
+            return st;
+        if(i == rule_length - 1 && isPresent(TK_EPS, fst))
+            st = setAdd(TK_EPS, st);
+    }
+    return st;
+}
+
+table initialiseParserTable()
+{
+    table p = (table) malloc(sizeof(int*) * NUM_NONTERMINALS);
+    int i, j;
+    for (i = 0; i < NUM_NONTERMINALS; ++i)
+        p[i] = (int*) malloc(sizeof(int) * NUM_TERMINALS);
+    for (i = 0; i < NUM_NONTERMINALS; ++i)
+        for (j = 0; j < NUM_TERMINALS; ++j)
+            p[i][j] = -1;
+    return p;
+}
+
+void addRuleinSet(int ntid, int ruleno, set* st, table p)
+{
+    if(st == NULL)
+        return;
+    if(st->val != TK_EPS)
+        p[ntid][st->val - TERMINAL_OFFSET] = ruleno;
+    addRuleinSet(ntid, ruleno, st->left, p);
+    addRuleinSet(ntid, ruleno, st->right, p);
+}
+
+table createParseTable(grammar rulelist)
+{
+    set **firststs = createFirstSets(rulelist);
+    set **followsts = createFollowSets(rulelist, firststs);
+    table p = initialiseParserTable();
+    int i, j;
+    for (i = 0; i < NUM_NONTERMINALS; ++i)
+    {
+        for (j = 0; j < rulelist[i]->prod_rule_cnt; ++j)
+        {
+            set* fst = getFirstSetsRule(rulelist[i]->prod_rules[j], rulelist[i]->rule_length[j], firststs);
+            addRuleinSet(i, j, fst, p);
+            if(isPresent(TK_EPS, fst))
+            {
+                set* flst = getFollowSet(i, followsts);
+                addRuleinSet(i, j, flst, p);
+            }
+        }
+    }
+    return p;
+}
+
+void displayParserTable(table p)
+{
+    printf("X\t");
+    int i, j;
+    for (i = 0; i < NUM_TERMINALS; ++i)
+        printf("%s\t", getTerminalStr(i + TERMINAL_OFFSET));
+    printf("\n");
+    for (i = 0; i < NUM_NONTERMINALS; ++i)
+    {
+        printf("%s\t", getNonTerminalStr(i));
+        for (j = 0; j < NUM_TERMINALS; ++j)
+            printf("%d\t", p[i][j]);
+        printf("\n");
+    }
+}
+
 parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid)
 {
     parseTreeNode *p = (parseTreeNode*) malloc(sizeof(parseTreeNode));
@@ -23,7 +99,7 @@ parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid)
     return p;
 }
 
-parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist, parserTable T)
+parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table T)
 {
     FILE *tfp = fopen(testcaseFile, "r");
     tokenInfo t = getNextToken(tfp);

@@ -12,7 +12,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include "parserUtils.h"
-#include "parserTable.h"
 #include "parser.h"
 
 int main(int argc, char const *argv[])
@@ -21,12 +20,11 @@ int main(int argc, char const *argv[])
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
     char src_filename[] = "./Testcases/testcase3.txt";
-    // char filename[] = "./Grammar/test_grammar.txt";
-    prodRuleNode** rulelist = getRuleList(filename);
+    grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
-    parserTable p = populateParserTable(rulelist);
-    parseTree PT = parseInputSourceCode(src_filename, rulelist, p);
+    table T = createParseTable(rulelist);
+    parseTree PT = parseInputSourceCode(src_filename, rulelist, T);
     printParseTree(PT, "ptree.txt");
-    // displayParserTable(p);
+    // displayParserTable(T);
     return 0;
 }

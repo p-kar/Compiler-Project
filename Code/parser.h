@@ -11,7 +11,10 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "parserTable.h"
+#include "parserDef.h"
+#include "parserUtils.h"
+#include "set.h"
+#include "parserSets.h"
 #include "stack.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,10 +28,18 @@
 #define KMAG "\x1B[35m"
 #define KCYN "\x1B[36m"
 #define KWHT "\x1B[37m"
+
 #define DEBUG_PARSER
 
+typedef int** table;
+
+set* getFirstSetsRule(int* prodrule, int rule_length, set** firststs);
+table initialiseParserTable();
+void addRuleinSet(int ntid, int ruleno, set* st, table p);
+table createParseTable(grammar rulelist);
+void displayParserTable(table p);
 parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid);
-parseTree parseInputSourceCode(const char *testcaseFile, prodRuleNode** rulelist, parserTable T);
+parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table T);
 void printParseTree(parseTree PT, const char* outfile);
 
 #endif

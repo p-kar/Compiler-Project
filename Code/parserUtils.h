@@ -17,15 +17,15 @@
 #include <stdio.h>
 
 NONTERMINAL getNonTerminalfromStr(const char* str);
-prodRuleNode* createProdRuleNode(NONTERMINAL ntid);
-prodRuleNode** initialiseProdRuleList();
-prodRuleNode** addProdRule(char* str, prodRuleNode** rulelist);
-prodRuleNode** getRuleList(const char* grammar_file);
-void printProdRule(int ntid, int rno, prodRuleNode** rulelist);
-void printProdRules(int ntid, prodRuleNode** rulelist);
-void printAllRules(prodRuleNode** rulelist);
-bool isNonTerminal(int nontermid);
 char* getNonTerminalStr(NONTERMINAL ntid);
+bool isNonTerminal(int nontermid);
 char* getIDStr(int id);
+prodRuleNode* createProdRuleNode(NONTERMINAL ntid);
+grammar initialiseProdRuleList();
+grammar addProdRule(char* str, grammar rulelist);
+grammar getRuleList(const char* grammar_file);
+void printProdRule(int ntid, int rno, grammar rulelist);
+void printProdRules(int ntid, grammar rulelist);
+void printAllRules(grammar rulelist);
 
 #endif
