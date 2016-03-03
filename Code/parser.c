@@ -114,7 +114,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
     {
         #ifdef DEBUG_PARSER
         printf("\n");
-        printf("Current lexeme: %s\n", getTerminalStr(t.tokenType));
+        printf("Current token: %s\n", getTerminalStr(t.tokenType));
         printStack(stck);
         #endif
         stackNode* top = topStack(stck);
@@ -122,10 +122,9 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         parseTreeNode* pnode = top->pnode;
         if(top->val == t.tokenType)
         {
-            int cidx = pnode->child_cnt;
-            pnode->child_cnt++;
-            pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
-            pnode->children[cidx] = createEmptyTreeNode(t.tokenType, t, pnode->nodeid);
+            pnode->tk.lineNum = t.lineNum;
+            strcpy(pnode->tk.lexeme, t.lexeme);
+            pnode->tk.tokenType = t.tokenType;
             t = getNextToken(tfp);
             continue;
         }
@@ -146,14 +145,14 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         #endif
         if(rulelist[top->val]->prod_rules[rno][ridx] == TK_EPS)
             continue;
+        int idx = pnode->child_cnt;
+        pnode->child_cnt += ridx + 1;
+        pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
         for (; ridx >= 0; --ridx)
         {
-            int idx = pnode->child_cnt;
-            pnode->child_cnt++;
-            pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
-            pnode->children[idx] = createEmptyTreeNode(rulelist[top->val]->prod_rules[rno][ridx], nttk, pnode->nodeid);
+            pnode->children[idx + ridx] = createEmptyTreeNode(rulelist[top->val]->prod_rules[rno][ridx], nttk, pnode->nodeid);
             int childid = rulelist[top->val]->prod_rules[rno][ridx];
-            stck = pushStack(childid, pnode->children[idx], stck);
+            stck = pushStack(childid, pnode->children[idx + ridx], stck);
         }
     }
     printf("%sCompiled Successfully: Input source code is syntactically correct.%s\n", KGRN, KNRM);

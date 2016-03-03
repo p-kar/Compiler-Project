@@ -31,7 +31,7 @@ define errorecho
 endef
 
 define warnecho
-	@tput setaf 3
+	@tput setaf 5
 	@tput bold
 	@echo $1
 	@tput sgr0
@@ -51,6 +51,8 @@ all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./
 	$(call notifyecho, "compiling and linking final code")
 	@$(CC) -o run run.c ./Build/*.o
 	$(call warnecho, "Built target run")
+	@$(CC) -o driver driver.c ./Build/*.o
+	$(call warnecho, "Built target driver")
 
 ./Build/parser.o: ./Build/stack.o ./Build/parserSets.o parser.h parser.c
 	@echo -n Building $@...

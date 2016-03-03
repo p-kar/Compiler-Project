@@ -1,0 +1,4 @@
+_main
+    b5 <--- 5;
+    return;
+end

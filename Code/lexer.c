@@ -325,18 +325,18 @@ void getStream(FILE* fp)
 char getCharacter(FILE* fp)
 {
 	if(bufferSize==-1 || bufferIndex==bufferSize  )
-	{	
+	{
 		getStream(fp);
 		if(bufferSize==0)
 		{
-			return 127;  
-			// EOF 
+			return 127;
+			// EOF
 		}
 	}
 	//printf("ok\n");
 	//printf("%c",buffer[bufferIndex]);
 	if(bufferSize!=0)
-	{	
+	{
 		return buffer[bufferIndex++];
 	}
 	else
@@ -355,7 +355,7 @@ tokenInfo getNextToken(FILE *fp)
 	//tk = (tokenInfo*) malloc(sizeof(tokenInfo));
 	while(1)
 	{
-		
+
 		char c = getCharacter(fp);
 		if(c==EOF)
 		{
@@ -711,7 +711,7 @@ tokenInfo getNextToken(FILE *fp)
 	                    tk.lineNum = currLine;
 	                     //if(c == '\n')
 	                     //   currLine++;
-	                     return tk; 
+	                     return tk;
 					}
 				break;
 			case 53:
@@ -764,7 +764,7 @@ tokenInfo getNextToken(FILE *fp)
 						lexCount=0;
 						//tk.tokenType= TK_COMMENT;
 						//tk.lineNum = currLine ;
-						//tk.lexeme[lexCount]='\0'; 
+						//tk.lexeme[lexCount]='\0';
 						//return tk;
 					}
 					else if(c==127)
@@ -844,7 +844,7 @@ tokenInfo getNextToken(FILE *fp)
                             tk.tokenType = TK_ERROR;
                             tk.lineNum = currLine;
                             return tk;
-                        }   
+                        }
 						//buffer thing
 						bufferIndex--;
 						tk.lexeme[lexCount-1] = '\0';
@@ -940,7 +940,7 @@ tokenInfo getNextToken(FILE *fp)
 			case 112:
 					if(c>='0' && c<='9')
 					{
-						currState = 113 ; 
+						currState = 113 ;
 					}
 					else if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
 					{
@@ -972,10 +972,10 @@ tokenInfo getNextToken(FILE *fp)
                             strncpy(temp,tk.lexeme,lexCount+1);
                             sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
                             //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						 	tk.tokenType = TK_ERROR ; 
+						 	tk.tokenType = TK_ERROR ;
 						 	tk.lineNum = currLine;
-						 	return tk; 
-						 	
+						 	return tk;
+
 						 }
 				break;
 			case 113:
@@ -998,7 +998,7 @@ tokenInfo getNextToken(FILE *fp)
 						 		tk.tokenType = TK_FUNID;
 						 	return tk;
 					}
-				else if( !(c>='0' && c<='9') ) 
+				else if( !(c>='0' && c<='9') )
 						 {
 						 	bufferIndex--;
                             tk.lexeme[lexCount]='\0';
@@ -1006,12 +1006,12 @@ tokenInfo getNextToken(FILE *fp)
                             strncpy(temp,tk.lexeme,lexCount+1);
                             sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
                             //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						 	tk.tokenType = TK_ERROR ; 
+						 	tk.tokenType = TK_ERROR ;
 						 	tk.lineNum = currLine;
-						 	return tk; 
-						 	
+						 	return tk;
+
 						 }
-				break;	
+				break;
 			case 121:
 					if(c>='a' && c<='z')
 					{
@@ -1064,254 +1064,18 @@ tokenInfo getNextToken(FILE *fp)
 	}
 }
 
-/*char* find(TERMINAL k)
+void printTokenList(const char* src_code_filename)
 {
-	if(k == TK_MAIN)
-	{
-		return "TK_MAIN";
-	}
-    else if(k == TK_END)
+    FILE *tfp = fopen(src_code_filename, "r");
+    tokenInfo t = getNextToken(tfp);
+    int space = 20;
+    char tokenType[20] = "tokenType";
+    char lexeme[20] = "lexeme";
+    char lineNum[20] = "lineNum";
+    printf("%*s%*s%*s\n", space, tokenType, space, lexeme, space, lineNum);
+    while(t.tokenType != TK_EOF)
     {
-    	return "TK_END";
-    }
-    else if(k == TK_FUNID)
-    {
-    	return "TK_FUNID";
-    }
-    else if(k == TK_SEM)
-    {
-    	return "TK_SEM";
-    }
-    else if(k == TK_INPUT)
-    {
-    	return "TK_INPUT";
-    }
-    else if(k == TK_PARAMETER)
-    {
-    	return "TK_PARAMETER";
-    }
-    else if(k == TK_LIST)
-    {
-    	return "TK_LIST";
-    }
-    else if(k == TK_SQL)
-    {
-    	return "TK_SQL";
-    }
-    else if(k == TK_SQR)
-    {
-    	return "TK_SQR";
-    }
-    else if(k == TK_OUTPUT)
-    {
-    	return "TK_OUTPUT";
-    }
-    else if(k == TK_ID)
-    {
-    	return "TK_ID";
-    }
-    else if(k == TK_INT)
-    {
-    	return "TK_INT";
-    }
-    else if(k == TK_REAL)
-    {
-    	return "TK_REAL";
-    }
-    else if(k == TK_RECORD)
-    {
-    	return "TK_RECORD";
-    }
-    else if(k == TK_RECORDID)
-    {
-    	return "TK_RECORDID";
-    }
-    else if(k == TK_COMMA)
-    {
-    	return "TK_COMMA";
-    }
-    else if(k == TK_ENDRECORD)
-    {
-    	return "TK_ENDRECORD";
-    }
-    else if(k == TK_TYPE)
-    {
-    	return "TK_TYPE";
-    }
-    else if(k == TK_COLON)
-    {
-    	return "TK_COLON";
-    }
-    else if(k == TK_FIELDID)
-    {
-    	return "TK_FIELDID";
-    }
-    else if(k == TK_GLOBAL)
-    {
-    	return "TK_GLOBAL";
-    }
-    else if(k == TK_ASSIGNOP)
-    {
-    	return "TK_ASSIGNOP";
-    }
-    else if(k == TK_DOT)
-    {
-    	return "TK_DOT";
-    }
-    else if(k == TK_CALL)
-    {
-    	return "TK_CALL";
-    }
-    else if(k == TK_WITH)
-    {
-    	return "TK_WITH";
-    }
-    else if(k == TK_PARAMETERS)
-    {
-    	return "TK_PARAMETERS";
-    }	
-    else if(k == TK_WHILE)
-    {
-    	return "TK_WHILE";
-    }
-    else if(k == TK_OP)
-    {
-    	return "TK_OP";
-    }
-    else if(k == TK_CL)
-    {
-    	return "TK_CL";
-    }
-    else if(k == TK_ENDWHILE)
-    {
-    	return "TK_ENDWHILE";
-    }
-    else if(k == TK_IF)
-    {
-    	return "TK_IF";
-    }
-    else if(k == TK_THEN)
-    {
-    	return "TK_THEN";
-    }
-    else if(k == TK_ELSE)
-    {
-    	return "TK_ELSE";
-    }
-    else if(k == TK_ENDIF)
-    {
-    	return "TK_ENDIF";
-    }
-    else if(k == TK_READ)
-    {
-    	return "TK_READ";
-    }
-    else if(k == TK_WRITE)
-    {
-    	return "TK_WRITE";
-    }
-    else if(k == TK_PLUS)
-    {
-    	return "TK_PLUS";
-    }
-    else if(k == TK_MUL)
-    {
-    	return "TK_MUL";
-    }
-    else if(k == TK_MINUS)
-    {
-    	return "TK_MINUS";
-    }
-    else if(k == TK_DIV)
-    {
-    	return "TK_DIV";
-    }
-    else if(k == TK_NOT)
-    {
-    	return "TK_NOT";
-    }
-    else if(k == TK_NUM)
-    {
-    	return "TK_NUM";
-    }
-    else if(k == TK_RNUM)
-    {
-    	return "TK_RNUM";
-    }
-    else if(k == TK_AND)
-    {
-    	return "TK_AND";
-    }
-    else if(k == TK_OR)
-    {
-    	return "TK_OR";
-    }
-    else if(k == TK_LT)
-    {
-    	return "TK_LT";
-    }
-    else if(k == TK_LE)
-    {
-    	return "TK_LE";
-    }
-    else if(k == TK_EQ)
-    {
-    	return "TK_EQ";
-    }
-    else if(k == TK_GT)
-    {
-    	return "TK_GT";
-    }
-    else if(k == TK_GE)
-    {
-    	return "TK_GE";
-    }
-    else if(k == TK_NE)
-    {
-    	return "TK_NE";
-    }
-    else if(k == TK_RETURN)
-    {
-    	return "TK_RETURN";
-    }
-    else if(k == TK_ERROR)
-    {
-    	return "TK_ERROR";
-    }
-    else if(k == TK_EOF)
-    {
-    	return "TK_EOF";
-    }
-    else if(k==TK_COMMENT)
-    {
-    	return "TK_COMMENT";
+        printf("%*s%*s%*d\n", space, getTerminalStr(t.tokenType), space, t.lexeme, space, t.lineNum);
+        t = getNextToken(tfp);
     }
 }
-
-int main()
-{
-	//printf("ok\n");
-	FILE* fp,*fp1;
-	fp = fopen("inp.txt","r");
-	fp1 = fopen("out.txt","w");
-	tokenInfo t;
-	//t = (tokenInfo*) malloc(sizeof(tokenInfo));
-	//printf("ok\n");
-	t= getNextToken(fp);
-	//printf("ok\n");
-	//printf("%s\n",t.lexeme);
-	//printf("%d\n",t.lineNum);
-	//printf("%s\n\n",find(t.tokenType) );
-		
-	while(t.tokenType!=TK_EOF)
-	{
-		fprintf(fp1,"%s\n",t.lexeme);
-		fprintf(fp1,"%d\n",t.lineNum);
-		fprintf(fp1,"%s\n\n",find(t.tokenType) );
-		//tokenInfo *tk = (tokenInfo*) malloc(sizeof(tokenInfo));
-		t = getNextToken(fp);
-	}
-
-
-	return 0;
-}*/

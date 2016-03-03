@@ -16,9 +16,11 @@
 #include <string.h>
 #include <stdbool.h>
 #include "lexerDef.h"
+
 tokenInfo getNextToken(FILE *fp);
 TERMINAL getTerminalfromStr(const char* str);
 bool isTerminal(int termid);
 char* getTerminalStr(TERMINAL termid);
+void printTokenList(const char* src_code_filename);
 
 #endif
