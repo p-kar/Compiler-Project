@@ -92,6 +92,7 @@ struct _prodRuleNode
     int follow_set_flag;    // 0 - not visited, 1 - currently computing, 2 - done
 };
 typedef struct _prodRuleNode prodRuleNode;
+typedef prodRuleNode** grammar;
 
 struct _parseTreeNode
 {

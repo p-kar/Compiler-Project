@@ -8,9 +8,17 @@
 * @Date:      2016-02-18 12:26:23
 */
 
-#include "lexer.h"
+//#include "lexer.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include "lexerDef.h"
 
 int currLine=1;
+char buffer[20];
+int bufferIndex;
+int bufferSize=-1 ;
 
 TERMINAL getTerminalfromStr(const char* str)
 {
@@ -308,23 +316,47 @@ TERMINAL findToken(char str[])
         return TK_FIELDID;
 }
 
+void getStream(FILE* fp)
+{
+		bufferSize =  fread(buffer,sizeof(char),(size_t)20,fp);
+		bufferIndex = 0;
+}
+
+char getCharacter(FILE* fp)
+{
+	if(bufferSize==-1 || bufferIndex==bufferSize  )
+	{	
+		getStream(fp);
+		if(bufferSize==0)
+		{
+			return 127;  
+			// EOF 
+		}
+	}
+	//printf("ok\n");
+	//printf("%c",buffer[bufferIndex]);
+	if(bufferSize!=0)
+	{	
+		return buffer[bufferIndex++];
+	}
+	else
+	{
+		return 127;
+	}
+}
+
 tokenInfo getNextToken(FILE *fp)
 {
 	//char c;
 	long long int lexCount=0;
 	int currState=1;
 	tokenInfo tk;
+    memset(tk.lexeme,'\0', ( sizeof(tk.lexeme)/ sizeof(char) ) );
 	//tk = (tokenInfo*) malloc(sizeof(tokenInfo));
 	while(1)
 	{
-		/*if(bufferIndex==real_k)
-		{
-			bufferIndex =0 ;
-			getStream();
-
-		}
-		char c = buff[vufferIndex];*/
-		char c = fgetc(fp);
+		
+		char c = getCharacter(fp);
 		if(c==EOF)
 		{
 			c = 127;
@@ -498,7 +530,7 @@ tokenInfo getNextToken(FILE *fp)
 					{
 						tk.tokenType = TK_ERROR;
 						tk.lineNum	 = currLine;
-						sprintf(tk.lexeme,"unrecognized character\n");
+						sprintf(tk.lexeme,"ERROR_2: Unknown Symbol   %c at line %d",c,currLine);
 						return tk;
 					}
 				break;
@@ -510,8 +542,11 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk.lexeme, "expected '@' before  '%c'", c);
+						bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+						sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         if(c == '\n')
@@ -529,8 +564,12 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk.lexeme, "expected '@' before  '%c'", c);
+						bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         if(c == '\n')
@@ -545,8 +584,12 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk.lexeme, "expected '&' before  '%c'", c);
+						bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+						//sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         //if(c == '\n')
@@ -564,8 +607,12 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk.lexeme, "expected '&' before  '%c'", c);
+						bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+						//sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         //if(c == '\n')
@@ -590,8 +637,12 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk.lexeme, "expected '=' before  '%c'", c);
+						bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         //if(c == '\n')
@@ -609,8 +660,12 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk.lexeme, "expected '=' before  '%c'", c);
+						bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         //if(c == '\n')
@@ -632,7 +687,7 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
+						bufferIndex--;
 						tk.lexeme[lexCount-1]='\0';
 						tk.tokenType = TK_LT;
 						tk.lineNum = currLine;
@@ -646,13 +701,17 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk.lexeme, "expected '-' before  '%c'", c);
+						bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
 	                    tk.tokenType = TK_ERROR;
 	                    tk.lineNum = currLine;
 	                     //if(c == '\n')
 	                     //   currLine++;
-	                     return tk;
+	                     return tk; 
 					}
 				break;
 			case 53:
@@ -665,8 +724,12 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						sprintf(tk.lexeme, "expected '-' before  '%c'", c);
+						bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
 	                    tk.tokenType = TK_ERROR;
 	                    tk.lineNum = currLine;
 	                     //if(c == '\n')
@@ -684,7 +747,7 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
+						bufferIndex--;
 						tk.lexeme[lexCount-1]='\0';
 
 						// buffer position wala panga
@@ -701,7 +764,7 @@ tokenInfo getNextToken(FILE *fp)
 						lexCount=0;
 						//tk.tokenType= TK_COMMENT;
 						//tk.lineNum = currLine ;
-						//tk.lexeme[lexCount]='\0';
+						//tk.lexeme[lexCount]='\0'; 
 						//return tk;
 					}
 					else if(c==127)
@@ -718,9 +781,14 @@ tokenInfo getNextToken(FILE *fp)
 						currState = 82;
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
+						bufferIndex--;
 						tk.tokenType = TK_ERROR ;
-						tk.lexeme[lexCount-1]= '\0';
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
+						//tk.lexeme[lexCount-1]= '\0';
 						tk.lineNum = currLine ;
 						return tk;
 					}
@@ -732,7 +800,16 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else if(!(c>='b' && c<='d') )
 					{
-						fseek(fp,-1,SEEK_CUR);
+                        if(lexCount>20)
+                        {
+                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            bufferIndex--;
+                            tk.tokenType = TK_ERROR;
+                            tk.lineNum = currLine;
+                            return tk;
+                        }
+
+						bufferIndex--;
 						tk.tokenType	= TK_ID;
 						tk.lineNum = currLine;
 						tk.lexeme[lexCount-1]='\0';
@@ -742,7 +819,15 @@ tokenInfo getNextToken(FILE *fp)
 			case 83:
 					if(!(c>='2' && c<='7') )
 					{
-						fseek(fp,-1,SEEK_CUR);
+                        if(lexCount>20)
+                        {
+                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            bufferIndex--;
+                            tk.tokenType = TK_ERROR;
+                            tk.lineNum = currLine;
+                            return tk;
+                        }
+						bufferIndex--;
 						tk.tokenType = TK_ID;
 						tk.lineNum = currLine ;
 						tk.lexeme[lexCount-1]='\0';
@@ -752,8 +837,16 @@ tokenInfo getNextToken(FILE *fp)
 			case 91:
 					if ( !(c>='a' && c<='z') )
 					{
+                         if(lexCount>20)
+                        {
+                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            bufferIndex--;
+                            tk.tokenType = TK_ERROR;
+                            tk.lineNum = currLine;
+                            return tk;
+                        }   
 						//buffer thing
-						fseek(fp,-1,SEEK_CUR);
+						bufferIndex--;
 						tk.lexeme[lexCount-1] = '\0';
 						tk.tokenType = findToken(tk.lexeme);
 						tk.lineNum = currLine ;
@@ -766,7 +859,7 @@ tokenInfo getNextToken(FILE *fp)
 						if(lexCount>20)
 						{
 							tk.tokenType = TK_ERROR ;
-							sprintf(tk.lexeme,"overflow");
+							sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
 							return tk;
 						}
 					}
@@ -778,11 +871,11 @@ tokenInfo getNextToken(FILE *fp)
 					{
 						// buffer position wala problem
 						//  managing the lexemee
-						fseek(fp,-1,SEEK_CUR);
+						bufferIndex--;
 						tk.lexeme[lexCount-1] = '\0';
 						tk.tokenType = TK_NUM;
 						tk.lineNum = currLine ;
-						return tk;
+						return tk ;
 
 					}
 				break;
@@ -793,10 +886,14 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
+						bufferIndex--;
 						tk.tokenType = TK_ERROR;
 						tk.lineNum = currLine;
-						sprintf(tk.lexeme,"expected numeric constant after '.' ");
+                        tk.lexeme[lexCount]='\0';
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
 						return tk;
 					}
 				break;
@@ -810,10 +907,13 @@ tokenInfo getNextToken(FILE *fp)
 					}
 					else
 					{
-						fseek(fp,-1,SEEK_CUR);
-						tk.lexeme[lexCount-1]='\0';
+						bufferIndex--;
+						tk.lexeme[lexCount]='\0';
 						tk.tokenType = TK_ERROR ;
-						sprintf(tk.lexeme,"illegal real constant");
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
 						return tk;
 					}
 				break;
@@ -826,21 +926,34 @@ tokenInfo getNextToken(FILE *fp)
 					else
 					{
 						// buffer wala problem;
-						fseek(fp,-1,SEEK_CUR);
+						bufferIndex--;
 						tk.tokenType = TK_ERROR;
 						tk.lineNum = currLine;
-						sprintf(tk.lexeme,"expect an alphabetic character after '_'");
+                        tk.lexeme[lexCount]='\0';
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
 						return tk;
 					}
 				break;
 			case 112:
 					if(c>='0' && c<='9')
 					{
-						currState = 113 ;
+						currState = 113 ; 
 					}
 					else if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
 					{
-						//fseek(fp,-1,SEEK_CUR);
+                        if(lexCount>30)
+                        {
+                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            //bufferIndex--;
+                            tk.tokenType = TK_ERROR;
+                            tk.lineNum = currLine;
+                            return tk;
+                        }
+
+						//bufferIndex--;
 						 	tk.lexeme[lexCount-1] = '\0';
 						 	tk.lineNum = currLine;
 						 	if(strcmp(tk.lexeme,"_main")==0)
@@ -853,18 +966,30 @@ tokenInfo getNextToken(FILE *fp)
 						 (c>='A' && c<='Z') ||
 						 (c>='0' && c<='9') ) )
 						 {
-						 	fseek(fp,-1,SEEK_CUR);
-						 	sprintf(tk.lexeme,"expect a ' ' here");
-						 	tk.tokenType = TK_ERROR ;
+						 	bufferIndex--;
+                            tk.lexeme[lexCount]='\0';
+						 	char temp[lexCount+1];
+                            strncpy(temp,tk.lexeme,lexCount+1);
+                            sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                            //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
+						 	tk.tokenType = TK_ERROR ; 
 						 	tk.lineNum = currLine;
-						 	return tk;
-
+						 	return tk; 
+						 	
 						 }
 				break;
 			case 113:
 				if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
 					{
-						//fseek(fp,-1,SEEK_CUR);
+                        if(lexCount>30)
+                        {
+                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                           // bufferIndex--;
+                            tk.tokenType = TK_ERROR;
+                            tk.lineNum = currLine;
+                            return tk;
+                        }
+						//bufferIndex--;
 						 	tk.lexeme[lexCount-1] = '\0';
 						 	tk.lineNum = currLine;
 						 	if(strcmp(tk.lexeme,"_main")==0)
@@ -873,16 +998,20 @@ tokenInfo getNextToken(FILE *fp)
 						 		tk.tokenType = TK_FUNID;
 						 	return tk;
 					}
-				else if( !(c>='0' && c<='9') )
+				else if( !(c>='0' && c<='9') ) 
 						 {
-						 	fseek(fp,-1,SEEK_CUR);
-						 	sprintf(tk.lexeme,"error , expect a numeric value here");
-						 	tk.tokenType = TK_ERROR ;
+						 	bufferIndex--;
+                            tk.lexeme[lexCount]='\0';
+						 	char temp[lexCount+1];
+                            strncpy(temp,tk.lexeme,lexCount+1);
+                            sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                            //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
+						 	tk.tokenType = TK_ERROR ; 
 						 	tk.lineNum = currLine;
-						 	return tk;
-
+						 	return tk; 
+						 	
 						 }
-				break;
+				break;	
 			case 121:
 					if(c>='a' && c<='z')
 					{
@@ -891,10 +1020,14 @@ tokenInfo getNextToken(FILE *fp)
 					else
 					{
 						//buffer stuff
-						fseek(fp,-1,SEEK_CUR);
+						bufferIndex--;
 						tk.tokenType = TK_ERROR ;
 						tk.lineNum = currLine ;
-						sprintf(tk.lexeme,"error");
+                        tk.lexeme[lexCount]='\0';
+						char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
 						if(c=='\n')
 						{
 							currLine++;
@@ -907,7 +1040,17 @@ tokenInfo getNextToken(FILE *fp)
 					{
 						//buffer wala problem
 						// some bullshit about lexeme
-						fseek(fp,-1,SEEK_CUR);
+
+                        if(lexCount>20)
+                        {
+                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            bufferIndex--;
+                            tk.tokenType = TK_ERROR;
+                            tk.lineNum = currLine;
+                            return tk;
+                        }
+
+						bufferIndex--;
 						tk.lexeme[lexCount-1]='\0';
 						tk.tokenType = TK_RECORDID;
 						tk.lineNum = currLine ;
@@ -921,7 +1064,7 @@ tokenInfo getNextToken(FILE *fp)
 	}
 }
 
-char* find(TERMINAL k)
+/*char* find(TERMINAL k)
 {
 	if(k == TK_MAIN)
 	{
@@ -1026,7 +1169,7 @@ char* find(TERMINAL k)
     else if(k == TK_PARAMETERS)
     {
     	return "TK_PARAMETERS";
-    }
+    }	
     else if(k == TK_WHILE)
     {
     	return "TK_WHILE";
@@ -1145,7 +1288,7 @@ char* find(TERMINAL k)
     }
 }
 
-/*int main()
+int main()
 {
 	//printf("ok\n");
 	FILE* fp,*fp1;
@@ -1159,7 +1302,7 @@ char* find(TERMINAL k)
 	//printf("%s\n",t.lexeme);
 	//printf("%d\n",t.lineNum);
 	//printf("%s\n\n",find(t.tokenType) );
-
+		
 	while(t.tokenType!=TK_EOF)
 	{
 		fprintf(fp1,"%s\n",t.lexeme);
@@ -1168,7 +1311,7 @@ char* find(TERMINAL k)
 		//tokenInfo *tk = (tokenInfo*) malloc(sizeof(tokenInfo));
 		t = getNextToken(fp);
 	}
-*/
 
-// 	return 0;
-// }
+
+	return 0;
+}*/

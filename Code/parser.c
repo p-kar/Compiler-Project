@@ -91,15 +91,19 @@ void printParseTreeHelper(parseTree PT, FILE* fp)
         fprintf(stderr, "parse tree is NULL\n");
         return;
     }
+    char empty[10] = "----";
+    char yes[10] = "YES";
+    char no[10] = "NO";
+    int space = 30;
     if(PT->child_cnt == 0)
     {
         if(isTerminal(PT->nodeid))
-            fprintf(fp, "%s\t%d\t%s\t%s\t%s\tyes\t----\n", PT->tk.lexeme, PT->tk.lineNum, getIDStr(PT->nodeid), PT->tk.lexeme, getIDStr(PT->parentNodeSymbol));
+            fprintf(fp, "%*s%*d%*s%*s%*s%*s%*s\n", 20, PT->tk.lexeme, space, PT->tk.lineNum, space, getIDStr(PT->nodeid), space, PT->tk.lexeme, space, getIDStr(PT->parentNodeSymbol), space, yes, space, empty);
         else
-            fprintf(fp, "----\t----\t----\t----\t%s\tno\t%s\n", getIDStr(PT->parentNodeSymbol), getIDStr(PT->nodeid));
+            fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space, empty, space, empty, space, empty, space, getIDStr(PT->parentNodeSymbol), space, no, space, getIDStr(PT->nodeid));
         return;
     }
-    fprintf(fp, "----\t----\t----\t----\t%s\tno\t%s\n", getIDStr(PT->parentNodeSymbol), getIDStr(PT->nodeid));
+    fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space, empty, space, empty, space, empty, space, getIDStr(PT->parentNodeSymbol), space, no, space, getIDStr(PT->nodeid));
     int idx;
     for (idx = 0; idx < PT->child_cnt; ++idx)
         printParseTreeHelper(PT->children[idx], fp);
@@ -108,7 +112,15 @@ void printParseTreeHelper(parseTree PT, FILE* fp)
 void printParseTree(parseTree PT, const char* outfile)
 {
     FILE* fp = fopen(outfile, "w");
-    fprintf(fp, "lexemeCurrentNode\tlineno\ttoken\tvalueIfNumber\tparentNodeSymbol\tisLeafNode\tNodeSymbol\n");
+    int space = 30;
+    char lexemeCurrentNode[20] = "lexemeCurrentNode";
+    char lineno[20] = "lineno";
+    char token[20] = "token";
+    char valuelfNumber[20] = "valuelfNumber";
+    char parentNodeSymbol[20] = "parentNodeSymbol";
+    char isLeafNode[20] = "isLeafNode";
+    char NodeSymbol[20] = "NodeSymbol";
+    fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, lexemeCurrentNode, space, lineno, space, token, space, valuelfNumber, space, parentNodeSymbol, space, isLeafNode, space, NodeSymbol);
     printParseTreeHelper(PT, fp);
     fclose(fp);
 }

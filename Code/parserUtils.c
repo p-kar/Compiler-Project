@@ -118,107 +118,105 @@ char* getNonTerminalStr(NONTERMINAL ntid)
 {
     char* str = (char*) malloc(sizeof(char) * 100);
     if(ntid == PROGRAM)
-        strcpy(str, "<PROGRAM>");
+        strcpy(str, "<program>");
     else if(ntid == OTHERFUNCTIONS)
-        strcpy(str, "<OTHERFUNCTIONS>");
+        strcpy(str, "<otherFunctions>");
     else if(ntid == MAINFUNCTION)
-        strcpy(str, "<MAINFUNCTION>");
+        strcpy(str, "<mainFunction>");
     else if(ntid == STMTS)
-        strcpy(str, "<STMTS>");
+        strcpy(str, "<stmts>");
     else if(ntid == FUNCTION)
-        strcpy(str, "<FUNCTION>");
+        strcpy(str, "<function>");
     else if(ntid == DATATYPE)
-        strcpy(str, "<DATATYPE>");
+        strcpy(str, "<dataType>");
     else if(ntid == PRIMITIVEDATATYPE)
-        strcpy(str, "<PRIMITIVEDATATYPE>");
+        strcpy(str, "<primitiveDatatype>");
     else if(ntid == CONSTRUCTEDDATATYPE)
-        strcpy(str, "<CONSTRUCTEDDATATYPE>");
+        strcpy(str, "<constructedDatatype>");
     else if(ntid == TYPEDEFINITIONS)
-        strcpy(str, "<TYPEDEFINITIONS>");
+        strcpy(str, "<typeDefinitions>");
     else if(ntid == DECLARATIONS)
-        strcpy(str, "<DECLARATIONS>");
+        strcpy(str, "<declarations>");
     else if(ntid == OTHERSTMTS)
-        strcpy(str, "<OTHERSTMTS>");
+        strcpy(str, "<otherStmts>");
     else if(ntid == RETURNSTMT)
-        strcpy(str, "<RETURNSTMT>");
+        strcpy(str, "<returnStmt>");
     else if(ntid == TYPEDEFINITION)
-        strcpy(str, "<TYPEDEFINITION>");
+        strcpy(str, "<typeDefinition>");
     else if(ntid == FIELDDEFINITIONS)
-        strcpy(str, "<FIELDDEFINITIONS>");
+        strcpy(str, "<fieldDefinitions>");
     else if(ntid == FIELDDEFINITION)
-        strcpy(str, "<FIELDDEFINITION>");
+        strcpy(str, "<fieldDefinition>");
     else if(ntid == MOREFIELDS)
-        strcpy(str, "<MOREFIELDS>");
+        strcpy(str, "<moreFields>");
     else if(ntid == DECLARATION)
-        strcpy(str, "<DECLARATION>");
+        strcpy(str, "<declaration>");
     else if(ntid == STMT)
-        strcpy(str, "<STMT>");
+        strcpy(str, "<stmt>");
     else if(ntid == ASSIGNMENTSTMT)
-        strcpy(str, "<ASSIGNMENTSTMT>");
+        strcpy(str, "<assignmentStmt>");
     else if(ntid == ITERATIVESTMT)
-        strcpy(str, "<ITERATIVESTMT>");
+        strcpy(str, "<iterativeStmt>");
     else if(ntid == CONDITIONALSTMT)
-        strcpy(str, "<CONDITIONALSTMT>");
+        strcpy(str, "<conditionalStmt>");
     else if(ntid == ELSEPART)
-        strcpy(str, "<ELSEPART>");
+        strcpy(str, "<elsePart>");
     else if(ntid == IOSTMT)
-        strcpy(str, "<IOSTMT>");
+        strcpy(str, "<ioStmt>");
     else if(ntid == FUNCALLSTMT)
-        strcpy(str, "<FUNCALLSTMT>");
+        strcpy(str, "<funCallStmt>");
     else if(ntid == SINGLEORRECID)
-        strcpy(str, "<SINGLEORRECID>");
+        strcpy(str, "<singleOrRecId>");
     else if(ntid == NEW24)
-        strcpy(str, "<NEW24>");
+        strcpy(str, "<new_24>");
     else if(ntid == ARITHMETICEXPRESSION)
-        strcpy(str, "<ARITHMETICEXPRESSION>");
-    else if(ntid == SINGLEORRECID)
-        strcpy(str, "<SINGLEORRECID>");
+        strcpy(str, "<arithmeticExpression>");
     else if(ntid == OUTPUTPARAMETERS)
-        strcpy(str, "<OUTPUTPARAMETERS>");
+        strcpy(str, "<outputParameters>");
     else if(ntid == INPUTPARAMETERS)
-        strcpy(str, "<INPUTPARAMETERS>");
+        strcpy(str, "<inputParameters>");
     else if(ntid == IDLIST)
-        strcpy(str, "<IDLIST>");
+        strcpy(str, "<idList>");
     else if(ntid == BOOLEANEXPRESSION)
-        strcpy(str, "<BOOLEANEXPRESSION>");
+        strcpy(str, "<booleanExpression>");
     else if(ntid == ALLVAR)
-        strcpy(str, "<ALLVAR>");
+        strcpy(str, "<allVar>");
     else if(ntid == VAR)
-        strcpy(str, "<VAR>");
+        strcpy(str, "<var>");
     else if(ntid == LOGICALOP)
-        strcpy(str, "<LOGICALOP>");
+        strcpy(str, "<logicalOp>");
     else if(ntid == RELATIONALOP)
-        strcpy(str, "<RELATIONALOP>");
+        strcpy(str, "<relationalOp>");
     else if(ntid == OPTIONALRETURN)
-        strcpy(str, "<OPTIONALRETURN>");
+        strcpy(str, "<optionalReturn>");
     else if(ntid == INPUTPAR)
-        strcpy(str, "<INPUTPAR>");
+        strcpy(str, "<input_par>");
     else if(ntid == OUTPUTPAR)
-        strcpy(str, "<OUTPUTPAR>");
+        strcpy(str, "<output_par>");
     else if(ntid == GLOBALORNOT)
-        strcpy(str, "<GLOBALORNOT>");
+        strcpy(str, "<global_or_not>");
     else if(ntid == PARAMETERLIST)
-        strcpy(str, "<PARAMETERLIST>");
+        strcpy(str, "<parameter_list>");
     else if(ntid == REMAININGLIST)
-        strcpy(str, "<REMAININGLIST>");
+        strcpy(str, "<remaining_list>");
     else if(ntid == MOREIDS)
-        strcpy(str, "<MOREIDS>");
+        strcpy(str, "<more_ids>");
     else if(ntid == TERM)
-        strcpy(str, "<TERM>");
+        strcpy(str, "<term>");
     else if(ntid == EXPPRIME)
-        strcpy(str, "<EXPPRIME>");
+        strcpy(str, "<expPrime>");
     else if(ntid == LOWPRECEDENCEOPERATORS)
-        strcpy(str, "<LOWPRECEDENCEOPERATORS>");
+        strcpy(str, "<lowPrecedenceOperators>");
     else if(ntid == FACTOR)
-        strcpy(str, "<FACTOR>");
+        strcpy(str, "<factor>");
     else if(ntid == HIGHPRECEDENCEOPERATORS)
-        strcpy(str, "<HIGHPRECEDENCEOPERATORS>");
+        strcpy(str, "<highPrecedenceOperators>");
     else if(ntid == TERMPRIME)
-        strcpy(str, "<TERMPRIME>");
+        strcpy(str, "<termPrime>");
     else if(ntid ==  ALL)
-        strcpy(str, "<ALL>");
+        strcpy(str, "<all>");
     else if(ntid == TEMP)
-        strcpy(str, "<TEMP>");
+        strcpy(str, "<temp>");
     else
         strcpy(str, "<NONTERMERROR>");
     return str;
