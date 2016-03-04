@@ -120,6 +120,8 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         stackNode* top = topStack(stck);
         stck = popStack(stck);
         parseTreeNode* pnode = top->pnode;
+        if(top->val == TK_EPS)
+            continue;
         if(top->val == t.tokenType)
         {
             pnode->tk.lineNum = t.lineNum;
@@ -143,8 +145,6 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         #ifdef DEBUG_PARSER
         printProdRule(top->val, rno, rulelist); // for debugging
         #endif
-        if(rulelist[top->val]->prod_rules[rno][ridx] == TK_EPS)
-            continue;
         int idx = pnode->child_cnt;
         pnode->child_cnt += ridx + 1;
         pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
@@ -173,7 +173,14 @@ void printParseTreeHelper(parseTree PT, FILE* fp)
     if(PT->child_cnt == 0)
     {
         if(isTerminal(PT->nodeid))
-            fprintf(fp, "%*s%*d%*s%*s%*s%*s%*s\n", 20, PT->tk.lexeme, space, PT->tk.lineNum, space, getIDStr(PT->nodeid), space, PT->tk.lexeme, space, getIDStr(PT->parentNodeSymbol), space, yes, space, empty);
+        {
+            if(PT->nodeid == TK_EPS)
+                fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space, empty, space, getIDStr(PT->nodeid), space, empty, space, getIDStr(PT->parentNodeSymbol), space, yes, space, empty);
+            else if(PT->nodeid == TK_NUM || PT->nodeid == TK_RNUM)
+                fprintf(fp, "%*s%*d%*s%*s%*s%*s%*s\n", 20, empty, space, PT->tk.lineNum, space, getIDStr(PT->nodeid), space, PT->tk.lexeme, space, getIDStr(PT->parentNodeSymbol), space, yes, space, empty);
+            else
+                fprintf(fp, "%*s%*d%*s%*s%*s%*s%*s\n", 20, PT->tk.lexeme, space, PT->tk.lineNum, space, getIDStr(PT->nodeid), space, empty, space, getIDStr(PT->parentNodeSymbol), space, yes, space, empty);
+        }
         else
             fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space, empty, space, empty, space, empty, space, getIDStr(PT->parentNodeSymbol), space, no, space, getIDStr(PT->nodeid));
         return;

@@ -2,7 +2,7 @@
 * @Author: Pratyush Kar
 * @Date:   2016-03-04 01:07:01
 * @Last Modified by:   Pratyush Kar
-* @Last Modified time: 2016-03-04 01:32:57
+* @Last Modified time: 2016-03-04 01:47:23
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,18 +49,25 @@ int main(int argc, char const *argv[])
     }
     else if(option == 3 || option == 4)
     {
-        if(argc < 3)
+        if(option == 3 && argc < 2)
+        {
+            fprintf(stderr, "%s <testcase filename>\n", argv[0]);
+            return -1;
+        }
+        if(option == 4 && argc < 3)
         {
             fprintf(stderr, "%s <testcase filename> <parse tree output filename>\n", argv[0]);
             return -1;
         }
         const char* src_code_filename = argv[1];
-        const char* parse_tree_filename = argv[2];
         grammar rulelist = getRuleList(grammar_filename);
         table T = createParseTable(rulelist);
         parseTree PT = parseInputSourceCode(src_code_filename, rulelist, T);
         if(option == 4)
+        {
+            const char* parse_tree_filename = argv[2];
             printParseTree(PT, parse_tree_filename);
+        }
     }
     else
         printf("Wrong option entered.\n");

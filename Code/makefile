@@ -92,4 +92,5 @@ all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./
 
 clean:
 	$(RM) run
+	$(RM) driver
 	$(RM) ./Build
