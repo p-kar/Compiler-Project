@@ -33,8 +33,7 @@ int main(int argc, char const *argv[])
             return -1;
         }
         const char* src_code_filename = argv[1];
-        // do something
-        printf("do something\n");
+        printFileWithoutComments(src_code_filename);
     }
     else if(option == 2)
     {
@@ -44,7 +43,6 @@ int main(int argc, char const *argv[])
             return -1;
         }
         const char* src_code_filename = argv[1];
-        // testcase zero line numbers are incorrect
         printTokenList(src_code_filename);
     }
     else if(option == 3 || option == 4)
