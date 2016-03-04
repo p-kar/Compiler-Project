@@ -20,6 +20,44 @@ char buffer[20];
 int bufferIndex;
 int bufferSize=-1 ;
 
+void printFileWithoutComments(const char* filename)
+{
+    FILE* fp = fopen(filename,"r");
+
+    int buffersize ; 
+
+    char buffer[20];
+    int i;
+    int state=0;
+    
+    while(1)
+    {
+        buffersize = fread(buffer,sizeof(char),(size_t)20,fp);
+        if(buffersize==0)
+            return;
+        
+        for(i=0;i<buffersize;i++)
+        {
+            if(buffer[i]==EOF)
+                return;
+            if(state==0 && buffer[i]=='%' )
+            {
+                state =1 ;
+            }
+            else if(state==1 &&  buffer[i]=='\n'  )
+            {
+                state=0;
+            }
+            if(state==0)
+            {
+                printf("%c",buffer[i]);
+            }
+
+        }
+    }
+
+
+}
 TERMINAL getTerminalfromStr(const char* str)
 {
     if(strcmp(str, "TK_MAIN") == 0)
@@ -266,804 +304,832 @@ bool isTerminal(int termid)
 
 TERMINAL findToken(char str[])
 {
-	if(strcmp(str,"with") == 0 )
-		return TK_WITH;
-	else if(strcmp(str, "parameters") == 0)
+    if(strcmp(str,"with") == 0 )
+        return TK_WITH;
+    else if(strcmp(str, "parameters") == 0)
         return TK_PARAMETERS;
     else if(strcmp(str, "end") == 0)
-    	return TK_END;
+        return TK_END;
     else if(strcmp(str, "while") == 0)
-    	return TK_WHILE;
+        return TK_WHILE;
     else if(strcmp(str, "int") == 0)
-    	return TK_INT;
+        return TK_INT;
     else if(strcmp(str, "real") == 0)
-    	return TK_REAL;
+        return TK_REAL;
     else if(strcmp(str, "type") == 0)
-    	return TK_TYPE;
+        return TK_TYPE;
     else if(strcmp(str, "global") == 0)
-    	return TK_GLOBAL;
+        return TK_GLOBAL;
     else if(strcmp(str, "parameter") == 0)
-    	return TK_PARAMETER;
+        return TK_PARAMETER;
     else if(strcmp(str, "list") == 0)
-    	return TK_LIST;
+        return TK_LIST;
     else if(strcmp(str, "input") == 0)
-    	return TK_INPUT;
+        return TK_INPUT;
     else if(strcmp(str, "output") == 0)
-    	return TK_OUTPUT;
+        return TK_OUTPUT;
     else if(strcmp(str, "endwhile") == 0)
-    	return TK_ENDWHILE;
+        return TK_ENDWHILE;
     else if(strcmp(str, "if") == 0)
-    	return TK_IF;
+        return TK_IF;
     else if(strcmp(str, "then") == 0)
-    	return TK_THEN;
+        return TK_THEN;
     else if(strcmp(str, "endif") == 0)
-    	return TK_ENDIF;
+        return TK_ENDIF;
     else if(strcmp(str, "read") == 0)
-    	return TK_READ;
+        return TK_READ;
     else if(strcmp(str, "write") == 0)
-    	return TK_WRITE;
+        return TK_WRITE;
     else if(strcmp(str, "return") == 0)
-    	return TK_RETURN;
+        return TK_RETURN;
     else if(strcmp(str, "call") == 0)
-    	return TK_CALL;
+        return TK_CALL;
     else if(strcmp(str, "record") == 0)
-    	return TK_RECORD;
+        return TK_RECORD;
     else if(strcmp(str, "endrecord") == 0)
-    	return TK_ENDRECORD;
+        return TK_ENDRECORD;
     else if(strcmp(str, "else") == 0)
-     	return TK_ELSE;
+        return TK_ELSE;
     else
         return TK_FIELDID;
 }
 
 void getStream(FILE* fp)
 {
-		bufferSize =  fread(buffer,sizeof(char),(size_t)20,fp);
-		bufferIndex = 0;
+        bufferSize =  fread(buffer,sizeof(char),(size_t)20,fp);
+        bufferIndex = 0;
 }
 
 char getCharacter(FILE* fp)
 {
-	if(bufferSize==-1 || bufferIndex==bufferSize  )
-	{
-		getStream(fp);
-		if(bufferSize==0)
-		{
-			return 127;
-			// EOF
-		}
-	}
-	//printf("ok\n");
-	//printf("%c",buffer[bufferIndex]);
-	if(bufferSize!=0)
-	{
-		return buffer[bufferIndex++];
-	}
-	else
-	{
-		return 127;
-	}
+    if(bufferSize==-1 || bufferIndex==bufferSize  )
+    {
+        getStream(fp);
+        if(bufferSize==0)
+        {
+            return 127;
+            // EOF
+        }
+    }
+    //printf("ok\n");
+    //printf("%c",buffer[bufferIndex]);
+    if(bufferSize!=0)
+    {
+        return buffer[bufferIndex++];
+    }
+    else
+    {
+        return 127;
+    }
 }
 
 tokenInfo getNextToken(FILE *fp)
 {
-	//char c;
-	long long int lexCount=0;
-	int currState=1;
-	tokenInfo tk;
+    //char c;
+    long long int lexCount=0;
+    int currState=1;
+    tokenInfo tk;
     memset(tk.lexeme,'\0', ( sizeof(tk.lexeme)/ sizeof(char) ) );
-	//tk = (tokenInfo*) malloc(sizeof(tokenInfo));
-	while(1)
-	{
+    //tk = (tokenInfo*) malloc(sizeof(tokenInfo));
+    while(1)
+    {
 
-		char c = getCharacter(fp);
-		if(c==EOF)
-		{
-			c = 127;
-		}
-		tk.lexeme[lexCount] = c ;
-		lexCount++;
-		switch(currState)
-		{
-			case 1:
-					if(c==',')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_COMMA;
-						return tk;
-					}
-					else if(c=='[')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_SQL;
-						return tk;
-					}
-					else if(c==']')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_SQR;
-						return tk;
-					}
-					else if(c==':')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_COLON;
-						return tk;
-					}
-					else if(c==';')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_SEM;
-						return tk;
-					}
-					else if(c=='.')
-					{
-						tk.lineNum = currLine;
-						tk.lexeme[lexCount]='\0';
-						tk.tokenType = TK_DOT;
-						return tk;
-					}
-					else if(c=='(')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_OP;
-						return tk;
-					}
-					else if(c==')')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_CL;
-						return tk;
-					}
-					else if(c=='+')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_PLUS;
-						return tk;
-					}
-					else if(c=='-')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_MINUS;
-						return tk;
-					}
-					else if(c=='*')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_MUL;
-						return tk;
-					}
-					else if(c=='/')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_DIV;
-						return tk;
-					}
-					else if(c=='~')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_NOT;
-						return tk;
-					}
-					else if(c==127)
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum = currLine;
-						tk.tokenType = TK_EOF;
-						return tk;
-					}
-					else if(c==' '||c=='\t'||c=='\v'||c=='\r')
-					{
-						lexCount=0;
-					}
-					else if(c=='\n')
-					{
-						currLine++;
-						lexCount=0;
-					}
-					else if(c=='@')
-					{
-						currState=11;
-					}
+        char c = getCharacter(fp);
+        if(c==EOF)
+        {
+            c = 127;
+        }
+        tk.lexeme[lexCount] = c ;
+        lexCount++;
+        switch(currState)
+        {
+            case 1:
+                    if(c==',')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_COMMA;
+                        return tk;
+                    }
+                    else if(c=='[')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_SQL;
+                        return tk;
+                    }
+                    else if(c==']')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_SQR;
+                        return tk;
+                    }
+                    else if(c==':')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_COLON;
+                        return tk;
+                    }
+                    else if(c==';')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_SEM;
+                        return tk;
+                    }
+                    else if(c=='.')
+                    {
+                        tk.lineNum = currLine;
+                        tk.lexeme[lexCount]='\0';
+                        tk.tokenType = TK_DOT;
+                        return tk;
+                    }
+                    else if(c=='(')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_OP;
+                        return tk;
+                    }
+                    else if(c==')')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_CL;
+                        return tk;
+                    }
+                    else if(c=='+')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_PLUS;
+                        return tk;
+                    }
+                    else if(c=='-')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_MINUS;
+                        return tk;
+                    }
+                    else if(c=='*')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_MUL;
+                        return tk;
+                    }
+                    else if(c=='/')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_DIV;
+                        return tk;
+                    }
+                    else if(c=='~')
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_NOT;
+                        return tk;
+                    }
+                    else if(c==127)
+                    {
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum = currLine;
+                        tk.tokenType = TK_EOF;
+                        return tk;
+                    }
+                    else if(c==' '||c=='\t'||c=='\v'||c=='\r')
+                    {
+                        lexCount=0;
+                    }
+                    else if(c=='\n')
+                    {
+                        currLine++;
+                        lexCount=0;
+                    }
+                    else if(c=='@')
+                    {
+                        currState=11;
+                    }
 
-					else if(c=='&')
-					{
-						currState=21;
-					}
+                    else if(c=='&')
+                    {
+                        currState=21;
+                    }
 
-					else if(c=='=')
-					{
-						currState = 31;
-					}
+                    else if(c=='=')
+                    {
+                        currState = 31;
+                    }
 
-					else if(c=='!')
-					{
-						currState=41;
-					}
+                    else if(c=='!')
+                    {
+                        currState=41;
+                    }
 
-					else if(c=='<')
-					{
-						currState=51;
-					}
-					else if(c=='>')
-					{
-						currState=61;
-					}
-					else if(c=='%')
-					{
-						currState=71;
-					}
-					else if(c=='b' || c=='c' || c=='d')
-					{
-						currState = 81;
-					}
-					else if(c>='a' && c<='z')
-					{
-						currState = 91;
+                    else if(c=='<')
+                    {
+                        currState=51;
+                    }
+                    else if(c=='>')
+                    {
+                        currState=61;
+                    }
+                    else if(c=='%')
+                    {
+                        currState=71;
+                    }
+                    else if(c=='b' || c=='c' || c=='d')
+                    {
+                        currState = 81;
+                    }
+                    else if(c>='a' && c<='z')
+                    {
+                        currState = 91;
 
-					}
-					else if(c>='0' && c<='9')
-					{
-						currState = 101;
-					}
-					else if(c=='_')
-					{
-						currState = 111;
-					}
-					else if(c=='#')
-					{
-						currState = 121;
-					}
-					else
-					{
-						tk.tokenType = TK_ERROR;
-						tk.lineNum	 = currLine;
-						sprintf(tk.lexeme,"ERROR_2: Unknown Symbol   %c at line %d",c,currLine);
-						return tk;
-					}
-				break;
+                    }
+                    else if(c>='0' && c<='9')
+                    {
+                        currState = 101;
+                    }
+                    else if(c=='_')
+                    {
+                        currState = 111;
+                    }
+                    else if(c=='#')
+                    {
+                        currState = 121;
+                    }
+                    else
+                    {
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum   = currLine;
+                        printf("ERROR_2: Unknown Symbol   %c at line %d\n",c,currLine);
+                        sprintf(tk.lexeme,"ERROR_2");
+                        //sprintf(tk.lexeme,"ERROR_2: Unknown Symbol   %c at line %d",c,currLine);
+                        return tk;
+                    }
+                break;
 
-			case 11:
-					if(c=='@')
-					{
-						currState=12;
-					}
-					else
-					{
-						bufferIndex--;
+            case 11:
+                    if(c=='@')
+                    {
+                        currState=12;
+                    }
+                    else
+                    {
+                        bufferIndex--;
                         tk.lexeme[lexCount]='\0';
                         char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-						sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");                        
+                        //sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         if(c == '\n')
                             currLine++;
                         return tk;
-					}
-				break;
-			case 12:
-					if(c=='@')
-					{
-						tk.lexeme[lexCount]='\0';
-						tk.tokenType = TK_OR;
-						tk.lineNum = currLine;
-						return tk;
-					}
-					else
-					{
-						bufferIndex--;
+                    }
+                break;
+            case 12:
+                    if(c=='@')
+                    {
                         tk.lexeme[lexCount]='\0';
-						char temp[lexCount+1];
+                        tk.tokenType = TK_OR;
+                        tk.lineNum = currLine;
+                        return tk;
+                    }
+                    else
+                    {
+                        bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                         //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         if(c == '\n')
                             currLine++;
                         return tk;
-					}
-				break;
-			case 21:
-					if(c=='&')
-					{
-						currState=22;
-					}
-					else
-					{
-						bufferIndex--;
+                    }
+                break;
+            case 21:
+                    if(c=='&')
+                    {
+                        currState=22;
+                    }
+                    else
+                    {
+                        bufferIndex--;
                         tk.lexeme[lexCount]='\0';
                         char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
-						//sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         //if(c == '\n')
                         //    currLine++;
                         return tk;
-					}
-				break;
-			case 22:
-					if(c=='&')
-					{
-						tk.tokenType = TK_AND;
-						tk.lineNum = currLine;
-						tk.lexeme[lexCount]='\0';
-						return tk;
-					}
-					else
-					{
-						bufferIndex--;
+                    }
+                break;
+            case 22:
+                    if(c=='&')
+                    {
+                        tk.tokenType = TK_AND;
+                        tk.lineNum = currLine;
+                        tk.lexeme[lexCount]='\0';
+                        return tk;
+                    }
+                    else
+                    {
+                        bufferIndex--;
                         tk.lexeme[lexCount]='\0';
                         char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
-						//sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-                        tk.tokenType = TK_ERROR;
-                        tk.lineNum = currLine;
-                        //if(c == '\n')
-                        //    currLine++;
-                        return tk;
-					}
-				break;
-			case 31:
-					if(c=='=')
-					{
-						tk.tokenType = TK_EQ;
-						tk.lineNum = currLine;
-						tk.lexeme[lexCount]='\0';
-						return tk;
-					}
-					else if(c==' '||c=='\n'||c=='\t'||c=='\r'||c=='\v')
-					{
-						tk.tokenType = TK_ASSIGNOP;
-						tk.lexeme[lexCount]='\0';
-						tk.lineNum=currLine;
-						return tk;
-					}
-					else
-					{
-						bufferIndex--;
-                        tk.lexeme[lexCount]='\0';
-						char temp[lexCount+1];
-                        strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                         //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         //if(c == '\n')
                         //    currLine++;
                         return tk;
-					}
-				break;
-			case 41:
-					if(c=='=')
-					{
-						tk.tokenType = TK_NE;
-						tk.lineNum = currLine;
-						tk.lexeme[lexCount]='\0';
-						return tk;
-					}
-					else
-					{
-						bufferIndex--;
+                    }
+                break;
+            case 31:
+                    if(c=='=')
+                    {
+                        tk.tokenType = TK_EQ;
+                        tk.lineNum = currLine;
                         tk.lexeme[lexCount]='\0';
-						char temp[lexCount+1];
+                        return tk;
+                    }
+                    else if(c==' '||c=='\n'||c=='\t'||c=='\r'||c=='\v')
+                    {
+                        tk.tokenType = TK_ASSIGNOP;
+                        tk.lexeme[lexCount]='\0';
+                        tk.lineNum=currLine;
+                        return tk;
+                    }
+                    else
+                    {
+                        bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                         //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
                         //if(c == '\n')
                         //    currLine++;
                         return tk;
-					}
-				break;
-			case 51:
-					if(c=='=')
-					{
-						tk.tokenType = TK_LE;
-						tk.lineNum = currLine ;
-						tk.lexeme[lexCount]='\0';
-						return tk;
-					}
-					else if(c=='-')
-					{
-						currState=52;
-					}
-					else
-					{
-						bufferIndex--;
-						tk.lexeme[lexCount-1]='\0';
-						tk.tokenType = TK_LT;
-						tk.lineNum = currLine;
-						return tk;
-					}
-				break;
-			case 52:
-					if(c=='-')
-					{
-						currState=53;
-					}
-					else
-					{
-						bufferIndex--;
+                    }
+                break;
+            case 41:
+                    if(c=='=')
+                    {
+                        tk.tokenType = TK_NE;
+                        tk.lineNum = currLine;
                         tk.lexeme[lexCount]='\0';
-						char temp[lexCount+1];
-                        strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
-                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-	                    tk.tokenType = TK_ERROR;
-	                    tk.lineNum = currLine;
-	                     //if(c == '\n')
-	                     //   currLine++;
-	                     return tk;
-					}
-				break;
-			case 53:
-					if(c=='-')
-					{
-						tk.tokenType = TK_ASSIGNOP;
-						tk.lineNum = currLine;
-						tk.lexeme[lexCount]='\0';
-						return tk;
-					}
-					else
-					{
-						bufferIndex--;
+                        return tk;
+                    }
+                    else
+                    {
+                        bufferIndex--;
                         tk.lexeme[lexCount]='\0';
-						char temp[lexCount+1];
+                        char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                         //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-	                    tk.tokenType = TK_ERROR;
-	                    tk.lineNum = currLine;
-	                     //if(c == '\n')
-	                     //   currLine++;
-	                     return tk;
-					}
-				break;
-			case 61:
-					if(c=='=')
-					{
-						tk.tokenType = TK_GE;
-						tk.lineNum = currLine ;
-						tk.lexeme[lexCount]='\0';
-						return tk;
-					}
-					else
-					{
-						bufferIndex--;
-						tk.lexeme[lexCount-1]='\0';
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
+                        //if(c == '\n')
+                        //    currLine++;
+                        return tk;
+                    }
+                break;
+            case 51:
+                    if(c=='=')
+                    {
+                        tk.tokenType = TK_LE;
+                        tk.lineNum = currLine ;
+                        tk.lexeme[lexCount]='\0';
+                        return tk;
+                    }
+                    else if(c=='-')
+                    {
+                        currState=52;
+                    }
+                    else
+                    {
+                        bufferIndex--;
+                        tk.lexeme[lexCount-1]='\0';
+                        tk.tokenType = TK_LT;
+                        tk.lineNum = currLine;
+                        return tk;
+                    }
+                break;
+            case 52:
+                    if(c=='-')
+                    {
+                        currState=53;
+                    }
+                    else
+                    {
+                        bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
+                         //if(c == '\n')
+                         //   currLine++;
+                         return tk;
+                    }
+                break;
+            case 53:
+                    if(c=='-')
+                    {
+                        tk.tokenType = TK_ASSIGNOP;
+                        tk.lineNum = currLine;
+                        tk.lexeme[lexCount]='\0';
+                        return tk;
+                    }
+                    else
+                    {
+                        bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
+                         //if(c == '\n')
+                         //   currLine++;
+                         return tk;
+                    }
+                break;
+            case 61:
+                    if(c=='=')
+                    {
+                        tk.tokenType = TK_GE;
+                        tk.lineNum = currLine ;
+                        tk.lexeme[lexCount]='\0';
+                        return tk;
+                    }
+                    else
+                    {
+                        bufferIndex--;
+                        tk.lexeme[lexCount-1]='\0';
 
-						// buffer position wala panga
-						tk.tokenType = TK_GT;
-						tk.lineNum = currLine;
-						return tk;
-					}
-				break;
-			case 71:
-					if(c=='\n')
-					{
-						currLine++;
-						currState=1;
-						lexCount=0;
-						//tk.tokenType= TK_COMMENT;
-						//tk.lineNum = currLine ;
-						//tk.lexeme[lexCount]='\0';
-						//return tk;
-					}
-					else if(c==127)
-					{
-						tk.tokenType = TK_EOF;
-						tk.lexeme[0]='\0';
-						return tk ;
-					}
-				break;
-			case 81:
-					if(c>='a' && c<='z')
-						currState = 91;
-					else if(c>='2' && c<='7')
-						currState = 82;
-					else
-					{
-						bufferIndex--;
-						tk.tokenType = TK_ERROR ;
+                        // buffer position wala panga
+                        tk.tokenType = TK_GT;
+                        tk.lineNum = currLine;
+                        return tk;
+                    }
+                break;
+            case 71:
+                    if(c=='\n')
+                    {
+                        currLine++;
+                        currState=1;
+                        lexCount=0;
+                        //tk.tokenType= TK_COMMENT;
+                        //tk.lineNum = currLine ;
+                        //tk.lexeme[lexCount]='\0';
+                        //return tk;
+                    }
+                    else if(c==127)
+                    {
+                        tk.tokenType = TK_EOF;
+                        tk.lexeme[0]='\0';
+                        return tk ;
+                    }
+                break;
+            case 81:
+                    if(c>='a' && c<='z')
+                        currState = 91;
+                    else if(c>='2' && c<='7')
+                        currState = 82;
+                    else
+                    {
+                        bufferIndex--;
+                        tk.tokenType = TK_ERROR ;
                         tk.lexeme[lexCount]='\0';
                         char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                         //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						//tk.lexeme[lexCount-1]= '\0';
-						tk.lineNum = currLine ;
-						return tk;
-					}
-				break;
-			case 82:
-					if(c>='2' && c<='7')
-					{
-						currState = 83;
-					}
-					else if(!(c>='b' && c<='d') )
-					{
+                        //tk.lexeme[lexCount-1]= '\0';
+                        tk.lineNum = currLine ;
+                        return tk;
+                    }
+                break;
+            case 82:
+                    if(c>='2' && c<='7')
+                    {
+                        currState = 83;
+                    }
+                    else if(!(c>='b' && c<='d') )
+                    {
                         if(lexCount>20)
                         {
-                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
+                            sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
                             bufferIndex--;
                             tk.tokenType = TK_ERROR;
                             tk.lineNum = currLine;
                             return tk;
                         }
 
-						bufferIndex--;
-						tk.tokenType	= TK_ID;
-						tk.lineNum = currLine;
-						tk.lexeme[lexCount-1]='\0';
-						return tk;
-					}
-				break;
-			case 83:
-					if(!(c>='2' && c<='7') )
-					{
+                        bufferIndex--;
+                        tk.tokenType    = TK_ID;
+                        tk.lineNum = currLine;
+                        tk.lexeme[lexCount-1]='\0';
+                        return tk;
+                    }
+                break;
+            case 83:
+                    if(!(c>='2' && c<='7') )
+                    {
                         if(lexCount>20)
                         {
-                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
+                            sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
                             bufferIndex--;
                             tk.tokenType = TK_ERROR;
                             tk.lineNum = currLine;
                             return tk;
                         }
-						bufferIndex--;
-						tk.tokenType = TK_ID;
-						tk.lineNum = currLine ;
-						tk.lexeme[lexCount-1]='\0';
-						return tk;
-					}
-				break;
-			case 91:
-					if ( !(c>='a' && c<='z') )
-					{
+                        bufferIndex--;
+                        tk.tokenType = TK_ID;
+                        tk.lineNum = currLine ;
+                        tk.lexeme[lexCount-1]='\0';
+                        return tk;
+                    }
+                break;
+            case 91:
+                    if ( !(c>='a' && c<='z') )
+                    {
                          if(lexCount>20)
                         {
-                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
+                            sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
                             bufferIndex--;
                             tk.tokenType = TK_ERROR;
                             tk.lineNum = currLine;
                             return tk;
                         }
-						//buffer thing
-						bufferIndex--;
-						tk.lexeme[lexCount-1] = '\0';
-						tk.tokenType = findToken(tk.lexeme);
-						tk.lineNum = currLine ;
-						return tk;
-					}
-				break;
-			case 101:
-					if(c>='0' && c<='9')
-					{
-						if(lexCount>20)
-						{
-							tk.tokenType = TK_ERROR ;
+                        //buffer thing
+                        bufferIndex--;
+                        tk.lexeme[lexCount-1] = '\0';
+                        tk.tokenType = findToken(tk.lexeme);
+                        tk.lineNum = currLine ;
+                        return tk;
+                    }
+                break;
+            case 101:
+                    if(c>='0' && c<='9')
+                    {
+                        if(lexCount>20)
+                        {
+                            tk.tokenType = TK_ERROR ;
                             tk.lineNum = currLine;
-							sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
-							return tk;
-						}
-					}
-					else if(c=='.')
-					{
-						currState = 102;
-					}
-					else
-					{
-						// buffer position wala problem
-						//  managing the lexemee
-						bufferIndex--;
-						tk.lexeme[lexCount-1] = '\0';
-						tk.tokenType = TK_NUM;
-						tk.lineNum = currLine ;
-						return tk ;
+                            printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
+                            sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            return tk;
+                        }
+                    }
+                    else if(c=='.')
+                    {
+                        currState = 102;
+                    }
+                    else
+                    {
+                        // buffer position wala problem
+                        //  managing the lexemee
+                        bufferIndex--;
+                        tk.lexeme[lexCount-1] = '\0';
+                        tk.tokenType = TK_NUM;
+                        tk.lineNum = currLine ;
+                        return tk ;
 
-					}
-				break;
-			case 102:
-					if(c>='0' && c<='9')
-					{
-						currState  = 103;
-					}
-					else
-					{
-						bufferIndex--;
-						tk.tokenType = TK_ERROR;
-						tk.lineNum = currLine;
-                        tk.lexeme[lexCount]='\0';
-						char temp[lexCount+1];
-                        strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
-                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						return tk;
-					}
-				break;
-			case 103:
-					if(c>='0' && c<='9')
-					{
-						tk.tokenType = TK_RNUM;
-						tk.lineNum = currLine ;
-						tk.lexeme[lexCount] = '\0';
-						return tk;
-					}
-					else
-					{
-						bufferIndex--;
-						tk.lexeme[lexCount]='\0';
-						tk.tokenType = TK_ERROR ;
+                    }
+                break;
+            case 102:
+                    if(c>='0' && c<='9')
+                    {
+                        currState  = 103;
+                    }
+                    else
+                    {
+                        bufferIndex--;
+                        tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
-						char temp[lexCount+1];
-                        strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
-                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						return tk;
-					}
-				break;
-			case 111:
-					if( (c>='a' && c<='z') || (c>='A' && c<='Z') )
-					{
-
-						currState = 112;
-					}
-					else
-					{
-						// buffer wala problem;
-						bufferIndex--;
-						tk.tokenType = TK_ERROR;
-						tk.lineNum = currLine;
                         tk.lexeme[lexCount]='\0';
-						char temp[lexCount+1];
+                        char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                         //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						return tk;
-					}
-				break;
-			case 112:
-					if(c>='0' && c<='9')
-					{
-						currState = 113 ;
-					}
-					else if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
-					{
+                        return tk;
+                    }
+                break;
+            case 103:
+                    if(c>='0' && c<='9')
+                    {
+                        tk.tokenType = TK_RNUM;
+                        tk.lineNum = currLine ;
+                        tk.lexeme[lexCount] = '\0';
+                        return tk;
+                    }
+                    else
+                    {
+                        bufferIndex--;
+                        tk.lexeme[lexCount]='\0';
+                        tk.tokenType = TK_ERROR ;
+                        tk.lineNum = currLine;
+                        char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
+                        return tk;
+                    }
+                break;
+            case 111:
+                    if( (c>='a' && c<='z') || (c>='A' && c<='Z') )
+                    {
+
+                        currState = 112;
+                    }
+                    else
+                    {
+                        // buffer wala problem;
+                        bufferIndex--;
+                        tk.tokenType = TK_ERROR;
+                        tk.lineNum = currLine;
+                        tk.lexeme[lexCount]='\0';
+                        char temp[lexCount+1];
+                        strncpy(temp,tk.lexeme,lexCount+1);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
+                        //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
+                        return tk;
+                    }
+                break;
+            case 112:
+                    if(c>='0' && c<='9')
+                    {
+                        currState = 113 ;
+                    }
+                    else if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
+                    {
+
                         if(lexCount>30)
                         {
-                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
+                            sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
                             //bufferIndex--;
                             tk.tokenType = TK_ERROR;
                             tk.lineNum = currLine;
                             return tk;
                         }
 
-						//bufferIndex--;
-						 	tk.lexeme[lexCount-1] = '\0';
-						 	tk.lineNum = currLine;
-						 	if(strcmp(tk.lexeme,"_main")==0)
-						 		tk.tokenType = TK_MAIN;
-						 	else
-						 		tk.tokenType = TK_FUNID;
-						 	return tk;
-					}
-					else if( !( (c>='a' && c<='z')||
-						 (c>='A' && c<='Z') ||
-						 (c>='0' && c<='9') ) )
-						 {
-						 	bufferIndex--;
+                            bufferIndex--;
+                            tk.lexeme[lexCount-1] = '\0';
+                            tk.lineNum = currLine;
+                            if(strcmp(tk.lexeme,"_main")==0)
+                                tk.tokenType = TK_MAIN;
+                            else
+                                tk.tokenType = TK_FUNID;
+                            return tk;
+                    }
+                    else if( !( (c>='a' && c<='z')||
+                         (c>='A' && c<='Z') ||
+                         (c>='0' && c<='9') ) )
+                         {
+                            bufferIndex--;
                             tk.lexeme[lexCount]='\0';
-						 	char temp[lexCount+1];
+                            char temp[lexCount+1];
                             strncpy(temp,tk.lexeme,lexCount+1);
-                            sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                            printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                            sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                             //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						 	tk.tokenType = TK_ERROR ;
-						 	tk.lineNum = currLine;
-						 	return tk;
+                            tk.tokenType = TK_ERROR ;
+                            tk.lineNum = currLine;
+                            return tk;
 
-						 }
-				break;
-			case 113:
-				if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
-					{
+                         }
+                break;
+            case 113:
+                if(c==' '|| c=='\t' || c=='\r' || c=='\v' || c=='\n')
+                    {
                         if(lexCount>30)
                         {
-                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
-                           // bufferIndex--;
+                            printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
+                            
+                            sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                           //bufferIndex--;
                             tk.tokenType = TK_ERROR;
                             tk.lineNum = currLine;
                             return tk;
                         }
-						//bufferIndex--;
-						 	tk.lexeme[lexCount-1] = '\0';
-						 	tk.lineNum = currLine;
-						 	if(strcmp(tk.lexeme,"_main")==0)
-						 		tk.tokenType = TK_MAIN;
-						 	else
-						 		tk.tokenType = TK_FUNID;
-						 	return tk;
-					}
-				else if( !(c>='0' && c<='9') )
-						 {
-						 	bufferIndex--;
+                            bufferIndex--;
+                            tk.lexeme[lexCount-1] = '\0';
+                            tk.lineNum = currLine;
+                            if(strcmp(tk.lexeme,"_main")==0)
+                                tk.tokenType = TK_MAIN;
+                            else
+                                tk.tokenType = TK_FUNID;
+                            return tk;
+                    }
+                else if( !(c>='0' && c<='9') )
+                         {
+                            bufferIndex--;
                             tk.lexeme[lexCount]='\0';
-						 	char temp[lexCount+1];
+                            char temp[lexCount+1];
                             strncpy(temp,tk.lexeme,lexCount+1);
-                            sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                            printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                            sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                             //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						 	tk.tokenType = TK_ERROR ;
-						 	tk.lineNum = currLine;
-						 	return tk;
+                            tk.tokenType = TK_ERROR ;
+                            tk.lineNum = currLine;
+                            return tk;
 
-						 }
-				break;
-			case 121:
-					if(c>='a' && c<='z')
-					{
-						currState =122;
-					}
-					else
-					{
-						//buffer stuff
-						bufferIndex--;
-						tk.tokenType = TK_ERROR ;
-						tk.lineNum = currLine ;
+                         }
+                break;
+            case 121:
+                    if(c>='a' && c<='z')
+                    {
+                        currState =122;
+                    }
+                    else
+                    {
+                        //buffer stuff
+                        bufferIndex--;
+                        tk.tokenType = TK_ERROR ;
+                        tk.lineNum = currLine ;
                         tk.lexeme[lexCount]='\0';
-						char temp[lexCount+1];
+                        char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
-                        sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
+                        printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
+                        sprintf(tk.lexeme, "ERROR_3");//:Unknown pattern %s at line %d", temp,currLine);
                         //sprintf(tk.lexeme,"ERROR_3:Unknown pattern %s at line %d", tk.lexeme,currLine);
-						if(c=='\n')
-						{
-							currLine++;
-						}
-						return tk;
-					}
-				break;
-			case 122:
-					if(!  ( (c>='a') && (c<='z') )  )
-					{
-						//buffer wala problem
-						// some bullshit about lexeme
+                        if(c=='\n')
+                        {
+                            currLine++;
+                        }
+                        return tk;
+                    }
+                break;
+            case 122:
+                    if(!  ( (c>='a') && (c<='z') )  )
+                    {
+                        //buffer wala problem
+                        // some bullshit about lexeme
 
                         if(lexCount>20)
                         {
-                            sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
+                            printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
+                            
+                            sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
                             bufferIndex--;
                             tk.tokenType = TK_ERROR;
                             tk.lineNum = currLine;
                             return tk;
                         }
 
-						bufferIndex--;
-						tk.lexeme[lexCount-1]='\0';
-						tk.tokenType = TK_RECORDID;
-						tk.lineNum = currLine ;
-						return tk;
-					}
-				break;
-			default:
-				 break;
-				 //this should never be executed
-		}
-	}
+                        bufferIndex--;
+                        tk.lexeme[lexCount-1]='\0';
+                        tk.tokenType = TK_RECORDID;
+                        tk.lineNum = currLine ;
+                        return tk;
+                    }
+                break;
+            default:
+                 break;
+                 //this should never be executed
+        }
+    }
 }
 
 void printTokenList(const char* src_code_filename)
