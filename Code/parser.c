@@ -48,11 +48,10 @@ void addRuleinSet(int ntid, int ruleno, set* st, table p)
     addRuleinSet(ntid, ruleno, st->right, p);
 }
 
-table createParseTable(grammar rulelist)
+void createParseTable(grammar rulelist, table p)
 {
     set **firststs = createFirstSets(rulelist);
     set **followsts = createFollowSets(rulelist, firststs);
-    table p = initialiseParserTable();
     int i, j;
     for (i = 0; i < NUM_NONTERMINALS; ++i)
     {
@@ -67,7 +66,6 @@ table createParseTable(grammar rulelist)
             }
         }
     }
-    return p;
 }
 
 void displayParserTable(table p)

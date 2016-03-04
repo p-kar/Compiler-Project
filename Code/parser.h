@@ -37,7 +37,7 @@ typedef int** table;
 set* getFirstSetsRule(int* prodrule, int rule_length, set** firststs);
 table initialiseParserTable();
 void addRuleinSet(int ntid, int ruleno, set* st, table p);
-table createParseTable(grammar rulelist);
+void createParseTable(grammar rulelist, table p);
 void displayParserTable(table p);
 parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid);
 parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table T);

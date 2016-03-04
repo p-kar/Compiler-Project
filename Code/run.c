@@ -22,9 +22,10 @@ int main(int argc, char const *argv[])
     char src_filename[] = "./Testcases/testcase4.txt";
     grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
-    table T = createParseTable(rulelist);
-    // parseTree PT = parseInputSourceCode(src_filename, rulelist, T);
-    // printParseTree(PT, "ptree.txt");
+    table T = initialiseParserTable();
+    createParseTable(rulelist, T);
+    parseTree PT = parseInputSourceCode(src_filename, rulelist, T);
+    printParseTree(PT, "ptree.txt");
     // displayParserTable(T);
     return 0;
 }

@@ -10,8 +10,8 @@
 #ifndef PARSERSETS_H
 #define PARSERSETS_H
 
-#define ENABLE_PRINTING_FIRST_SETS
-#define ENABLE_PRINTING_FOLLOW_SETS
+// #define ENABLE_PRINTING_FIRST_SETS
+// #define ENABLE_PRINTING_FOLLOW_SETS
 
 #include "parserUtils.h"
 #include "parserDef.h"
