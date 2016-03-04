@@ -859,6 +859,7 @@ tokenInfo getNextToken(FILE *fp)
 						if(lexCount>20)
 						{
 							tk.tokenType = TK_ERROR ;
+                            tk.lineNum = currLine;
 							sprintf(tk.lexeme,"ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
 							return tk;
 						}
@@ -910,6 +911,7 @@ tokenInfo getNextToken(FILE *fp)
 						bufferIndex--;
 						tk.lexeme[lexCount]='\0';
 						tk.tokenType = TK_ERROR ;
+                        tk.lineNum = currLine;
 						char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
                         sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);

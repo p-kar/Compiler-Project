@@ -29,7 +29,8 @@
 #define KCYN "\x1B[36m"
 #define KWHT "\x1B[37m"
 
-#define DEBUG_PARSER
+// #define DEBUG_PARSER
+// #define PANIC_MODE_PRINTING
 
 typedef int** table;
 

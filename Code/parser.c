@@ -101,6 +101,8 @@ parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid)
 
 parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table T)
 {
+    bool syntaxError = false;
+    set** firststs = createFirstSets(rulelist); // required for PANIC MODE
     FILE *tfp = fopen(testcaseFile, "r");
     tokenInfo t = getNextToken(tfp);
     tokenInfo nttk;
@@ -110,13 +112,19 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
     stackNode* stck = NULL;
     stck = pushStack(TK_DOLLAR, NULL, stck);  // inserting stack bottom symbol
     stck = pushStack(PROGRAM, pTree, stck);   // inserting start symbol
-    while(!isEmpty(stck))
+    while(!isEmpty(stck) && t.tokenType != TK_EOF)
     {
         #ifdef DEBUG_PARSER
         printf("\n");
-        printf("Current token: %s\n", getTerminalStr(t.tokenType));
+        printf("Current token: %s <%d>\n", getTerminalStr(t.tokenType), t.lineNum);
         printStack(stck);
         #endif
+        if(t.tokenType == TK_ERROR)
+        {
+            t = getNextToken(tfp);
+            syntaxError = true;
+            continue;
+        }
         stackNode* top = topStack(stck);
         stck = popStack(stck);
         parseTreeNode* pnode = top->pnode;
@@ -132,13 +140,31 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         }
         else if(isTerminal(top->val))
         {
-            fprintf(stderr, "%sSyntax Error on line <%d>. Expected: %s Received: %s.%s\n", KRED, t.lineNum, getTerminalStr(top->val), getTerminalStr(t.tokenType), KNRM);
-            return pTree;
+            syntaxError = true;
+            fprintf(stderr, "The token %s for lexeme <%s> does not match at line <%d>. The expected token here is %s.\n", getTerminalStr(t.tokenType), t.lexeme, t.lineNum, getTerminalStr(top->val));
+            pnode->tk.lineNum = t.lineNum;
+            strcpy(pnode->tk.lexeme, "Panic Mode");
+            pnode->tk.tokenType = top->val;
+            top = topStack(stck);
+            while(t.tokenType != top->val && !isEmpty(stck) && isTerminal(top->val))
+            {
+                stck = popStack(stck);
+                top = topStack(stck);
+            }
+            continue;
+            // return pTree;
         }
         else if(T[top->val][t.tokenType - TERMINAL_OFFSET] == -1)
         {
-            fprintf(stderr, "%sNo rule in the parse table to expand.%s\n", KRED, KNRM);
-            return pTree;
+            syntaxError = true;
+            fprintf(stderr, "No rule in the parse table to expand. Received %s on line <%d> for %s.\n", getIDStr(t.tokenType), t.lineNum, getIDStr(top->val));
+            top = topStack(stck);
+            while(t.tokenType != TK_EOF && !isPresent(t.tokenType, getFirstSet(top->val, firststs)))
+            {
+                t = getNextToken(tfp);
+            }
+            continue;
+            // return pTree;
         }
         int rno = T[top->val][t.tokenType - TERMINAL_OFFSET];
         int ridx = rulelist[top->val]->rule_length[rno] - 1;
@@ -155,7 +181,10 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
             stck = pushStack(childid, pnode->children[idx + ridx], stck);
         }
     }
-    printf("%sCompiled Successfully: Input source code is syntactically correct.%s\n", KGRN, KNRM);
+    if(!syntaxError)
+        printf("%sCompiled Successfully: Input source code is syntactically correct.%s\n", KGRN, KNRM);
+    else
+        printf("%sInput source code has errors.%s\n", KRED, KNRM);
     return pTree;
 }
 

@@ -23,8 +23,8 @@ int main(int argc, char const *argv[])
     grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
     table T = createParseTable(rulelist);
-    parseTree PT = parseInputSourceCode(src_filename, rulelist, T);
-    printParseTree(PT, "ptree.txt");
+    // parseTree PT = parseInputSourceCode(src_filename, rulelist, T);
+    // printParseTree(PT, "ptree.txt");
     // displayParserTable(T);
     return 0;
 }
