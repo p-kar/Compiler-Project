@@ -94,6 +94,7 @@ parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid)
     p->parentNodeSymbol = pntid;
     p->child_cnt = 0;
     p->children = NULL;
+    p->rno = -1;
     return p;
 }
 
@@ -171,6 +172,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         #endif
         int idx = pnode->child_cnt;
         pnode->child_cnt += ridx + 1;
+        pnode->rno = rno;
         pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
         for (; ridx >= 0; --ridx)
         {
@@ -196,23 +198,24 @@ void printParseTreeHelper(parseTree PT, FILE* fp)
     char empty[10] = "----";
     char yes[10] = "YES";
     char no[10] = "NO";
-    int space = 30;
+    int space = 25;
+    int space_small = 15;
     if(PT->child_cnt == 0)
     {
         if(isTerminal(PT->nodeid))
         {
             if(PT->nodeid == TK_EPS)
-                fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space, empty, space, getIDStr(PT->nodeid), space, empty, space, getIDStr(PT->parentNodeSymbol), space, yes, space, empty);
+                fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space_small, empty, space_small, getIDStr(PT->nodeid), space_small, empty, space, getIDStr(PT->parentNodeSymbol), space_small, yes, space, empty);
             else if(PT->nodeid == TK_NUM || PT->nodeid == TK_RNUM)
-                fprintf(fp, "%*s%*d%*s%*s%*s%*s%*s\n", 20, empty, space, PT->tk.lineNum, space, getIDStr(PT->nodeid), space, PT->tk.lexeme, space, getIDStr(PT->parentNodeSymbol), space, yes, space, empty);
+                fprintf(fp, "%*s%*d%*s%*s%*s%*s%*s\n", 20, empty, space_small, PT->tk.lineNum, space_small, getIDStr(PT->nodeid), space_small, PT->tk.lexeme, space, getIDStr(PT->parentNodeSymbol), space_small, yes, space, empty);
             else
-                fprintf(fp, "%*s%*d%*s%*s%*s%*s%*s\n", 20, PT->tk.lexeme, space, PT->tk.lineNum, space, getIDStr(PT->nodeid), space, empty, space, getIDStr(PT->parentNodeSymbol), space, yes, space, empty);
+                fprintf(fp, "%*s%*d%*s%*s%*s%*s%*s\n", 20, PT->tk.lexeme, space_small, PT->tk.lineNum, space_small, getIDStr(PT->nodeid), space_small, empty, space, getIDStr(PT->parentNodeSymbol), space_small, yes, space, empty);
         }
         else
-            fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space, empty, space, empty, space, empty, space, getIDStr(PT->parentNodeSymbol), space, no, space, getIDStr(PT->nodeid));
+            fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space_small, empty, space_small, empty, space_small, empty, space, getIDStr(PT->parentNodeSymbol), space_small, no, space, getIDStr(PT->nodeid));
         return;
     }
-    fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space, empty, space, empty, space, empty, space, getIDStr(PT->parentNodeSymbol), space, no, space, getIDStr(PT->nodeid));
+    fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, empty, space_small, empty, space_small, empty, space_small, empty, space, getIDStr(PT->parentNodeSymbol), space_small, no, space, getIDStr(PT->nodeid));
     int idx;
     for (idx = 0; idx < PT->child_cnt; ++idx)
         printParseTreeHelper(PT->children[idx], fp);
@@ -221,7 +224,8 @@ void printParseTreeHelper(parseTree PT, FILE* fp)
 void printParseTree(parseTree PT, const char* outfile)
 {
     FILE* fp = fopen(outfile, "w");
-    int space = 30;
+    int space = 25;
+    int space_small = 15;
     char lexemeCurrentNode[20] = "lexemeCurrentNode";
     char lineno[20] = "lineno";
     char token[20] = "token";
@@ -229,7 +233,7 @@ void printParseTree(parseTree PT, const char* outfile)
     char parentNodeSymbol[20] = "parentNodeSymbol";
     char isLeafNode[20] = "isLeafNode";
     char NodeSymbol[20] = "NodeSymbol";
-    fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, lexemeCurrentNode, space, lineno, space, token, space, valuelfNumber, space, parentNodeSymbol, space, isLeafNode, space, NodeSymbol);
+    fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, lexemeCurrentNode, space_small, lineno, space_small, token, space_small, valuelfNumber, space, parentNodeSymbol, space_small, isLeafNode, space, NodeSymbol);
     printParseTreeHelper(PT, fp);
     fclose(fp);
 }

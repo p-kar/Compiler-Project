@@ -1,8 +1,11 @@
 /*
-* @Author: Pratyush Kar
-* @Date:   2016-03-04 01:07:01
-* @Last Modified by:   Pratyush Kar
-* @Last Modified time: 2016-03-04 21:00:20
+* @Author:    Pratyush Kar (2013A7PS029P),
+*             Ayush Kataria (2013A7PS028P)
+* @Email:     f2013029@pilani.bits-pilani.ac.in,
+*             f2013028@pilani.bits-pilani.ac.in
+* @Gp Number: 52
+* @File Name: run.c
+* @Date:      2016-03-05 12:30:36
 */
 #include <stdio.h>
 #include <stdlib.h>

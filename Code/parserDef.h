@@ -95,6 +95,7 @@ typedef prodRuleNode** grammar;
 struct _parseTreeNode
 {
     int nodeid;
+    int rno;
     tokenInfo tk;
     NONTERMINAL parentNodeSymbol;
     int child_cnt;

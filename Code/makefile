@@ -47,12 +47,18 @@ endef
 #---------------------------------------------------------------------
 # rules
 #---------------------------------------------------------------------
-all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o
+all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o ./Build/AST.o
 	$(call notifyecho, "compiling and linking final code")
 	@$(CC) -o run run.c ./Build/*.o
 	$(call warnecho, "Built target run")
 	@$(CC) -o driver driver.c ./Build/*.o
 	$(call warnecho, "Built target driver")
+
+./Build/AST.o: ./Build/parser.o ASTDef.h AST.h AST.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c AST.c -o $@
+	$(call okecho, " Done")
 
 ./Build/parser.o: ./Build/stack.o ./Build/parserSets.o parser.h parser.c
 	@echo -n Building $@...
