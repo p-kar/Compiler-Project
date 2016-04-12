@@ -130,7 +130,7 @@ void displayASTHelper(ASTNode* a, FILE* fp)
 {
     if(a == NULL)
     {
-        fprintf(stderr, "abstract syntax tree is NULL\n");
+        // fprintf(stderr, "abstract syntax tree is NULL\n");
         return;
     }
     char empty[10] = "----";
