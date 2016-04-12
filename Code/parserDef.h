@@ -82,6 +82,7 @@ typedef struct _rhsOcc rhsOcc;
 struct _prodRuleNode
 {
     NONTERMINAL ntid;
+    int* rule_no;        // global rule number
     int prod_rule_cnt;
     int* rule_length;
     int** prod_rules;

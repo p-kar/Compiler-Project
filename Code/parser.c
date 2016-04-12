@@ -172,7 +172,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         #endif
         int idx = pnode->child_cnt;
         pnode->child_cnt += ridx + 1;
-        pnode->rno = rno;
+        pnode->rno = rulelist[top->val]->rule_no[rno];
         pnode->children = (parseTreeNode**) realloc(pnode->children, sizeof(parseTreeNode*)*pnode->child_cnt);
         for (; ridx >= 0; --ridx)
         {

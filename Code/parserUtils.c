@@ -234,6 +234,7 @@ prodRuleNode* createProdRuleNode(NONTERMINAL ntid)
 {
     prodRuleNode* p = (prodRuleNode*) malloc(sizeof(prodRuleNode));
     p->ntid = ntid;
+    p->rule_no = NULL;
     p->prod_rule_cnt = 0;
     p->rule_length = NULL;
     p->prod_rules = NULL;
@@ -285,7 +286,7 @@ void printProdRules(int ntid, grammar rulelist)
     for (i = 0; i < p->prod_rule_cnt; ++i)
     {
         char* token = getNonTerminalStr(ntid);
-        printf("%s ===> ", token);
+        printf("%d. %s ===> ", p->rule_no[i], token);
         for (j = 0; j < p->rule_length[i]; ++j)
         {
             if(isTerminal(p->prod_rules[i][j]))
@@ -305,13 +306,15 @@ void printAllRules(grammar rulelist)
         printProdRules(i, rulelist);
 }
 
-grammar addProdRule(char* str, grammar rulelist)
+grammar addProdRule(int rno, char* str, grammar rulelist)
 {
     char* token;
     token = strtok(str, " \n");
     int ntid = getNonTerminalfromStr(token);
     int prod_rule_idx = rulelist[ntid]->prod_rule_cnt;
     rulelist[ntid]->prod_rule_cnt++;
+    rulelist[ntid]->rule_no = (int*) realloc(rulelist[ntid]->rule_no, sizeof(int) * (prod_rule_idx + 1));
+    rulelist[ntid]->rule_no[prod_rule_idx] = rno;
     rulelist[ntid]->rule_length = (int*) realloc(rulelist[ntid]->rule_length, sizeof(int) * (prod_rule_idx + 1));
     rulelist[ntid]->rule_length[prod_rule_idx] = 0;
     rulelist[ntid]->prod_rules = (int**) realloc(rulelist[ntid]->prod_rules, sizeof(int*) * (prod_rule_idx + 1));
@@ -348,10 +351,12 @@ grammar getRuleList(const char* grammar_filename)
     FILE* file = fopen(grammar_filename, "r");
     char line[1000];
     grammar rulelist = initialiseProdRuleList();
+    int rno = 0;
     while(fgets(line, sizeof(line), file) != NULL)
     {
         line[strlen(line) - 1] = '\0';
-        rulelist = addProdRule(line, rulelist);
+        rulelist = addProdRule(rno, line, rulelist);
+        rno++;
     }
     fclose(file);
     return rulelist;

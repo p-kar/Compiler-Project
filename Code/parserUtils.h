@@ -22,7 +22,7 @@ bool isNonTerminal(int nontermid);
 char* getIDStr(int id);
 prodRuleNode* createProdRuleNode(NONTERMINAL ntid);
 grammar initialiseProdRuleList();
-grammar addProdRule(char* str, grammar rulelist);
+grammar addProdRule(int rno, char* str, grammar rulelist);
 grammar getRuleList(const char* grammar_file);
 void printProdRule(int ntid, int rno, grammar rulelist);
 void printProdRules(int ntid, grammar rulelist);

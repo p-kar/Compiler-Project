@@ -28,7 +28,9 @@ int main(int argc, char const *argv[])
     parseTree PT = parseInputSourceCode(src_filename, rulelist, T);
     printParseTree(PT, "ptree.txt");
     ASTRuleNode** ast_rule_list = readASTRuleList("./Grammar/astrules.txt");
+    // displayASTRuleList(ast_rule_list, rulelist);
     ASTNode* AT = createASTfromPT(PT, ast_rule_list);
+    displayAST(AT, "atree.txt");
     // displayParserTable(T);
     return 0;
 }
