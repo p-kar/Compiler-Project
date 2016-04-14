@@ -14,6 +14,7 @@
 #define MAX_LEXEME_SIZE 650 // doubt here
 #define TERMINAL_OFFSET 1000
 #define NUM_TERMINALS 57
+#define RECORD_OFFSET 100000
 
 enum _TERMINAL
 {

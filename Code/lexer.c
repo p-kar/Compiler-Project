@@ -24,18 +24,18 @@ void printFileWithoutComments(const char* filename)
 {
     FILE* fp = fopen(filename,"r");
 
-    int buffersize ; 
+    int buffersize ;
 
     char buffer[20];
     int i;
     int state=0;
-    
+
     while(1)
     {
         buffersize = fread(buffer,sizeof(char),(size_t)20,fp);
         if(buffersize==0)
             return;
-        
+
         for(i=0;i<buffersize;i++)
         {
             if(buffer[i]==EOF)
@@ -290,6 +290,12 @@ char* getTerminalStr(TERMINAL termid)
         strcpy(str, "$");
     else if(TK_EOF == termid)
         strcpy(str, "TK_EOF");
+    else if((int)termid >= RECORD_OFFSET)
+    {
+        char record_str[100];
+        sprintf(record_str, "TK_RECORD(%d)", termid - RECORD_OFFSET);
+        strcpy(str, record_str);
+    }
     else
         strcpy(str, "TK_ERROR");
     return str;
@@ -587,7 +593,7 @@ tokenInfo getNextToken(FILE *fp)
                         char temp[lexCount+1];
                         strncpy(temp,tk.lexeme,lexCount+1);
                         printf("ERROR_3:Unknown pattern %s at line %d\n", temp,currLine);
-                        sprintf(tk.lexeme, "ERROR_3");                        
+                        sprintf(tk.lexeme, "ERROR_3");
                         //sprintf(tk.lexeme, "ERROR_3:Unknown pattern %s at line %d", temp,currLine);
                         tk.tokenType = TK_ERROR;
                         tk.lineNum = currLine;
@@ -1046,7 +1052,7 @@ tokenInfo getNextToken(FILE *fp)
                         if(lexCount>30)
                         {
                             printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
-                            
+
                             sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
                            //bufferIndex--;
                             tk.tokenType = TK_ERROR;
@@ -1110,7 +1116,7 @@ tokenInfo getNextToken(FILE *fp)
                         if(lexCount>20)
                         {
                             printf("ERROR_1 : Identifier at line %d is longer than the prescribed length of 20 characters\n",currLine);
-                            
+
                             sprintf(tk.lexeme,"ERROR_1");// : Identifier at line %d is longer than the prescribed length of 20 characters",currLine);
                             bufferIndex--;
                             tk.tokenType = TK_ERROR;

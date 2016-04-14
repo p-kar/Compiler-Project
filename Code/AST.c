@@ -187,11 +187,17 @@ ASTNode* insertFunctionParameters(ASTNode* AT, GlobalTable* global_table, funcId
     {
         if(input)
         {
-            insertInputParameter(global_table, local_table, AT->children[1]->tk, AT->children[0]->nodeid);
+            if(AT->children[0]->nodeid == TK_INT || AT->children[0]->nodeid == TK_REAL)
+                insertInputParameter(global_table, local_table, AT->children[1]->tk, AT->children[0]->nodeid);
+            else
+                insertInputParameterRecord(global_table, local_table, AT->children[1]->tk, AT->children[0]->children[1]->tk.lexeme, record_table);
         }
         else
         {
-            insertOutputParameter(global_table, local_table, AT->children[1]->tk, AT->children[0]->nodeid);
+            if(AT->children[0]->nodeid == TK_INT || AT->children[0]->nodeid == TK_REAL)
+                insertOutputParameter(global_table, local_table, AT->children[1]->tk, AT->children[0]->nodeid);
+            else
+                insertOutputParameterRecord(global_table, local_table, AT->children[1]->tk, AT->children[0]->children[1]->tk.lexeme, record_table);
         }
     }
     int i;
@@ -263,7 +269,6 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
     else if(getNonTerminalfromStr("<declaration>") == AT->nodeid)
     {
         // manage TK_INT, TK_REAL, TK_RECORD, TK_GLOBAL
-        // printf("Inserting declaration %s in scope %s\n", AT->children[1]->tk.lexeme, local_table->funcName);
         AT->global_table = global_table;
         AT->local_table = local_table;
         AT->record_table = record_table;
@@ -289,6 +294,7 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
                 insertLocalRecord(global_table, local_table, AT->children[1]->tk, TK_RECORD, AT->children[0]->children[1]->tk.lexeme, record_table);
             }
         }
+        return AT;
     }
     else if(getNonTerminalfromStr("<typeDefinition>") == AT->nodeid)
     {
@@ -304,6 +310,10 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
         AT->record_table = record_table;
         AT->children[1] = makeASTSymbolTableLinks(AT->children[1], global_table, local_table, record_table);
         return AT;
+    }
+    else if(getNonTerminalfromStr("<singleOrRecId>") == AT->nodeid)
+    {
+        // check if variable is declared
     }
     int i;
     AT->global_table = global_table;

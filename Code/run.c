@@ -20,11 +20,12 @@ int main(int argc, char const *argv[])
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
-    char src_filename[] = "./Testcases/testcase3.txt";
+    char src_filename[] = "./Testcases/testcase2.txt";
     grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
     table T = initialiseParserTable();
     createParseTable(rulelist, T);
+    // displayParserTable(T);
     parseTree PT = parseInputSourceCode(src_filename, rulelist, T);
     printParseTree(PT, "ptree.txt");
     ASTRuleNode** ast_rule_list = readASTRuleList("./Grammar/astrules.txt");
@@ -36,7 +37,6 @@ int main(int argc, char const *argv[])
     funcIdTable* local_table = NULL;
     AT = insertRecordDeclarations(AT, record_table);
     AT = makeASTSymbolTableLinks(AT, global_table, local_table, record_table);
-    // displayParserTable(T);
     displaySymbolTable(global_table);
     return 0;
 }

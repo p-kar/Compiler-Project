@@ -4,8 +4,8 @@
 
 void displaySymbolTable(GlobalTable* t)
 {
-	printf("--------------------\n");
 	printf("GLOBAL SCOPE\n");
+	printf("--------------------\n");
 	int i;
 	for(i=0;i<997;i++)
 	{
@@ -14,12 +14,11 @@ void displaySymbolTable(GlobalTable* t)
 			entry* temp = t->entryArray[i];
 			while(temp != NULL)
 			{
-				printf("%s\t%s\n", temp->token.lexeme, getTerminalStr(temp->type));
+				printf("%s\t\t%s\n", temp->token.lexeme, getTerminalStr(temp->type));
 				temp = temp->next;
 			}
 		}
 	}
-	printf("--------------------\n");
 	funcTable *temp2 = &(t->finalFuncTable);
 
 	for(i=0;i<997;i++)
@@ -27,8 +26,8 @@ void displaySymbolTable(GlobalTable* t)
 		funcIdTable *temp3 = temp2->funcTableArray[i];
 		while(temp3!=NULL)
 		{
-			printf("--------------------\n");
 			printf("LOCAL SCOPE %s\n",temp3->funcName );
+			printf("--------------------\n");
 			int j=0;
 			for(j=0;j<997;j++)
 			{
@@ -36,7 +35,7 @@ void displaySymbolTable(GlobalTable* t)
 				while(temp4!=NULL)
 				{
 					//entry* temp4 = temp3->table.entryArray[i];
-					printf("%s %s\n",temp4->token.lexeme , getTerminalStr(temp4->type) );
+					printf("%s\t\t%s\n",temp4->token.lexeme , getTerminalStr(temp4->type));
 					temp4=temp4->next;
 				}
 			}
@@ -211,11 +210,11 @@ bool insertGlobalRecord(GlobalTable* table,tokenInfo temp,TERMINAL type, char* r
     while(temp2!=NULL)
     {
     	tokenInfo tk = temp2->token;
-    	char* ch = temp.lexeme;
+    	char ch[100];
+    	strcpy(ch, temp.lexeme);
     	strcat(ch,".");
     	strcat(ch,temp2->token.lexeme);
     	strcpy(tk.lexeme,ch);
-    	printf("%s\n",tk.lexeme);
     	insertGlobalId(table ,tk, temp2->type);
     	temp2=temp2->next;
     }
@@ -378,7 +377,8 @@ bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMIN
     while(temp2!=NULL)
     {
     	tokenInfo tk = temp2->token;
-    	char* ch = temp.lexeme;
+    	char ch[100];
+    	strcpy(ch, temp.lexeme);
     	strcat(ch,".");
     	strcat(ch,temp2->token.lexeme);
     	strcpy(tk.lexeme,ch);
@@ -414,7 +414,7 @@ void insertInputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,ch
 	TERMINAL type = t->identifier;
 
 	insertLocalId(g,temp,tk,type);
-	
+
 	entry* temp1 = (entry*) malloc(sizeof(entry));
 	temp1->token =tk ;
 	temp1->type = type;
@@ -438,7 +438,8 @@ void insertInputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,ch
     while(temp3!=NULL)
     {
     	tokenInfo tk1 = temp3->token;
-    	char* ch = tk.lexeme;
+    	char ch[100];
+    	strcpy(ch, tk.lexeme);
     	strcat(ch,".");
     	strcat(ch,temp3->token.lexeme);
     	strcpy(tk1.lexeme,ch);
@@ -452,7 +453,7 @@ void insertOutputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,c
 	TERMINAL type = t->identifier;
 
 	insertLocalId(g,temp,tk,type);
-	
+
 	entry* temp1 = (entry*) malloc(sizeof(entry));
 	temp1->token =tk ;
 	temp1->type = type;
@@ -476,7 +477,8 @@ void insertOutputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,c
     while(temp3!=NULL)
     {
     	tokenInfo tk1 = temp3->token;
-    	char* ch = tk.lexeme;
+    	char ch[100];
+    	strcpy(ch, tk.lexeme);
     	strcat(ch,".");
     	strcat(ch,temp3->token.lexeme);
     	strcpy(tk1.lexeme,ch);
