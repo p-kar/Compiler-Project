@@ -17,18 +17,10 @@ typedef struct entry
 	// storing the exact value can be a number can be something else
 }entry;
 
-
 typedef struct IdTable
 {
 	entry *entryArray[997] ;
 }IdTable;
-
-
-int computeHashVal(char* ch);
-
-//entry* findId(IdTable *idTable,char* name);
-
-// may need other but do not need the now
 
 typedef struct funcIdTable
 {
@@ -37,23 +29,16 @@ typedef struct funcIdTable
 	entry* inputParameterList;
 	entry *outputParameterList;
 	struct funcIdTable* next;
+	int input_num;
+	int output_num;
 
 }funcIdTable;
-
 
 typedef struct funcTable
 {
 	funcIdTable *funcTableArray[997];
 
 }funcTable;
-
-
-
-
-//void deleteFuncIdTable(funcTable* curr , char* curr_funcName);
-
-
-
 typedef struct recordEntry
 {
 	entry* arr;
@@ -69,21 +54,17 @@ typedef struct recordTable
 	int next_identifer;
 }recordTable;
 
-//void insertRecord(recordTable* curr,char* name,int type[],char* attr[],char* value[]);
-//recordEntry* findRecordTable(recordTable* curr,char* name);
-
-
 typedef struct GlobalTable
 {
 	entry *entryArray[997] ;
 	funcTable finalFuncTable;
 }GlobalTable;
 
+
+
+int computeHashVal(char* ch);
 bool insertGlobalId(GlobalTable* table ,tokenInfo temp,TERMINAL type);
 entry* findGlobalId(GlobalTable *table,char* name);
-
-
-
 funcIdTable* insertFuncIdTable(GlobalTable* table , char* funcName);
 funcIdTable* findFuncIdTable(funcTable *curr, char* curr_name);
 bool insertLocalId(GlobalTable* global_table,funcIdTable* function_table,tokenInfo temp,TERMINAL type);

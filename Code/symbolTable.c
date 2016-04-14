@@ -252,7 +252,8 @@ funcIdTable* insertFuncIdTable(GlobalTable* table , char* funcName)
 	funcTable *curr = &table->finalFuncTable;
 
 	funcIdTable* curr_funcidtable  = (funcIdTable*) malloc(sizeof(funcIdTable));
-
+	curr_funcidtable->input_num=0;
+	curr_funcidtable->output_num=0;
 	strcpy(curr_funcidtable->funcName,funcName);
 	int k = computeHashVal(funcName);
 
@@ -412,7 +413,7 @@ void insertInputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,ch
 {
 	recordEntry* t = findRecordEntry(name,currRecordTable);
 	TERMINAL type = t->identifier;
-
+	temp->input_num++;
 	insertLocalId(g,temp,tk,type);
 
 	entry* temp1 = (entry*) malloc(sizeof(entry));
@@ -451,7 +452,7 @@ void insertOutputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,c
 {
 	recordEntry* t = findRecordEntry(name,currRecordTable);
 	TERMINAL type = t->identifier;
-
+	temp->output_num++;
 	insertLocalId(g,temp,tk,type);
 
 	entry* temp1 = (entry*) malloc(sizeof(entry));
@@ -495,7 +496,7 @@ void insertInputParameter(GlobalTable *g,funcIdTable* temp,tokenInfo tk,TERMINAL
 	entry* temp1 = (entry*) malloc(sizeof(entry));
 	temp1->token =tk ;
 	temp1->type = type;
-
+	temp->input_num++;
 	entry* temp2 = temp->inputParameterList;
 	if(temp2==NULL)
 	{
@@ -516,7 +517,7 @@ void insertOutputParameter(GlobalTable *g,funcIdTable* temp,tokenInfo tk,TERMINA
 	entry* temp1 = (entry*) malloc(sizeof(entry));
 	temp1->token =tk ;
 	temp1->type = type;
-
+	temp->output_num++;
 	entry* temp2 = temp->outputParameterList;
 	if(temp2==NULL)
 	{
