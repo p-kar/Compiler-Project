@@ -199,7 +199,7 @@ bool insertGlobalRecord(GlobalTable* table,tokenInfo temp,TERMINAL type, char* r
 	entry* new_entry;
 	new_entry = (entry*) malloc(sizeof(entry));
 	new_entry->token = temp;
-	new_entry->type = type;
+	new_entry->type = findRecordEntry(recordtype,record_table)->identifier;
 
 	strcpy( new_entry->recordType,recordtype);
 
@@ -207,7 +207,7 @@ bool insertGlobalRecord(GlobalTable* table,tokenInfo temp,TERMINAL type, char* r
     recordEntry* tempRecordEntry = findRecordEntry(recordtype ,record_table);
 
     entry* temp2 = tempRecordEntry->arr ;
-    printf("**********************\n");
+    //printf("**********************\n");
     while(temp2!=NULL)
     {
     	tokenInfo tk = temp2->token;
@@ -366,7 +366,7 @@ bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMIN
 	entry* new_entry;
 	new_entry = (entry*) malloc(sizeof(entry));
 	new_entry->token = temp;
-	new_entry->type = type;
+	new_entry->type = findRecordEntry(recordtype,record_table)->identifier;
 
 	strcpy( new_entry->recordType,recordtype);
 
@@ -532,7 +532,7 @@ void insertOutputParameter(GlobalTable *g,funcIdTable* temp,tokenInfo tk,TERMINA
 recordTable* initializeRecordTable()
 {
 	recordTable* t = (recordTable*) malloc(sizeof(recordTable));
-	t->next_identifer =TERMINAL_OFFSET +NUM_TERMINALS;
+	t->next_identifer =RECORD_OFFSET;
 	return t;
 }
 
