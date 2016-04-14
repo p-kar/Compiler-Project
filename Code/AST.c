@@ -76,37 +76,37 @@ ASTRuleNode** readASTRuleList(const char* filename)
     return ast_rule_list;
 }
 
+ASTNode* createEmptyASTNode(int rno, int nodeid, tokenInfo tk)
+{
+    ASTNode *a = (ASTNode*) malloc(sizeof(ASTNode));
+    a->child_cnt = 0;
+    a->children = NULL;
+    a->nodeid = nodeid;
+    a->rno = rno;
+    a->tk.lineNum = tk.lineNum;
+    strcpy(a->tk.lexeme, tk.lexeme);
+    a->tk.tokenType = tk.tokenType;
+    a->global_table = NULL;
+    a->local_table = NULL;
+    return a;
+}
+
 ASTNode* createASTfromPT(parseTree p, ASTRuleNode** ast_rule_list)
 {
     if(p == NULL)
         return NULL;
     int rno = p->rno;
-    printf("%s%*s\n", getIDStr(p->nodeid), 50, p->tk.lexeme);
+    // printf("%s%*s\n", getIDStr(p->nodeid), 50, p->tk.lexeme);
     if(rno == -1)   // Is a terminal
-    {
-        ASTNode *a = (ASTNode*) malloc(sizeof(ASTNode));
-        a->child_cnt = 0;
-        a->children = NULL;
-        a->nodeid = p->nodeid;
-        a->rno = rno;
-        a->tk.lineNum = p->tk.lineNum;
-        strcpy(a->tk.lexeme, p->tk.lexeme);
-        a->tk.tokenType = p->tk.tokenType;
-        return a;
-    }
+        return createEmptyASTNode(rno, p->nodeid, p->tk);
     if(ast_rule_list[rno]->action == -1)    //return NULL
         return NULL;
     if(ast_rule_list[rno]->action == 0)     //trim the parse tree
     {
         int i, j = 0;
-        ASTNode *a = (ASTNode*) malloc(sizeof(ASTNode));
+        ASTNode *a = createEmptyASTNode(rno, p->nodeid, p->tk);
         a->child_cnt = ast_rule_list[rno]->ast_child_cnt;
         a->children = (ASTNode**) malloc(sizeof(ASTNode*) * a->child_cnt);
-        a->nodeid = p->nodeid;
-        a->rno = rno;
-        a->tk.lineNum = p->tk.lineNum;
-        strcpy(a->tk.lexeme, p->tk.lexeme);
-        a->tk.tokenType = p->tk.tokenType;
         for (i = 0; i < p->child_cnt; ++i)
         {
             if(ast_rule_list[rno]->flags[i] == false)
@@ -173,4 +173,143 @@ void displayAST(ASTNode* a, const char* outfile)
     fprintf(fp, "%*s%*s%*s%*s%*s%*s\n", 20, lexemeCurrentNode, space_small, lineno, space_small, token, space_small, valuelfNumber, space_small, isLeafNode, space, NodeSymbol);
     displayASTHelper(a, fp);
     fclose(fp);
+}
+
+// handle for record case
+ASTNode* insertFunctionParameters(ASTNode* AT, GlobalTable* global_table, funcIdTable* local_table, recordTable* record_table, bool input)
+{
+    if(AT == NULL)
+        return NULL;
+    AT->global_table = global_table;
+    AT->local_table = local_table;
+    AT->record_table = record_table;
+    if(getNonTerminalfromStr("<parameter_list>") == AT->nodeid)
+    {
+        if(input)
+        {
+            insertInputParameter(global_table, local_table, AT->children[1]->tk, AT->children[0]->nodeid);
+        }
+        else
+        {
+            insertOutputParameter(global_table, local_table, AT->children[1]->tk, AT->children[0]->nodeid);
+        }
+    }
+    int i;
+    for (i = 0; i < AT->child_cnt; ++i)
+        AT->children[i] = insertFunctionParameters(AT->children[i], global_table, local_table, record_table, input);
+    return AT;
+}
+
+ASTNode* insertRecordEntries(ASTNode* AT, char* record_name, recordTable* record_table)
+{
+    if(AT == NULL)
+        return NULL;
+    AT->record_table = record_table;
+    if(getNonTerminalfromStr("<fieldDefinition>") == AT->nodeid)
+    {
+        insertRecordEntry(record_name, record_table, AT->children[1]->tk, AT->children[0]->nodeid);
+        return AT;
+    }
+    int i;
+    for (i = 0; i < AT->child_cnt; ++i)
+        AT->children[i] = insertRecordEntries(AT->children[i], record_name, record_table);
+    return AT;
+}
+
+ASTNode* insertRecordDeclarations(ASTNode* AT, recordTable* record_table)
+{
+    if(AT == NULL)
+        return AT;
+    AT->record_table = record_table;
+    if(getNonTerminalfromStr("<typeDefinition>") != AT->nodeid)
+    {
+        int i;
+        for (i = 0; i < AT->child_cnt; ++i)
+            AT->children[i] = insertRecordDeclarations(AT->children[i], record_table);
+        return AT;
+    }
+    printf("Inserting record %s\n", AT->children[1]->tk.lexeme);
+    insertRecord(AT->children[1]->tk.lexeme, record_table);
+    AT->children[2] = insertRecordEntries(AT->children[2], AT->children[1]->tk.lexeme, record_table);
+    return AT;
+}
+
+ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdTable* local_table, recordTable* record_table)
+{
+    if(AT == NULL)
+        return NULL;
+    // printf("%s\n", getIDStr(AT->nodeid));
+    if(isTerminal(AT->nodeid))
+    {
+        AT->global_table = global_table;
+        AT->local_table = local_table;
+        AT->record_table = record_table;
+        return AT;
+    }
+    // for all these cases ensure return AT because the rest is handled later
+    if(getNonTerminalfromStr("<function>") == AT->nodeid)
+    {
+        local_table = insertFuncIdTable(global_table, AT->children[0]->tk.lexeme);
+        if(local_table == NULL)
+            return NULL;
+        AT->global_table = global_table;
+        AT->local_table = local_table;
+        AT->record_table = record_table;
+        AT->children[1] = insertFunctionParameters(AT->children[1], global_table, local_table, record_table, true);
+        AT->children[2] = insertFunctionParameters(AT->children[2], global_table, local_table, record_table, false);
+        AT->children[3] = makeASTSymbolTableLinks(AT->children[3], global_table, local_table, record_table);
+        return AT;
+    }
+    else if(getNonTerminalfromStr("<declaration>") == AT->nodeid)
+    {
+        // manage TK_INT, TK_REAL, TK_RECORD, TK_GLOBAL
+        // printf("Inserting declaration %s in scope %s\n", AT->children[1]->tk.lexeme, local_table->funcName);
+        AT->global_table = global_table;
+        AT->local_table = local_table;
+        AT->record_table = record_table;
+        if(AT->children[2] != NULL)     // TK_GLOBAL
+        {
+            if(AT->children[0]->nodeid == TK_INT || AT->children[0]->nodeid == TK_REAL)
+            {
+                insertGlobalId(global_table, AT->children[1]->tk, AT->children[0]->nodeid);
+            }
+            else
+            {
+                insertGlobalRecord(global_table, AT->children[1]->tk, TK_RECORD, AT->children[0]->children[1]->tk.lexeme, record_table);
+            }
+        }
+        else
+        {
+            if(AT->children[0]->nodeid == TK_INT || AT->children[0]->nodeid == TK_REAL)
+            {
+                insertLocalId(global_table, local_table, AT->children[1]->tk, AT->children[0]->nodeid);
+            }
+            else
+            {
+                insertLocalRecord(global_table, local_table, AT->children[1]->tk, TK_RECORD, AT->children[0]->children[1]->tk.lexeme, record_table);
+            }
+        }
+    }
+    else if(getNonTerminalfromStr("<typeDefinition>") == AT->nodeid)
+    {
+        return AT;
+    }
+    else if(getNonTerminalfromStr("<mainFunction>") == AT->nodeid)
+    {
+        local_table = insertFuncIdTable(global_table, AT->children[0]->tk.lexeme);
+        if(local_table == NULL)
+            return NULL;
+        AT->global_table = global_table;
+        AT->local_table = local_table;
+        AT->record_table = record_table;
+        AT->children[1] = makeASTSymbolTableLinks(AT->children[1], global_table, local_table, record_table);
+        return AT;
+    }
+    int i;
+    AT->global_table = global_table;
+    AT->local_table = local_table;
+    AT->record_table = record_table;
+    for (i = 0; i < AT->child_cnt; ++i)
+        AT->children[i] = makeASTSymbolTableLinks(AT->children[i], global_table, local_table, record_table);
+    return AT;
 }

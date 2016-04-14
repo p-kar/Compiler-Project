@@ -1,38 +1,32 @@
-/*
-* @Author:    Pratyush Kar (2013A7PS029P),
-*             Ayush Kataria (2013A7PS028P)
-* @Email:     f2013029@pilani.bits-pilani.ac.in,
-*             f2013028@pilani.bits-pilani.ac.in
-* @Gp Number: 52
-* @File Name: symbolTable.h
-* @Date:      2016-03-29 10:44:42
-*/
-
 #ifndef _SYMBOL_TABLE_H_
 #define _SYMBOL_TABLE_H_
-
 #include <stdio.h>
 #include <stdlib.h>
-#include "parserDef.h"
+#include <stdbool.h>
+#include <string.h>
+#include "lexer.h"
+//#include <parserDef.h>
+
 
 typedef struct entry
 {
-	int   type;   // example TK_INT etc. the table remains the same as the one used earlier
-	char name[100];   // the name of the variable example  a, #abc etc.
-	char val[100];
+	TERMINAL   type;   // example TK_INT etc the table remains the same as the one used earlier
+	tokenInfo token;
+	char recordType[100];
 	struct entry* next;
 	// storing the exact value can be a number can be something else
 }entry;
 
+
 typedef struct IdTable
 {
 	entry *entryArray[997] ;
-
 }IdTable;
 
-int computeHashVal();
-void insertId(IdTable* table , entry* new_entry);
-entry* findId(IdTable *idTable,char* name);
+
+int computeHashVal(char* ch);
+
+//entry* findId(IdTable *idTable,char* name);
 
 // may need other but do not need the now
 
@@ -40,18 +34,78 @@ typedef struct funcIdTable
 {
 	IdTable table;
 	char funcName[100];
+	entry* inputParameterList;
+	entry *outputParameterList;
 	struct funcIdTable* next;
 
 }funcIdTable;
 
-// insert input and output parameters
+
 typedef struct funcTable
 {
 	funcIdTable *funcTableArray[997];
+
 }funcTable;
 
-void insertFuncIdTable(funcTable *curr , funcIdTable *curr_funcidtable);
-funcIdTable* findFuncIdTable(funcTable *curr, char* curr_functionname);
-void deleteFuncIdTable(funcTable* curr , char* curr_funcName);
+
+
+
+//void deleteFuncIdTable(funcTable* curr , char* curr_funcName);
+
+
+
+typedef struct recordEntry
+{
+	entry* arr;
+	char name[100];
+	struct recordEntry* next ;
+	int identifier;
+
+}recordEntry;
+
+typedef struct recordTable
+{
+	recordEntry* arr[7];
+	int next_identifer;
+}recordTable;
+
+//void insertRecord(recordTable* curr,char* name,int type[],char* attr[],char* value[]);
+//recordEntry* findRecordTable(recordTable* curr,char* name);
+
+
+typedef struct GlobalTable
+{
+	entry *entryArray[997] ;
+	funcTable finalFuncTable;
+}GlobalTable;
+
+bool insertGlobalId(GlobalTable* table ,tokenInfo temp,TERMINAL type);
+entry* findGlobalId(GlobalTable *table,char* name);
+
+
+
+funcIdTable* insertFuncIdTable(GlobalTable* table , char* funcName);
+funcIdTable* findFuncIdTable(funcTable *curr, char* curr_name);
+bool insertLocalId(GlobalTable* global_table,funcIdTable* function_table,tokenInfo temp,TERMINAL type);
+entry* findLocalId(funcIdTable* table,char* name);
+void insertInputParameter(GlobalTable* g,funcIdTable* temp,tokenInfo tk,TERMINAL type);
+void insertOutputParameter(GlobalTable* g, funcIdTable* temp,tokenInfo tk,TERMINAL type);
+bool insertLocalId(GlobalTable* global_table,funcIdTable* function_table,tokenInfo temp,TERMINAL type);
+entry* findLocalId(funcIdTable* table,char* name);
+
+
+
+void insertRecord(char* name,recordTable* curr);
+void insertRecordEntry(char* name,recordTable* curr,tokenInfo tk , TERMINAL type);
+recordEntry* findRecordEntry(char* name,recordTable* curr);
+
+
+bool insertGlobalRecord(GlobalTable* table,tokenInfo temp,TERMINAL type, char* recordtype , recordTable* record_table);
+bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMINAL type,char* recordtype , recordTable* record_table);
+
+recordTable* initializeRecordTable();
+GlobalTable* initalizeGlobalTable();
+funcIdTable* initalizeLocalTable();
+void displaySymbolTable(GlobalTable* t);
 
 #endif

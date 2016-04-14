@@ -54,16 +54,16 @@ all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./
 	@$(CC) -o driver driver.c ./Build/*.o
 	$(call warnecho, "Built target driver")
 
-./Build/symbolTable.o: parserDef.h ASTDef.h symbolTable.h symbolTable.c
-	@echo -n Building $@...
-	@if !(test -d ./Build); then $(MD) ./Build; fi
-	@$(CC) -c symbolTable.c -o $@
-	$(call okecho, " Done")
-
-./Build/AST.o: ./Build/parser.o ASTDef.h AST.h AST.c
+./Build/AST.o: ./Build/symbolTable.o ./Build/parser.o ASTDef.h AST.h AST.c
 	@echo -n Building $@...
 	@if !(test -d ./Build); then $(MD) ./Build; fi
 	@$(CC) -c AST.c -o $@
+	$(call okecho, " Done")
+
+./Build/symbolTable.o: lexer.h symbolTable.h symbolTable.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c symbolTable.c -o $@
 	$(call okecho, " Done")
 
 ./Build/parser.o: ./Build/stack.o ./Build/parserSets.o parser.h parser.c

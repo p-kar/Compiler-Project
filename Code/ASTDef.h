@@ -13,6 +13,7 @@
 
 #include "parserDef.h"
 #include "parserUtils.h"
+#include "symbolTable.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -33,6 +34,9 @@ struct _ASTNode
     tokenInfo tk;
     int child_cnt;
     struct _ASTNode** children;
+    GlobalTable* global_table;
+    funcIdTable* local_table;
+    recordTable* record_table;
 };
 typedef struct _ASTNode ASTNode;
 
