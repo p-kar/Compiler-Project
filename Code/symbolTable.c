@@ -407,6 +407,86 @@ bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMIN
 	return 1;
 }
 
+
+void insertInputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,char* name,recordTable *currRecordTable)
+{
+	recordEntry* t = findRecordEntry(name,currRecordTable);
+	TERMINAL type = t->identifier;
+
+	insertLocalId(g,temp,tk,type);
+	
+	entry* temp1 = (entry*) malloc(sizeof(entry));
+	temp1->token =tk ;
+	temp1->type = type;
+
+	entry* temp2 = temp->inputParameterList;
+	if(temp2==NULL)
+	{
+		temp->inputParameterList = temp1;
+	}
+	else
+	{
+		while(temp2->next!=NULL)
+		{
+			temp2=temp2->next;
+		}
+		temp2->next = temp1;
+	}
+
+	entry* temp3 = t->arr ;
+
+    while(temp3!=NULL)
+    {
+    	tokenInfo tk1 = temp3->token;
+    	char* ch = tk.lexeme;
+    	strcat(ch,".");
+    	strcat(ch,temp3->token.lexeme);
+    	strcpy(tk1.lexeme,ch);
+    	insertLocalId(g,temp ,tk1,temp3->type);
+    	temp3=temp3->next;
+    }
+}
+void insertOutputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,char* name,recordTable *currRecordTable)
+{
+	recordEntry* t = findRecordEntry(name,currRecordTable);
+	TERMINAL type = t->identifier;
+
+	insertLocalId(g,temp,tk,type);
+	
+	entry* temp1 = (entry*) malloc(sizeof(entry));
+	temp1->token =tk ;
+	temp1->type = type;
+
+	entry* temp2 = temp->outputParameterList;
+	if(temp2==NULL)
+	{
+		temp->outputParameterList = temp1;
+	}
+	else
+	{
+		while(temp2->next!=NULL)
+		{
+			temp2=temp2->next;
+		}
+		temp2->next = temp1;
+	}
+
+	entry* temp3 = t->arr ;
+
+    while(temp3!=NULL)
+    {
+    	tokenInfo tk1 = temp3->token;
+    	char* ch = tk.lexeme;
+    	strcat(ch,".");
+    	strcat(ch,temp3->token.lexeme);
+    	strcpy(tk1.lexeme,ch);
+    	insertLocalId(g,temp ,tk1,temp3->type);
+    	temp3=temp3->next;
+    }
+}
+
+
+
 void insertInputParameter(GlobalTable *g,funcIdTable* temp,tokenInfo tk,TERMINAL type)
 {
 	insertLocalId(g,temp,tk,type);
