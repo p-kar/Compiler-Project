@@ -311,10 +311,6 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
         AT->children[1] = makeASTSymbolTableLinks(AT->children[1], global_table, local_table, record_table);
         return AT;
     }
-    else if(getNonTerminalfromStr("<singleOrRecId>") == AT->nodeid)
-    {
-        // check if variable is declared
-    }
     int i;
     AT->global_table = global_table;
     AT->local_table = local_table;
@@ -322,4 +318,20 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
     for (i = 0; i < AT->child_cnt; ++i)
         AT->children[i] = makeASTSymbolTableLinks(AT->children[i], global_table, local_table, record_table);
     return AT;
+}
+
+int getLineNumber(ASTNode* AT)
+{
+    if(AT == NULL)
+        return -1;
+    if(isTerminal(AT->nodeid))
+        return AT->tk.lineNum;
+    int i;
+    for (i = 0; i < AT->child_cnt; ++i)
+    {
+        int ln = getLineNumber(AT->children[i]);
+        if(ln != -1)
+            return ln;
+    }
+    return -1;
 }

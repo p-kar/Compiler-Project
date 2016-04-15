@@ -14,13 +14,15 @@
 #include "parserUtils.h"
 #include "parser.h"
 #include "AST.h"
+#include "typeChecker.h"
+#include "semanticAnalyzer.h"
 
 int main(int argc, char const *argv[])
 {
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
-    char src_filename[] = "./Testcases/testcase2.txt";
+    char src_filename[] = "./Testcases/testcase0.txt";
     grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
     table T = initialiseParserTable();
@@ -37,6 +39,8 @@ int main(int argc, char const *argv[])
     funcIdTable* local_table = NULL;
     AT = insertRecordDeclarations(AT, record_table);
     AT = makeASTSymbolTableLinks(AT, global_table, local_table, record_table);
-    displaySymbolTable(global_table);
+    // displaySymbolTable(global_table);
+    runTypeCheckerAST(AT);
+    runSemanticAnalyzer(AT);
     return 0;
 }

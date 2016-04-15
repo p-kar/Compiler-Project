@@ -47,12 +47,24 @@ endef
 #---------------------------------------------------------------------
 # rules
 #---------------------------------------------------------------------
-all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o ./Build/AST.o ./Build/symbolTable.o
+all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o ./Build/AST.o ./Build/symbolTable.o ./Build/typeChecker.o ./Build/semanticAnalyzer.o
 	$(call notifyecho, "compiling and linking final code")
 	@$(CC) -o run run.c ./Build/*.o
 	$(call warnecho, "Built target run")
 	@$(CC) -o driver driver.c ./Build/*.o
 	$(call warnecho, "Built target driver")
+
+./Build/semanticAnalyzer.o: ./Build/AST.o semanticAnalyzer.h semanticAnalyzer.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c semanticAnalyzer.c -o $@
+	$(call okecho, " Done")
+
+./Build/typeChecker.o: ./Build/AST.o typeChecker.h typeChecker.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c typeChecker.c -o $@
+	$(call okecho, " Done")
 
 ./Build/AST.o: ./Build/symbolTable.o ./Build/parser.o ASTDef.h AST.h AST.c
 	@echo -n Building $@...
