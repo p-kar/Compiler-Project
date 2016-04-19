@@ -22,7 +22,7 @@ void verifyFunctionParameters(ASTNode* AT, int idx, GlobalTable* global_table, f
             ent = findLocalId(local_table, AT->children[0]->tk.lexeme);
         if(ent == NULL)
         {
-            fprintf(stderr, "Identifier %s not declared.\n", AT->children[0]->tk.lexeme);
+            fprintf(stderr, "Line %d: Identifier %s not declared.\n", getLineNumber(AT), AT->children[0]->tk.lexeme);
             return;
         }
         entry* fent;
@@ -38,22 +38,25 @@ void verifyFunctionParameters(ASTNode* AT, int idx, GlobalTable* global_table, f
         }
         if(fent == NULL)
         {
-            fprintf(stderr, "Function parameters of <%s> don't match on line <%d>.\n", func_table->funcName, getLineNumber(AT));
+            if(input)
+                fprintf(stderr, "Line %d: Too many input parameters received for function %s.\n", getLineNumber(AT), func_table->funcName);
+            else
+                fprintf(stderr, "Line %d: Too many output parameters received for function %s.\n", getLineNumber(AT), func_table->funcName);
             return;
         }
         if(fent->type != ent->type)
         {
-            fprintf(stderr, "Function <%s> parameters type mismatch between %s and %s on line <%d>\n", func_table->funcName, fent->token.lexeme, ent->token.lexeme, getLineNumber(AT));
+            fprintf(stderr, "Line %d: Function %s parameters type mismatch between %s and %s.\n", getLineNumber(AT), func_table->funcName, fent->token.lexeme, ent->token.lexeme);
             return;
         }
         if(AT->children[1] == NULL && input && func_table->input_num != idx + 1)
         {
-            fprintf(stderr, "Function parameters <%s> don't match on line <%d>\n", func_table->funcName, AT->children[0]->tk.lineNum);
+            fprintf(stderr, "Line %d: Too few input parameters received for function %s.\n", getLineNumber(AT), func_table->funcName);
             return;
         }
         if(AT->children[1] == NULL && !input && func_table->output_num != idx + 1)
         {
-            fprintf(stderr, "Function parameters <%s> don't match on line <%d>\n", func_table->funcName, AT->children[0]->tk.lineNum);
+            fprintf(stderr, "Line %d: Too few output parameters received for function %s.\n", getLineNumber(AT), func_table->funcName);
             return;
         }
         verifyFunctionParameters(AT->children[1], idx + 1, global_table, local_table, record_table, func_table, input);
@@ -78,17 +81,17 @@ void verifyFunctionReturnStmt(ASTNode* AT, int idx, funcIdTable* local_table)
     }
     if(fent == NULL)
     {
-        fprintf(stderr, "Function %s return statement parameter mismatch on line <%d>\n", local_table->funcName, getLineNumber(AT));
+        fprintf(stderr, "Line %d: Too many parameters in function %s return statement.\n", getLineNumber(AT), local_table->funcName);
         return;
     }
     if(strcmp(fent->token.lexeme, AT->children[0]->tk.lexeme) != 0)
     {
-        fprintf(stderr, "Function %s return statement parameter mismatch between %s and %s on line <%d>.\n", local_table->funcName, fent->token.lexeme, AT->children[0]->tk.lexeme, getLineNumber(AT));
+        fprintf(stderr, "Line %d: Function %s return statement parameter mismatch between %s and %s.\n", getLineNumber(AT), local_table->funcName, fent->token.lexeme, AT->children[0]->tk.lexeme);
         return;
     }
     if(AT->children[1] == NULL && local_table->output_num != idx + 1)
     {
-        fprintf(stderr, "Function %s return statement parameter mismatch on line <%d>.\n", local_table->funcName, getLineNumber(AT));
+        fprintf(stderr, "Line %d: Too few parameters in function %s return statement.\n", getLineNumber(AT), local_table->funcName);
         return;
     }
     verifyFunctionReturnStmt(AT->children[1], idx + 1, local_table);
@@ -146,6 +149,13 @@ modSet* getModifySetStmts(ASTNode* AT, modSet* head)
         head = addIdListModSet(AT->children[0], head);
         return head;
     }
+    else if(getNonTerminalfromStr("<ioStmt>") == AT->nodeid && AT->children[0]->nodeid == TK_READ)
+    {
+        char identifier[500];
+        strcpy(identifier, AT->children[1]->children[0]->tk.lexeme);
+        head = addModSet(head, identifier);
+        return head;
+    }
     int i;
     for (i = 0; i < AT->child_cnt; ++i)
         head = getModifySetStmts(AT->children[i], head);
@@ -180,28 +190,29 @@ void runSemanticAnalyzer(ASTNode* AT)
     {
         if(strcmp(AT->children[1]->tk.lexeme, local_table->funcName) == 0)
         {
-            fprintf(stderr, "Recursion detected on line <%d>.\n", getLineNumber(AT));
+            fprintf(stderr, "Line %d: Recursion detected in function %s.\n", getLineNumber(AT), local_table->funcName);
             return;
         }
         funcIdTable* func_table = findFuncIdTable(&(global_table->finalFuncTable), AT->children[1]->tk.lexeme);
         if(func_table == NULL)
         {
-            fprintf(stderr, "The function %s on line <%d> is undefined.\n", AT->children[1]->tk.lexeme, getLineNumber(AT));
+            fprintf(stderr, "Line %d: The function %s is undefined.\n", getLineNumber(AT), AT->children[1]->tk.lexeme);
             return;
         }
         if(func_table->input_num > 0 && AT->children[2] == NULL)
         {
-            fprintf(stderr, "Function parameters %s don't match on line <%d>\n", func_table->funcName, getLineNumber(AT));
+            fprintf(stderr, "Line %d: Too few input parameters received for function %s.\n", getLineNumber(AT), func_table->funcName);
             return;
         }
         if(func_table->output_num > 0 & AT->children[0] == NULL)
         {
-            fprintf(stderr, "Function parameters %s don't match on line <%d>\n", func_table->funcName, getLineNumber(AT));
+            fprintf(stderr, "Line %d: Too few output parameters received for function %s.\n", getLineNumber(AT), func_table->funcName);
             return;
         }
         verifyFunctionParameters(AT->children[0], 0, global_table, local_table, record_table, func_table, false);
         verifyFunctionParameters(AT->children[2], 0, global_table, local_table, record_table, func_table, true);
     }
+    /*
     else if(getNonTerminalfromStr("<singleOrRecId>") == AT->nodeid)
     {
         if(AT->children[1] != NULL)     // TK_RECORD
@@ -210,20 +221,21 @@ void runSemanticAnalyzer(ASTNode* AT)
             sprintf(record_id, "%s.%s", AT->children[0]->tk.lexeme, AT->children[1]->tk.lexeme);
             if(findGlobalId(global_table, record_id) == NULL && findLocalId(local_table, record_id) == NULL)
             {
-                fprintf(stderr, "Identifier %s on line number <%d> not declared.\n", record_id, getLineNumber(AT));
+                fprintf(stderr, "Line %d: Identifier %s not declared.\n", getLineNumber(AT), record_id);
             }
         }
         else
         {
             if(findGlobalId(global_table, AT->children[0]->tk.lexeme) == NULL && findLocalId(local_table, AT->children[0]->tk.lexeme) == NULL)
-                fprintf(stderr, "Identifier %s one line number <%d> not declared.\n", AT->children[0]->tk.lexeme, getLineNumber(AT));
+                fprintf(stderr, "Line %d: Identifier %s not declared.\n", getLineNumber(AT), AT->children[0]->tk.lexeme);
         }
     }
+    */
     else if(getNonTerminalfromStr("<returnStmt>") == AT->nodeid)
     {
         if(local_table->output_num > 0 && AT->children[1] == NULL)
         {
-            fprintf(stderr, "Function %s expected %d parameters received 0 on line <%d>.\n", local_table->funcName, local_table->output_num, getLineNumber(AT));
+            fprintf(stderr, "Line %d: Too few parameters in function %s return statement.\n", getLineNumber(AT), local_table->funcName);
             return;
         }
         verifyFunctionReturnStmt(AT->children[1], 0, local_table);
@@ -235,7 +247,7 @@ void runSemanticAnalyzer(ASTNode* AT)
         head = getModifySetStmts(AT->children[3], head);
         if(!checkWhileCondition(AT->children[1], head))
         {
-            fprintf(stderr, "None of the variables participating in the iterations of the while loop gets updated on line <%d>\n", getLineNumber(AT));
+            fprintf(stderr, "Line %d: None of the variables participating in the iterations of the while loop gets updated.\n", getLineNumber(AT));
         }
     }
     else if(getNonTerminalfromStr("<function>") == AT->nodeid)
@@ -247,7 +259,7 @@ void runSemanticAnalyzer(ASTNode* AT)
         {
             if(!inModSet(head, fent->token.lexeme))
             {
-                fprintf(stderr, "Function %s return parameter %s never updated.\n", local_table->funcName, fent->token.lexeme);
+                fprintf(stderr, "Line %d: Function %s return parameter %s never updated.\n", getLineNumber(AT), local_table->funcName, fent->token.lexeme);
             }
             fent = fent->next;
         }

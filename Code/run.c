@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
-    char src_filename[] = "./Testcases/testcase0.txt";
+    char src_filename[] = "./Semantic Testcases/testcase3.txt";
     grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
     table T = initialiseParserTable();
