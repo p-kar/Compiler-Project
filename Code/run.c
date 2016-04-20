@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
-    char src_filename[] = "./Testcases/main3.txt";
+    char src_filename[] = "./Semantic Testcases/testcase3.txt";
     grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
     table T = initialiseParserTable();
@@ -35,11 +35,7 @@ int main(int argc, char const *argv[])
     //displayASTRuleList(ast_rule_list, rulelist);
     ASTNode* AT = createASTfromPT(PT, ast_rule_list);
     displayAST(AT, "atree.txt");
-    recordTable* record_table = initializeRecordTable();
-    GlobalTable* global_table = initalizeGlobalTable();
-    funcIdTable* local_table = NULL;
-    AT = insertRecordDeclarations(AT, record_table);
-    AT = makeASTSymbolTableLinks(AT, global_table, local_table, record_table);
+    AT = makeASTSymbolTableLinks(AT);
     // displaySymbolTable(global_table);
     runTypeCheckerAST(AT);
     runSemanticAnalyzer(AT);

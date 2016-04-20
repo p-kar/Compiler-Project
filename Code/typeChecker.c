@@ -27,7 +27,7 @@ int getType(ASTNode* AT)
             ent = findLocalId(local_table, AT->tk.lexeme);
         if(ent == NULL)
         {
-            fprintf(stderr, "Identifier %s on line <%d> hasn't been declared in this scope.\n", AT->tk.lexeme, AT->tk.lineNum);
+            fprintf(stderr, "Line %d: Identifier %s hasn't been declared in this scope.\n", getLineNumber(AT), AT->tk.lexeme);
             return TYPE_ERROR;
         }
         if(ent->type == TK_INT)
@@ -47,7 +47,7 @@ int getType(ASTNode* AT)
                 ent = findLocalId(local_table, AT->children[0]->tk.lexeme);
             if(ent == NULL)
             {
-                fprintf(stderr, "Identifier %s on line <%d> hasn't been declared in this scope.\n", AT->children[0]->tk.lexeme, AT->children[0]->tk.lineNum);
+                fprintf(stderr, "Line %d: Identifier %s hasn't been declared in this scope.\n", getLineNumber(AT), AT->children[0]->tk.lexeme);
                 return TYPE_ERROR;
             }
             if(ent->type == TK_INT)
@@ -65,7 +65,7 @@ int getType(ASTNode* AT)
                 ent = findLocalId(local_table, record_id);
             if(ent == NULL)
             {
-                fprintf(stderr, "Identifier %s on line <%d> hasn't been declared in this scope.\n", record_id, AT->children[0]->tk.lineNum);
+                fprintf(stderr, "Line %d: Identifier %s hasn't been declared in this scope.\n", getLineNumber(AT), record_id);
                 return TYPE_ERROR;
             }
             if(ent->type == TK_INT)
@@ -155,18 +155,22 @@ void runTypeCheckerAST(ASTNode* AT)
         Type t1 = getType(AT->children[0]);
         Type t2 = getType(AT->children[1]);
         if(t1 != t2)
-            fprintf(stderr, "Type mismatch in assignment statement on line <%d>.\n", AT->children[0]->children[0]->tk.lineNum);
+            fprintf(stderr, "Line %d: Type mismatch in assignment statement.\n", getLineNumber(AT));
         return;
     }
     else if(getNonTerminalfromStr("<iterativeStmt>") == AT->nodeid)
     {
         if(getType(AT->children[1]) != TYPE_BOOL)
-            fprintf(stderr, "Condition inside while statement on line <%d> is not of boolean type.\n", AT->children[0]->tk.lineNum);
+            fprintf(stderr, "Line %d: Condition inside while statement is not of boolean type.\n", getLineNumber(AT));
     }
     else if(getNonTerminalfromStr("<conditionalStmt>") == AT->nodeid)
     {
         if(getType(AT->children[1]) != TYPE_BOOL)
-            fprintf(stderr, "Condition inside if statement on line <%d> is not of boolean type.\n", AT->children[0]->tk.lineNum);
+            fprintf(stderr, "Line %d: Condition inside if statement is not of boolean type.\n", getLineNumber(AT));
+    }
+    else if(getNonTerminalfromStr("<ioStmt>") == AT->nodeid)
+    {
+        getType(AT->children[1]);
     }
     int i;
     for (i = 0; i < AT->child_cnt; ++i)
