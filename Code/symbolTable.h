@@ -7,6 +7,8 @@
 #include "lexer.h"
 //#include <parserDef.h>
 
+#define INTSPACE 4	
+#define REALSPACE 8
 
 typedef struct entry
 {
@@ -14,6 +16,7 @@ typedef struct entry
 	tokenInfo token;
 	char recordType[100];
 	struct entry* next;
+	int offset;
 	// storing the exact value can be a number can be something else
 }entry;
 
@@ -31,6 +34,7 @@ typedef struct funcIdTable
 	struct funcIdTable* next;
 	int input_num;
 	int output_num;
+	int identifer;
 
 }funcIdTable;
 
@@ -58,6 +62,7 @@ typedef struct GlobalTable
 {
 	entry *entryArray[997] ;
 	funcTable finalFuncTable;
+
 }GlobalTable;
 
 

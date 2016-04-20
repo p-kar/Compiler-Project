@@ -47,12 +47,18 @@ endef
 #---------------------------------------------------------------------
 # rules
 #---------------------------------------------------------------------
-all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o ./Build/AST.o ./Build/symbolTable.o ./Build/typeChecker.o ./Build/semanticAnalyzer.o
+all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o ./Build/AST.o ./Build/symbolTable.o ./Build/typeChecker.o ./Build/semanticAnalyzer.o ./Build/codeGen.o
 	$(call notifyecho, "compiling and linking final code")
 	@$(CC) -o run run.c ./Build/*.o
 	$(call warnecho, "Built target run")
 	@$(CC) -o driver driver.c ./Build/*.o
 	$(call warnecho, "Built target driver")
+
+./Build/codeGen.o: ./Build/AST.o codeGen.h codeGen.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c codeGen.c -o $@
+	$(call okecho, " Done")
 
 ./Build/semanticAnalyzer.o: ./Build/AST.o semanticAnalyzer.h semanticAnalyzer.c
 	@echo -n Building $@...

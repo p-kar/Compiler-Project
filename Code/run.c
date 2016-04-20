@@ -16,22 +16,23 @@
 #include "AST.h"
 #include "typeChecker.h"
 #include "semanticAnalyzer.h"
+#include "codeGen.h"
 
 int main(int argc, char const *argv[])
 {
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
-    char src_filename[] = "./Testcases/testcase0.txt";
+    char src_filename[] = "./Testcases/main3.txt";
     grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
     table T = initialiseParserTable();
     createParseTable(rulelist, T);
-    // displayParserTable(T);
+    //displayParserTable(T);
     parseTree PT = parseInputSourceCode(src_filename, rulelist, T);
     printParseTree(PT, "ptree.txt");
     ASTRuleNode** ast_rule_list = readASTRuleList("./Grammar/astrules.txt");
-    // displayASTRuleList(ast_rule_list, rulelist);
+    //displayASTRuleList(ast_rule_list, rulelist);
     ASTNode* AT = createASTfromPT(PT, ast_rule_list);
     displayAST(AT, "atree.txt");
     recordTable* record_table = initializeRecordTable();
@@ -42,5 +43,6 @@ int main(int argc, char const *argv[])
     // displaySymbolTable(global_table);
     runTypeCheckerAST(AT);
     runSemanticAnalyzer(AT);
+    generateCode(AT);
     return 0;
 }

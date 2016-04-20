@@ -1,0 +1,85 @@
+RIM      0. <program> ===> <otherFunctions> <mainFunction> 
+TRIM      1. <mainFunction> ===> TK_MAIN <stmts> 
+TRIM      2. <otherFunctions> ===> <function> <otherFunctions> 
+REMOVE    3. NULL
+TRIM      4. <function> ===> TK_FUNID <input_par> <output_par> <stmts> 
+TRIM      5. <input_par> ===> <parameter_list> 
+TRIM      6. <output_par> ===> <parameter_list> 
+REMOVE    7. NULL
+TRIM      8. <parameter_list> ===> <dataType> TK_ID <remaining_list> 
+COLLAPSE  9. <dataType> ===> <primitiveDatatype> 
+COLLAPSE  10. <dataType> ===> <constructedDatatype> 
+COLLAPSE  11. <primitiveDatatype> ===> TK_INT 
+COLLAPSE  12. <primitiveDatatype> ===> TK_REAL 
+TRIM      13. <constructedDatatype> ===> TK_RECORD TK_RECORDID 
+COLLAPSE  14. <remaining_list> ===> <parameter_list> 
+REMOVE    15. NULL
+TRIM      16. <stmts> ===> <typeDefinitions> <declarations> <otherStmts> <returnStmt> 
+TRIM      17. <typeDefinitions> ===> <typeDefinition> <typeDefinitions> 
+REMOVE    18. NULL
+TRIM      19. <typeDefinition> ===> TK_RECORD TK_RECORDID <fieldDefinitions> 
+TRIM      20. <fieldDefinitions> ===> <fieldDefinition> <fieldDefinition> <moreFields> 
+TRIM      21. <fieldDefinition> ===> <primitiveDatatype> TK_FIELDID 
+TRIM      22. <moreFields> ===> <fieldDefinition> <moreFields> 
+REMOVE    23. NULL
+TRIM      24. <declarations> ===> <declaration> <declarations> 
+REMOVE    25. NULL
+TRIM      26. <declaration> ===> <dataType> TK_ID <global_or_not> 
+COLLAPSE  27. <global_or_not> ===> TK_GLOBAL 
+REMOVE    28. NULL
+TRIM      29. <otherStmts> ===> <stmt> <otherStmts> 
+REMOVE    30. NULL
+COLLAPSE  31. <stmt> ===> <assignmentStmt> 
+COLLAPSE  32. <stmt> ===> <iterativeStmt> 
+COLLAPSE  33. <stmt> ===> <conditionalStmt> 
+COLLAPSE  34. <stmt> ===> <ioStmt> 
+COLLAPSE  35. <stmt> ===> <funCallStmt> 
+TRIM      36. <assignmentStmt> ===> <singleOrRecId> <arithmeticExpression> 
+TRIM      37. <singleOrRecId> ===> TK_ID <new_24> 
+COLLAPSE  38. <new_24> ===> TK_FIELDID 
+REMOVE    39. NULL
+TRIM      40. <funCallStmt> ===> <outputParameters> TK_FUNID <inputParameters> 
+TRIM      41. <outputParameters> ===> <idList> 
+REMOVE    42. NULL
+TRIM      43. <inputParameters> ===> <idList> 
+TRIM      44. <iterativeStmt> ===> TK_WHILE <booleanExpression> <stmt> <otherStmts> 
+TRIM      45. <conditionalStmt> ===> TK_IF <booleanExpression> <stmt> <otherStmts> <elsePart> 
+TRIM      46. <elsePart> ===> <stmt> <otherStmts> 
+REMOVE    47. NULL
+TRIM      48. <ioStmt> ===> TK_READ <singleOrRecId> 
+TRIM      49. <ioStmt> ===> TK_WRITE <allVar> 
+COLLAPSE  50. <allVar> ===> <singleOrRecId> 
+COLLAPSE  51. <allVar> ===> TK_NUM 
+COLLAPSE  52. <allVar> ===> TK_RNUM 
+TRIM      53. <arithmeticExpression> ===> <term> <expPrime> 
+TRIM      54. <expPrime> ===> <lowPrecedenceOperators> <term> <expPrime> 
+REMOVE    55. NULL
+TRIM      56. <term> ===> <factor> <termPrime> 
+TRIM      57. <termPrime> ===> <highPrecedenceOperators> <factor> <termPrime> 
+REMOVE    58. NULL
+COLLAPSE  59. <factor> ===> <arithmeticExpression> 
+COLLAPSE  60. <factor> ===> <allVar> 
+COLLAPSE  61. <highPrecedenceOperators> ===> TK_MUL 
+COLLAPSE  62. <highPrecedenceOperators> ===> TK_DIV 
+COLLAPSE  63. <lowPrecedenceOperators> ===> TK_PLUS
+COLLAPSE  64. <lowPrecedenceOperators> ===> TK_MINUS 
+TRIM      65. <booleanExpression> ===> <booleanExpression> <logicalOp> <booleanExpression> 
+TRIM      66. <booleanExpression> ===> <var> <relationalOp> <var> 
+TRIM      67. <booleanExpression> ===> TK_NOT <booleanExpression> 
+COLLAPSE  68. <var> ===> TK_ID 
+COLLAPSE  69. <var> ===> TK_NUM 
+COLLAPSE  70. <var> ===> TK_RNUM 
+COLLAPSE  71. <logicalOp> ===> TK_AND 
+COLLAPSE  72. <logicalOp> ===> TK_OR 
+COLLAPSE  73. <relationalOp> ===> TK_LT 
+COLLAPSE  74. <relationalOp> ===> TK_LE 
+COLLAPSE  75. <relationalOp> ===> TK_EQ 
+COLLAPSE  76. <relationalOp> ===> TK_GT 
+COLLAPSE  77. <relationalOp> ===> TK_GE 
+COLLAPSE  78. <relationalOp> ===> TK_NE 
+TRIM      79. <returnStmt> ===> TK_RETURN <optionalReturn> 
+COLLAPSE  80. <optionalReturn> ===> <idList> 
+REMOVE    81. NULL
+TRIM      82. <idList> ===> TK_ID <more_ids> 
+COLLAPSE  83. <more_ids> ===> <idList> 
+REMOVE    84. NULL
