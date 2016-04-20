@@ -46,7 +46,10 @@ void verifyFunctionParameters(ASTNode* AT, int idx, GlobalTable* global_table, f
         }
         if(fent->type != ent->type)
         {
-            fprintf(stderr, "Line %d: Function %s parameters type mismatch between %s and %s.\n", getLineNumber(AT), func_table->funcName, fent->token.lexeme, ent->token.lexeme);
+            if(input)
+                fprintf(stderr, "Line %d: Function %s input parameters type mismatch between %s and %s.\n", getLineNumber(AT), func_table->funcName, fent->token.lexeme, ent->token.lexeme);
+            else
+                fprintf(stderr, "Line %d: Function %s output parameters type mismatch between %s and %s.\n", getLineNumber(AT), func_table->funcName, fent->token.lexeme, ent->token.lexeme);
             return;
         }
         if(AT->children[1] == NULL && input && func_table->input_num != idx + 1)

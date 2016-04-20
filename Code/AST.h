@@ -23,8 +23,7 @@ ASTRuleNode** readASTRuleList(const char* filename);
 ASTNode* createASTfromPT(parseTree PT, ASTRuleNode** ast_rule_list);
 void displayASTRuleList(ASTRuleNode** ast_rule_list, grammar rulelist);
 void displayAST(ASTNode* a, const char* outfile);
-ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdTable* local_table, recordTable* record_table);
-ASTNode* insertRecordDeclarations(ASTNode* AT, recordTable* record_table);
+ASTNode* makeASTSymbolTableLinks(ASTNode* AT);
 int getLineNumber(ASTNode* AT);
 
 #endif

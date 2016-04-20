@@ -240,7 +240,43 @@ ASTNode* insertRecordDeclarations(ASTNode* AT, recordTable* record_table)
     return AT;
 }
 
-ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdTable* local_table, recordTable* record_table)
+ASTNode* makeGlobalSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, recordTable* record_table)
+{
+    if(AT == NULL)
+        return NULL;
+    if(isTerminal(AT->nodeid))
+    {
+        AT->global_table = global_table;
+        AT->record_table = record_table;
+        return AT;
+    }
+    if(getNonTerminalfromStr("<typeDefinition>") == AT->nodeid)
+        return AT;
+    else if(getNonTerminalfromStr("<declaration>") == AT->nodeid)
+    {
+        AT->global_table = global_table;
+        AT->record_table = record_table;
+        if(AT->children[2] != NULL)     // TK_GLOBAL
+        {
+            if(AT->children[0]->nodeid == TK_INT || AT->children[0]->nodeid == TK_REAL)
+            {
+                insertGlobalId(global_table, AT->children[1]->tk, AT->children[0]->nodeid);
+            }
+            else
+            {
+                insertGlobalRecord(global_table, AT->children[1]->tk, TK_RECORD, AT->children[0]->children[1]->tk.lexeme, record_table);
+            }
+        }
+    }
+    int i;
+    AT->global_table = global_table;
+    AT->record_table = record_table;
+    for (i = 0; i < AT->child_cnt; ++i)
+        AT->children[i] = makeGlobalSymbolTableLinks(AT->children[i], global_table, record_table);
+    return AT;
+}
+
+ASTNode* makeLocalSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdTable* local_table, recordTable* record_table)
 {
     if(AT == NULL)
         return NULL;
@@ -263,7 +299,7 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
         AT->record_table = record_table;
         AT->children[1] = insertFunctionParameters(AT->children[1], global_table, local_table, record_table, true);
         AT->children[2] = insertFunctionParameters(AT->children[2], global_table, local_table, record_table, false);
-        AT->children[3] = makeASTSymbolTableLinks(AT->children[3], global_table, local_table, record_table);
+        AT->children[3] = makeLocalSymbolTableLinks(AT->children[3], global_table, local_table, record_table);
         return AT;
     }
     else if(getNonTerminalfromStr("<declaration>") == AT->nodeid)
@@ -272,18 +308,7 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
         AT->global_table = global_table;
         AT->local_table = local_table;
         AT->record_table = record_table;
-        if(AT->children[2] != NULL)     // TK_GLOBAL
-        {
-            if(AT->children[0]->nodeid == TK_INT || AT->children[0]->nodeid == TK_REAL)
-            {
-                insertGlobalId(global_table, AT->children[1]->tk, AT->children[0]->nodeid);
-            }
-            else
-            {
-                insertGlobalRecord(global_table, AT->children[1]->tk, TK_RECORD, AT->children[0]->children[1]->tk.lexeme, record_table);
-            }
-        }
-        else
+        if(AT->children[2] == NULL)
         {
             if(AT->children[0]->nodeid == TK_INT || AT->children[0]->nodeid == TK_REAL)
             {
@@ -308,7 +333,7 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
         AT->global_table = global_table;
         AT->local_table = local_table;
         AT->record_table = record_table;
-        AT->children[1] = makeASTSymbolTableLinks(AT->children[1], global_table, local_table, record_table);
+        AT->children[1] = makeLocalSymbolTableLinks(AT->children[1], global_table, local_table, record_table);
         return AT;
     }
     int i;
@@ -316,7 +341,18 @@ ASTNode* makeASTSymbolTableLinks(ASTNode* AT, GlobalTable* global_table, funcIdT
     AT->local_table = local_table;
     AT->record_table = record_table;
     for (i = 0; i < AT->child_cnt; ++i)
-        AT->children[i] = makeASTSymbolTableLinks(AT->children[i], global_table, local_table, record_table);
+        AT->children[i] = makeLocalSymbolTableLinks(AT->children[i], global_table, local_table, record_table);
+    return AT;
+}
+
+ASTNode* makeASTSymbolTableLinks(ASTNode* AT)
+{
+    recordTable* record_table = initializeRecordTable();
+    GlobalTable* global_table = initalizeGlobalTable();
+    funcIdTable* local_table = NULL;
+    AT = insertRecordDeclarations(AT, record_table);
+    AT = makeGlobalSymbolTableLinks(AT, global_table, record_table);
+    AT = makeLocalSymbolTableLinks(AT, global_table, local_table, record_table);
     return AT;
 }
 
