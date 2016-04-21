@@ -10,6 +10,26 @@
 
 #include "typeChecker.h"
 
+int getCummulativeRecordType(int ident, recordTable* record_table)
+{
+    recordEntry* rent = getRecordEntry(ident, record_table);
+    if(rent == NULL)
+        return TYPE_ERROR;
+    entry *p = rent->arr;
+    int type = p->type;
+    while(p != NULL)
+    {
+        if(type != p->type)
+            return TYPE_ERROR;
+        p = p->next;
+    }
+    if(type == TK_INT)
+        return TYPE_INT;
+    else if(type == TK_REAL)
+        return TYPE_REAL;
+    return TYPE_ERROR;
+}
+
 int getType(ASTNode* AT)
 {
     if(AT == NULL)
@@ -20,6 +40,7 @@ int getType(ASTNode* AT)
         return TYPE_REAL;
     GlobalTable *global_table = AT->global_table;
     funcIdTable* local_table = AT->local_table;
+    recordTable* record_table = AT->record_table;
     if(AT->nodeid == TK_ID)
     {
         entry* ent = findGlobalId(global_table, AT->tk.lexeme);
@@ -83,7 +104,7 @@ int getType(ASTNode* AT)
         Type t2 = getType(AT->children[1]);
         if(t2 == TYPE_NULL)
             return t1;
-        if(t1 == t2 && (t1 == TYPE_INT || t1 == TYPE_REAL))
+        if(t1 == t2)
             return t1;
         return TYPE_ERROR;
     }
@@ -95,6 +116,14 @@ int getType(ASTNode* AT)
             return t1;
         if(t1 == t2 && (t1 == TYPE_INT || t1 == TYPE_REAL))
             return t1;
+        if((int) t1 >= RECORD_OFFSET)
+        {
+            Type t3 = getCummulativeRecordType(t1, record_table);
+            if(t3 == TYPE_ERROR)
+                return TYPE_ERROR;
+            if(t3 == t2)
+                return t1;
+        }
         return TYPE_ERROR;
     }
     else if(getNonTerminalfromStr("<factor>") == AT->nodeid)
@@ -107,7 +136,7 @@ int getType(ASTNode* AT)
         Type t2 = getType(AT->children[2]);
         if(t2 == TYPE_NULL)
             return t1;
-        if(t1 == t2 && (t1 == TYPE_INT || t1 == TYPE_REAL))
+        if(t1 == t2)
             return t1;
         return TYPE_ERROR;
     }
@@ -119,6 +148,14 @@ int getType(ASTNode* AT)
             return t1;
         if(t1 == t2 && (t1 == TYPE_INT || t1 == TYPE_REAL))
             return t1;
+        if((int) t1 >= RECORD_OFFSET)
+        {
+            Type t3 = getCummulativeRecordType(t1, record_table);
+            if(t3 == TYPE_ERROR)
+                return TYPE_ERROR;
+            if(t3 == t2)
+                return t1;
+        }
         return TYPE_ERROR;
     }
     else if(getNonTerminalfromStr("<booleanExpression>") == AT->nodeid)
