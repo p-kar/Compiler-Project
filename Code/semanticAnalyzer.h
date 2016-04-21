@@ -14,7 +14,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "AST.h"
+
+extern bool SEMANTIC_ERROR;
 
 struct _modSet
 {

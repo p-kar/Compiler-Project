@@ -10,6 +10,8 @@
 
 #include "typeChecker.h"
 
+bool TYPECHECKER_ERROR = false;
+
 int getCummulativeRecordType(int ident, recordTable* record_table)
 {
     recordEntry* rent = getRecordEntry(ident, record_table);
@@ -49,6 +51,7 @@ int getType(ASTNode* AT)
         if(ent == NULL)
         {
             fprintf(stderr, "Line %d: Identifier %s hasn't been declared in this scope.\n", getLineNumber(AT), AT->tk.lexeme);
+            TYPECHECKER_ERROR = true;
             return TYPE_ERROR;
         }
         if(ent->type == TK_INT)
@@ -69,6 +72,7 @@ int getType(ASTNode* AT)
             if(ent == NULL)
             {
                 fprintf(stderr, "Line %d: Identifier %s hasn't been declared in this scope.\n", getLineNumber(AT), AT->children[0]->tk.lexeme);
+                TYPECHECKER_ERROR = true;
                 return TYPE_ERROR;
             }
             if(ent->type == TK_INT)
@@ -87,6 +91,7 @@ int getType(ASTNode* AT)
             if(ent == NULL)
             {
                 fprintf(stderr, "Line %d: Identifier %s hasn't been declared in this scope.\n", getLineNumber(AT), record_id);
+                TYPECHECKER_ERROR = true;
                 return TYPE_ERROR;
             }
             if(ent->type == TK_INT)
@@ -124,6 +129,14 @@ int getType(ASTNode* AT)
             if(t3 == t2)
                 return t1;
         }
+        if((int) t2 >= RECORD_OFFSET)
+        {
+            Type t3 = getCummulativeRecordType(t2, record_table);
+            if(t3 == TYPE_ERROR)
+                return TYPE_ERROR;
+            if(t3 == t2)
+                return t2;
+        }
         return TYPE_ERROR;
     }
     else if(getNonTerminalfromStr("<factor>") == AT->nodeid)
@@ -155,6 +168,14 @@ int getType(ASTNode* AT)
                 return TYPE_ERROR;
             if(t3 == t2)
                 return t1;
+        }
+        if((int) t2 >= RECORD_OFFSET)
+        {
+            Type t3 = getCummulativeRecordType(t2, record_table);
+            if(t3 == TYPE_ERROR)
+                return TYPE_ERROR;
+            if(t3 == t2)
+                return t2;
         }
         return TYPE_ERROR;
     }
@@ -193,17 +214,20 @@ void runTypeCheckerAST(ASTNode* AT)
         Type t2 = getType(AT->children[1]);
         if(t1 != t2)
             fprintf(stderr, "Line %d: Type mismatch in assignment statement.\n", getLineNumber(AT));
+        TYPECHECKER_ERROR = true;
         return;
     }
     else if(getNonTerminalfromStr("<iterativeStmt>") == AT->nodeid)
     {
         if(getType(AT->children[1]) != TYPE_BOOL)
             fprintf(stderr, "Line %d: Condition inside while statement is not of boolean type.\n", getLineNumber(AT));
+        TYPECHECKER_ERROR = true;
     }
     else if(getNonTerminalfromStr("<conditionalStmt>") == AT->nodeid)
     {
         if(getType(AT->children[1]) != TYPE_BOOL)
             fprintf(stderr, "Line %d: Condition inside if statement is not of boolean type.\n", getLineNumber(AT));
+        TYPECHECKER_ERROR = true;
     }
     else if(getNonTerminalfromStr("<ioStmt>") == AT->nodeid)
     {

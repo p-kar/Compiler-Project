@@ -18,7 +18,7 @@ void displayTriple()
 
 }
 
-void addTriple(char* op , int val1 , int val2)
+int addTriple(char* op , int val1 , int val2)
 {
 	/*if(val1==INF && val2==INF)
 	{
@@ -27,13 +27,14 @@ void addTriple(char* op , int val1 , int val2)
 	//int curr_size = sizeof(currTriple) / sizeof(triple) ;
 	//if( curr_size < curr_index+1   )
 	//{
-		currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) ) ; 
+		currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) ) ;
         // realloc memory
 	//}
 	strcpy(currTriple[curr_index].op, op );
 	currTriple[curr_index].val1 = val1;
 	currTriple[curr_index].val2 = val2;
 	curr_index++;
+	return curr_index - 1;
 }
 
 void addTriple2(char* op,int val1,int val2,int mylabel,int jumplabel)
@@ -41,7 +42,7 @@ void addTriple2(char* op,int val1,int val2,int mylabel,int jumplabel)
 	//int curr_size = sizeof(currTriple) / sizeof(triple) ;
 	//if( curr_size < curr_index+1   )
 	//{
-		currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) ); 
+		currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) );
         // realloc memory
 	//}
 	strcpy(currTriple[curr_index].op, op );
@@ -57,7 +58,7 @@ char* findVarName(char* lexeme)
 	return lexeme;
 }
 
-int solveAssignmentStmt(ASTNode* curr)
+tuple* solveAssignmentStmt(ASTNode* curr)
 {
 
 	if(curr->nodeid == getNonTerminalfromStr("<assignmentStmt>"))
@@ -65,11 +66,19 @@ int solveAssignmentStmt(ASTNode* curr)
 		//printf("%d %d\n",curr->children[1]->nodeid , getNonTerminalfromStr("<arithmeticExpression>"));
 		printf("Assignment Stmt ////\n");
 		//printf("%s\n", getIDStr(curr->children[1]->nodeid));
-		addTriple(findVarName(curr->children[0]->children[0]->tk.lexeme),INF,INF);
-		int temp = curr_index -1;
-		addTriple("=" , temp ,
-			solveAssignmentStmt(curr->children[1]));
-		return curr_index -1;
+		tuple* left = solveAssignmentStmt(curr->children[0]);
+		tuple* right = solveAssignmentStmt(curr->children[1]);
+		tuple *t = (tuple*) malloc(sizeof(tuple));
+		t->arr = NULL;
+		t->len = 0;
+		int i;
+		for (i = 0; i < left->len; ++i)
+		{
+			t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+			t->arr[t->len] = addTriple("=", left->arr[i], right->arr[i]);
+			t->len++;
+		}
+		return t;
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<arithmeticExpression>"))
 	{
@@ -81,25 +90,37 @@ int solveAssignmentStmt(ASTNode* curr)
 		}
 		else
 		{
+			tuple *t = (tuple*) malloc(sizeof(tuple));
+			t->arr = NULL;
+			t->len = 0;
 			if(curr->children[1]->children[0]->tk.tokenType==TK_PLUS)
 			{
 				//printf("//////////plus\n");
 				//printf("%d %d",curr->children[0]->nodeid, getNonTerminalfromStr("<term>"));
-				int temp1 = solveAssignmentStmt(curr->children[0]);
+				tuple* left = solveAssignmentStmt(curr->children[0]);
 				//printf("%d",temp1);
-				int temp2 = solveAssignmentStmt(curr->children[1]);
-				addTriple("+" , temp1 ,
-					temp2 );
+				tuple* right = solveAssignmentStmt(curr->children[1]);
+				int i;
+				for (i = 0; i < left->len; ++i)
+				{
+					t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+					t->arr[t->len] = addTriple("+", left->arr[i], right->arr[i]);
+					t->len++;
+				}
 			}
 			else if(curr->children[1]->children[0]->tk.tokenType==TK_MINUS)
 			{
-				int temp1 = solveAssignmentStmt(curr->children[0]);
-				int temp2 = solveAssignmentStmt(curr->children[1]);
-				addTriple("-" , temp1 ,
-					temp2 );
+				tuple* left = solveAssignmentStmt(curr->children[0]);
+				tuple* right = solveAssignmentStmt(curr->children[1]);
+				int i;
+				for (i = 0; i < left->len; ++i)
+				{
+					t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+					t->arr[t->len] = addTriple("-", left->arr[i], right->arr[i]);
+					t->len++;
+				}
 			}
-			return curr_index -1 ;
-
+			return t;
 		}
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<term>"))
@@ -107,20 +128,76 @@ int solveAssignmentStmt(ASTNode* curr)
 		printf("term\n");
 		if(curr->children[1]==NULL)
 		{
-
-			int temp = solveAssignmentStmt(curr->children[0]);
-			printf("%d", temp);
-			return temp;
+			return solveAssignmentStmt(curr->children[0]);
 		}
 		else
 		{
+			tuple *t = (tuple*) malloc(sizeof(tuple));
+			t->arr = NULL;
+			t->len = 0;
 			if(curr->children[1]->children[0]->tk.tokenType==TK_MUL)
-				addTriple("*",solveAssignmentStmt(curr->children[0]) ,
-					solveAssignmentStmt(curr->children[1]) );
+			{
+				tuple* left = solveAssignmentStmt(curr->children[0]);
+				tuple* right = solveAssignmentStmt(curr->children[1]);
+				if(left->len > 1)
+				{
+					int i;
+					for (i = 0; i < left->len; ++i)
+					{
+						t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+						t->arr[t->len] = addTriple("*", left->arr[i], right->arr[0]);
+						t->len++;
+					}
+				}
+				else if(right->len > 1)
+				{
+					int i;
+					for (i = 0; i < right->len; ++i)
+					{
+						t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+						t->arr[t->len] = addTriple("*", left->arr[0], right->arr[i]);
+						t->len++;
+					}
+				}
+				else
+				{
+					t->arr = (int*) malloc(sizeof(int));
+					t->arr[0] = addTriple("*", left->arr[0], right->arr[0]);
+					t->len++;
+				}
+			}
 			else if(curr->children[1]->children[0]->tk.tokenType==TK_DIV)
-				addTriple("/",solveAssignmentStmt(curr->children[0]) ,
-					solveAssignmentStmt(curr->children[1]) );
-			return curr_index -1 ;
+			{
+				tuple* left = solveAssignmentStmt(curr->children[0]);
+				tuple* right = solveAssignmentStmt(curr->children[1]);
+				if(left->len > 1)
+				{
+					int i;
+					for (i = 0; i < left->len; ++i)
+					{
+						t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+						t->arr[t->len] = addTriple("/", left->arr[i], right->arr[0]);
+						t->len++;
+					}
+				}
+				else if(right->len > 1)
+				{
+					int i;
+					for (i = 0; i < right->len; ++i)
+					{
+						t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+						t->arr[t->len] = addTriple("/", left->arr[0], right->arr[i]);
+						t->len++;
+					}
+				}
+				else
+				{
+					t->arr = (int*) malloc(sizeof(int));
+					t->arr[0] = addTriple("/", left->arr[0], right->arr[0]);
+					t->len++;
+				}
+			}
+			return t;
 		}
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<expPrime>"))
@@ -134,47 +211,162 @@ int solveAssignmentStmt(ASTNode* curr)
 		}
 		else
 		{
+			tuple *t = (tuple*) malloc(sizeof(tuple));
+			t->arr = NULL;
+			t->len = 0;
 			if(curr->children[2]->children[0]->tk.tokenType==TK_PLUS)
-				addTriple("+" , solveAssignmentStmt(curr->children[1]) ,
-					solveAssignmentStmt(curr->children[2]) );
+			{
+				tuple* left = solveAssignmentStmt(curr->children[1]);
+				tuple* right = solveAssignmentStmt(curr->children[2]);
+				int i;
+				for (i = 0; i < left->len; ++i)
+				{
+					t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+					t->arr[t->len] = addTriple("+", left->arr[i], right->arr[i]);
+					t->len++;
+				}
+			}
 			else if(curr->children[2]->children[0]->tk.tokenType==TK_MINUS)
-				addTriple("-" , solveAssignmentStmt(curr->children[1]) ,
-					solveAssignmentStmt(curr->children[2]) );
-			return curr_index -1 ;
+			{
+				tuple* left = solveAssignmentStmt(curr->children[1]);
+				tuple* right = solveAssignmentStmt(curr->children[2]);
+				int i;
+				for (i = 0; i < left->len; ++i)
+				{
+					t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+					t->arr[t->len] = addTriple("-", left->arr[i], right->arr[i]);
+					t->len++;
+				}
+			}
+			return t;
 		}
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<factor>"))
 	{
 		printf("factor\n");
-		solveAssignmentStmt(curr->children[0] );
+		return solveAssignmentStmt(curr->children[0]);
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<termPrime>"))
 	{
 		printf("term prime\n");
+		if(curr->children[2] == NULL)
+		{
+			return solveAssignmentStmt(curr->children[1]);
+		}
+		tuple *t = (tuple*) malloc(sizeof(tuple));
+		t->arr = NULL;
+		t->len = 0;
 		if(curr->children[2]->children[0]->tk.tokenType==TK_MUL)
-			addTriple("*",solveAssignmentStmt(curr->children[1]) ,
-				solveAssignmentStmt(curr->children[2]) );
+		{
+			tuple* left = solveAssignmentStmt(curr->children[1]);
+			tuple* right = solveAssignmentStmt(curr->children[2]);
+			if(left->len > 1)
+			{
+				int i;
+				for (i = 0; i < left->len; ++i)
+				{
+					t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+					t->arr[t->len] = addTriple("*", left->arr[i], right->arr[0]);
+					t->len++;
+				}
+			}
+			else if(right->len > 1)
+			{
+				int i;
+				for (i = 0; i < right->len; ++i)
+				{
+					t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+					t->arr[t->len] = addTriple("*", left->arr[0], right->arr[i]);
+					t->len++;
+				}
+			}
+			else
+			{
+				t->arr = (int*) malloc(sizeof(int));
+				t->arr[0] = addTriple("*", left->arr[0], right->arr[0]);
+				t->len++;
+			}
+		}
 		else if(curr->children[2]->children[0]->tk.tokenType==TK_DIV)
-			addTriple("/",solveAssignmentStmt(curr->children[1]) ,
-				solveAssignmentStmt(curr->children[2]) );
+		{
+			tuple* left = solveAssignmentStmt(curr->children[1]);
+			tuple* right = solveAssignmentStmt(curr->children[2]);
+			if(left->len > 1)
+			{
+				int i;
+				for (i = 0; i < left->len; ++i)
+				{
+					t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+					t->arr[t->len] = addTriple("/", left->arr[i], right->arr[0]);
+					t->len++;
+				}
+			}
+			else if(right->len > 1)
+			{
+				int i;
+				for (i = 0; i < right->len; ++i)
+				{
+					t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+					t->arr[t->len] = addTriple("/", left->arr[0], right->arr[i]);
+					t->len++;
+				}
+			}
+			else
+			{
+				t->arr = (int*) malloc(sizeof(int));
+				t->arr[0] = addTriple("/", left->arr[0], right->arr[0]);
+				t->len++;
+			}
+		}
 
-		return curr_index -1 ;
+		return t;
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<singleOrRecId>"))
 	{
 		printf("singleor recordid\n");
-
-		addTriple( findVarName(curr->children[0]->tk.lexeme) ,  INF , INF);
-		return curr_index -1 ;
+		int type = getType(curr);
+		tuple* t = (tuple*) malloc(sizeof(tuple));
+		t->arr = NULL;
+		t->len = 0;
+		if(type >= RECORD_OFFSET)
+		{
+			recordEntry* rent = getRecordEntry(type, curr->record_table);
+			entry* p = rent->arr;
+			t->len = 0;
+			while(p != NULL)
+			{
+				char identifier[100];
+				sprintf(identifier, "%s.%s", curr->children[0]->tk.lexeme, p->token.lexeme);
+				t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+				t->arr[t->len] = addTriple(identifier, INF, INF);
+				t->len++;
+				p = p->next;
+			}
+		}
+		else
+		{
+			char identifier[100];
+			if(curr->children[1] == NULL)
+				sprintf(identifier, "%s", curr->children[0]->tk.lexeme);
+			else
+				sprintf(identifier, "%s.%s", curr->children[0]->tk.lexeme, curr->children[1]->tk.lexeme);
+			t->arr = (int*) malloc(sizeof(int));
+			t->len = 1;
+			t->arr[0] = addTriple(identifier, INF, INF);
+		}
+		return t;
 	}
 	else if(curr->tk.tokenType == TK_NUM)
 	{
 		printf("num\n");
-		addTriple( "NUM" , atoi(curr->tk.lexeme) , INF);
-		return curr_index -1 ;
+		tuple* t = (tuple*) malloc(sizeof(tuple));
+		t->arr = (int*) malloc(sizeof(int));
+		t->len = 1;
+		t->arr[0] = addTriple( "NUM" , atoi(curr->tk.lexeme) , INF);
+		return t;
 
 	}
-	return -1;
+	return NULL;
 }
 
 int solve(ASTNode* curr)
@@ -230,14 +422,14 @@ void solveStmt(ASTNode* impStmtNode)
 		{
 
 			printf("Write Stmt\n");
-			addTriple(findVarName(stmtNode->children[1]->children[0]->tk.lexeme),INF,INF);
-			addTriple("write" , curr_index-1, INF  );
+			tuple* t = solveAssignmentStmt(stmtNode->children[1]);
+			addTriple("write" , t->arr[0], INF);
 		}
 		else if(stmtNode->children[0]->tk.tokenType == TK_READ)
 		{
 			printf("Read Stmt\n");
-			addTriple(findVarName(stmtNode->children[1]->children[0]->tk.lexeme),INF,INF);
-			addTriple("read" , curr_index-1 ,INF);
+			tuple* t = solveAssignmentStmt(stmtNode->children[1]);
+			addTriple("read" , t->arr[0] ,INF);
 		}
 		else
 			fprintf(stderr, "Code generation cannot handle this case\n" );
@@ -437,6 +629,7 @@ void generateCode(ASTNode* t)
 	solveStmt(impStmtNode);
 	printf("///////////////////\n");
 	displayTriple();
+	printf("starting assembly code gen\n");
 	generateAssemblyCode(currTriple,curr_index);
 }
 

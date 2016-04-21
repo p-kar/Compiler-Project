@@ -15,8 +15,14 @@ typedef struct triple
 
 }triple;
 
+typedef struct tuple
+{
+    int len;
+    int *arr;
+}tuple;
+
 void displayTriple();
-void addTriple(char* op,int val1,int val2);
+int addTriple(char* op,int val1,int val2);
 void addTriple2(char* op,int val1,int val2,int mylabel,int jumplabel);
 
 #endif

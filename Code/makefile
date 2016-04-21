@@ -56,7 +56,7 @@ all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./
 	@$(CC) -o driver driver.c ./Build/*.o
 	$(call warnecho, "Built target driver")
 
-./Build/codeGen.o: ./Build/AST.o ./Build/assemblyGen.o codeGenDef.h codeGen.h codeGen.c
+./Build/codeGen.o: ./Build/typeChecker.o ./Build/AST.o ./Build/assemblyGen.o codeGenDef.h codeGen.h codeGen.c
 	@echo -n Building $@...
 	@if !(test -d ./Build); then $(MD) ./Build; fi
 	@$(CC) -c codeGen.c -o $@

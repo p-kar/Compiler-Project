@@ -7,11 +7,13 @@
 #include "lexerDef.h"
 #include "ASTDef.h"
 #include "symbolTable.h"
+#include "typeChecker.h"
+#include "assemblyGen.h"
 #include "codeGenDef.h"
 
 
 char* findVarName(char* lexeme);
-int solveAssignmentStmt(ASTNode* curr);
+tuple* solveAssignmentStmt(ASTNode* curr);
 int solve(ASTNode* curr);
 void solveStmt(ASTNode* impStmtNode);
 void solveStmtHelper(ASTNode* stmtNode , ASTNode* impStmtNode);

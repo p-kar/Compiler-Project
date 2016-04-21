@@ -16,6 +16,8 @@
 #include <string.h>
 #include "AST.h"
 
+extern bool TYPECHECKER_ERROR;
+
 enum _Type
 {
     TYPE_ERROR = -1,
