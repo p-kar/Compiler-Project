@@ -261,7 +261,8 @@ funcIdTable* insertFuncIdTable(GlobalTable* table , char* funcName)
 	funcIdTable* curr_funcidtable  = (funcIdTable*) malloc(sizeof(funcIdTable));
 	curr_funcidtable->input_num=0;
 	curr_funcidtable->output_num=0;
-	curr_funcidtable->identifer = func_num; 
+	curr_funcidtable->identifier = func_num; 
+	func_num++;
 	strcpy(curr_funcidtable->funcName,funcName);
 	int k = computeHashVal(funcName);
 

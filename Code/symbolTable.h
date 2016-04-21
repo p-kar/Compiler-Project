@@ -34,7 +34,7 @@ typedef struct funcIdTable
 	struct funcIdTable* next;
 	int input_num;
 	int output_num;
-	int identifer;
+	int identifier;
 
 }funcIdTable;
 
