@@ -125,7 +125,7 @@
                   b5             38          TK_ID           ----            YES                     ----
                 ----           ----           ----           ----             NO           <declarations>
                 ----           ----           ----           ----             NO            <declaration>
-                real             39        TK_REAL           ----            YES                     ----
+                 int             39         TK_INT           ----            YES                     ----
            d5cb34567             39          TK_ID           ----            YES                     ----
                 ----           ----           ----           ----             NO           <declarations>
                 ----           ----           ----           ----             NO            <declaration>

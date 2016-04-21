@@ -49,6 +49,8 @@ endef
 #---------------------------------------------------------------------
 all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o ./Build/AST.o ./Build/symbolTable.o ./Build/typeChecker.o ./Build/semanticAnalyzer.o ./Build/codeGen.o
 	$(call notifyecho, "compiling and linking final code")
+	@$(CC) -o final final.c ./Build/*.o
+	$(call warnecho, "Built target final")
 	@$(CC) -o run run.c ./Build/*.o
 	$(call warnecho, "Built target run")
 	@$(CC) -o driver driver.c ./Build/*.o

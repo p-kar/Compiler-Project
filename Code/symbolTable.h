@@ -7,8 +7,8 @@
 #include "lexer.h"
 //#include <parserDef.h>
 
-#define INTSPACE 4
-#define REALSPACE 8
+#define INTSPACE 2
+#define REALSPACE 4
 
 typedef struct entry
 {

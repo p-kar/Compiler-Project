@@ -295,7 +295,7 @@
                 type             39        TK_TYPE           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO               <dataType>
                 ----           ----           ----           ----               <dataType>             NO      <primitiveDatatype>
-                real             39        TK_REAL           ----      <primitiveDatatype>            YES                     ----
+                 int             39         TK_INT           ----      <primitiveDatatype>            YES                     ----
                    :             39       TK_COLON           ----            <declaration>            YES                     ----
            d5cb34567             39          TK_ID           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO          <global_or_not>

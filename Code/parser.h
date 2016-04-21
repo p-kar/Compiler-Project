@@ -33,6 +33,7 @@
 // #define PANIC_MODE_PRINTING
 
 typedef int** table;
+extern bool PARSING_ERROR_FLAG;
 
 set* getFirstSetsRule(int* prodrule, int rule_length, set** firststs);
 table initialiseParserTable();
@@ -42,5 +43,8 @@ void displayParserTable(table p);
 parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid);
 parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table T);
 void printParseTree(parseTree PT, const char* outfile);
+void displayParseTreeSTDOUT(parseTree PT);
+int getPTNodeCount(parseTree PT);
+int getPTSize(parseTree PT);
 
 #endif
