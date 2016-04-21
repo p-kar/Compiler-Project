@@ -1,7 +1,5 @@
 #include "codeGen.h"
 
-
-
 ASTNode *root ;
 int curr_index=0;
 int curr_label=0;
@@ -26,12 +24,12 @@ void addTriple(char* op , int val1 , int val2)
 	{
 		printf("%s\n" , op);
 	}*/
-	int curr_size = sizeof(currTriple) / sizeof(triple) ;
-	if( curr_size < curr_index+1   )
-	{
-		currTriple = (triple*) realloc(currTriple , (curr_size+20)*sizeof(triple) ); 
+	//int curr_size = sizeof(currTriple) / sizeof(triple) ;
+	//if( curr_size < curr_index+1   )
+	//{
+		currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) ) ; 
         // realloc memory
-	}
+	//}
 	
 	strcpy(currTriple[curr_index].op, op );
 	currTriple[curr_index].val1 = val1;
@@ -41,12 +39,12 @@ void addTriple(char* op , int val1 , int val2)
 
 void addTriple2(char* op,int val1,int val2,int mylabel,int jumplabel)
 {
-	int curr_size = sizeof(currTriple) / sizeof(triple) ;
-	if( curr_size < curr_index+1   )
-	{
-		currTriple = (triple*) realloc(currTriple , (curr_size+20)*sizeof(triple) ); 
+	//int curr_size = sizeof(currTriple) / sizeof(triple) ;
+	//if( curr_size < curr_index+1   )
+	//{
+		currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) ); 
         // realloc memory
-	}
+	//}
 	
 	strcpy(currTriple[curr_index].op, op );
 	currTriple[curr_index].val1 = val1;
@@ -56,13 +54,10 @@ void addTriple2(char* op,int val1,int val2,int mylabel,int jumplabel)
 	curr_index++;
 
 }
-
 char* findVarName(char* lexeme)
 {
 	return lexeme;
 }
-
-
 
 int solveAssignmentStmt(ASTNode* curr)
 {
@@ -442,6 +437,7 @@ void generateCode(ASTNode* t)
 	solveStmt(impStmtNode);
 	printf("///////////////////\n");
 	displayTriple();
+	generateAssemblyCode(currTriple,curr_index);
 }
 
 

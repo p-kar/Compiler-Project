@@ -47,17 +47,23 @@ endef
 #---------------------------------------------------------------------
 # rules
 #---------------------------------------------------------------------
-all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o ./Build/AST.o ./Build/symbolTable.o ./Build/typeChecker.o ./Build/semanticAnalyzer.o ./Build/codeGen.o
+all: ./Build/parserUtils.o ./Build/set.o ./Build/parserSets.o ./Build/stack.o ./Build/lexer.o ./Build/parser.o ./Build/AST.o ./Build/symbolTable.o ./Build/typeChecker.o ./Build/semanticAnalyzer.o ./Build/assemblyGen.o ./Build/codeGen.o
 	$(call notifyecho, "compiling and linking final code")
 	@$(CC) -o run run.c ./Build/*.o
 	$(call warnecho, "Built target run")
 	@$(CC) -o driver driver.c ./Build/*.o
 	$(call warnecho, "Built target driver")
 
-./Build/codeGen.o: ./Build/AST.o codeGen.h codeGen.c
+./Build/codeGen.o: ./Build/AST.o ./Build/assemblyGen.o codeGenDef.h codeGen.h codeGen.c
 	@echo -n Building $@...
 	@if !(test -d ./Build); then $(MD) ./Build; fi
 	@$(CC) -c codeGen.c -o $@
+	$(call okecho, " Done")
+
+./Build/assemblyGen.o: codeGenDef.h assemblyGen.h assemblyGen.c
+	@echo -n Building $@...
+	@if !(test -d ./Build); then $(MD) ./Build; fi
+	@$(CC) -c assemblyGen.c -o $@
 	$(call okecho, " Done")
 
 ./Build/semanticAnalyzer.o: ./Build/AST.o semanticAnalyzer.h semanticAnalyzer.c

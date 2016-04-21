@@ -1,23 +1,15 @@
+#ifndef CODEGEN_H
+#define CODEGEN_H
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "lexerDef.h"
 #include "ASTDef.h"
 #include "symbolTable.h"
+#include "codeGenDef.h"
 
 
-typedef struct triple
-{
-	char op[100];
-	int val1,val2;
-	int mylabel;
-	int jumplabel;
-
-}triple;
-
-void displayTriple();
-void addTriple(char* op,int val1,int val2);
-void addTriple2(char* op,int val1,int val2,int mylabel,int jumplabel);
 char* findVarName(char* lexeme);
 int solveAssignmentStmt(ASTNode* curr);
 int solve(ASTNode* curr);
@@ -28,3 +20,5 @@ void solveConditionalOne(ASTNode* curr);
 void solveConditionalTwo(ASTNode* curr);
 void solveIterative(ASTNode* curr);
 void generateCode(ASTNode* t);
+
+#endif
