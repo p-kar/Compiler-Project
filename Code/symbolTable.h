@@ -7,7 +7,7 @@
 #include "lexer.h"
 //#include <parserDef.h>
 
-#define INTSPACE 4	
+#define INTSPACE 4
 #define REALSPACE 8
 
 typedef struct entry
@@ -35,7 +35,6 @@ typedef struct funcIdTable
 	int input_num;
 	int output_num;
 	int identifer;
-
 }funcIdTable;
 
 typedef struct funcTable
@@ -47,7 +46,7 @@ typedef struct recordEntry
 {
 	entry* arr;
 	char name[100];
-	struct recordEntry* next ;
+	struct recordEntry* next;
 	int identifier;
 
 }recordEntry;
@@ -84,7 +83,7 @@ entry* findLocalId(funcIdTable* table,char* name);
 void insertRecord(char* name,recordTable* curr);
 void insertRecordEntry(char* name,recordTable* curr,tokenInfo tk , TERMINAL type);
 recordEntry* findRecordEntry(char* name,recordTable* curr);
-
+recordEntry* getRecordEntry(int identifier,recordTable *table);
 
 bool insertGlobalRecord(GlobalTable* table,tokenInfo temp,TERMINAL type, char* recordtype , recordTable* record_table);
 bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMINAL type,char* recordtype , recordTable* record_table);
