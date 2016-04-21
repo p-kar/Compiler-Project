@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
     // remember add a new line at the end of grammar.txt
     // TODO need to handle this error
     char filename[] = "./Grammar/final_grammar.txt";
-    char src_filename[] = "./Semantic Testcases/main3.txt";
+    char src_filename[] = "./Semantic Testcases/testcase2.txt";
     grammar rulelist = getRuleList(filename);
     // printAllRules(rulelist);
     table T = initialiseParserTable();
@@ -39,6 +39,6 @@ int main(int argc, char const *argv[])
     // displaySymbolTable(global_table);
     runTypeCheckerAST(AT);
     runSemanticAnalyzer(AT);
-    generateCode(AT);
+    // generateCode(AT);
     return 0;
 }

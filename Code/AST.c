@@ -175,6 +175,22 @@ void displayAST(ASTNode* a, const char* outfile)
     fclose(fp);
 }
 
+void displayASTSTDOUT(ASTNode* a)
+{
+    FILE* fp = stdout;
+    int space = 25;
+    int space_small = 15;
+    char lexemeCurrentNode[20] = "lexemeCurrentNode";
+    char lineno[20] = "lineno";
+    char token[20] = "token";
+    char valuelfNumber[20] = "valuelfNumber";
+    char isLeafNode[20] = "isLeafNode";
+    char NodeSymbol[20] = "NodeSymbol";
+    fprintf(fp, "%*s%*s%*s%*s%*s%*s\n", 20, lexemeCurrentNode, space_small, lineno, space_small, token, space_small, valuelfNumber, space_small, isLeafNode, space, NodeSymbol);
+    displayASTHelper(a, fp);
+    fclose(fp);
+}
+
 // handle for record case
 ASTNode* insertFunctionParameters(ASTNode* AT, GlobalTable* global_table, funcIdTable* local_table, recordTable* record_table, bool input)
 {
@@ -370,4 +386,22 @@ int getLineNumber(ASTNode* AT)
             return ln;
     }
     return -1;
+}
+
+int getASTNodeCount(ASTNode* AT)
+{
+    if(AT == NULL)
+        return 0;
+    int nd_cnt = 1;
+    int i = 0;
+    for (i = 0; i < AT->child_cnt; ++i)
+        nd_cnt += getASTNodeCount(AT->children[i]);
+    return nd_cnt;
+}
+
+int getASTSize(ASTNode* AT)
+{
+    if(AT == NULL)
+        return 0;
+    return getASTNodeCount(AT) * sizeof(ASTNode);
 }

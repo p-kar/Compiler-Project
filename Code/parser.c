@@ -10,6 +10,8 @@
 
 #include "parser.h"
 
+bool PARSING_ERROR_FLAG = false;
+
 set* getFirstSetsRule(int* prodrule, int rule_length, set** firststs)
 {
     set* st = NULL;
@@ -100,7 +102,7 @@ parseTreeNode* createEmptyTreeNode(int nodeid, tokenInfo tk, NONTERMINAL pntid)
 
 parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table T)
 {
-    bool syntaxError = false;
+    PARSING_ERROR_FLAG = false;
     set** firststs = createFirstSets(rulelist); // required for PANIC MODE
     FILE *tfp = fopen(testcaseFile, "r");
     tokenInfo t = getNextToken(tfp);
@@ -121,7 +123,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         if(t.tokenType == TK_ERROR)
         {
             t = getNextToken(tfp);
-            syntaxError = true;
+            PARSING_ERROR_FLAG = true;
             continue;
         }
         stackNode* top = topStack(stck);
@@ -139,7 +141,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         }
         else if(isTerminal(top->val))
         {
-            syntaxError = true;
+            PARSING_ERROR_FLAG = true;
             fprintf(stderr, "The token %s for lexeme <%s> does not match at line <%d>. The expected token here is %s.\n", getTerminalStr(t.tokenType), t.lexeme, t.lineNum, getTerminalStr(top->val));
             pnode->tk.lineNum = t.lineNum;
             strcpy(pnode->tk.lexeme, "Panic Mode");
@@ -155,7 +157,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
         }
         else if(T[top->val][t.tokenType - TERMINAL_OFFSET] == -1)
         {
-            syntaxError = true;
+            PARSING_ERROR_FLAG = true;
             fprintf(stderr, "No rule in the parse table to expand. Received %s on line <%d> for %s.\n", getIDStr(t.tokenType), t.lineNum, getIDStr(top->val));
             top = topStack(stck);
             while(t.tokenType != TK_EOF && !isPresent(t.tokenType, getFirstSet(top->val, firststs)))
@@ -181,7 +183,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
             stck = pushStack(childid, pnode->children[idx + ridx], stck);
         }
     }
-    if(!syntaxError)
+    if(!PARSING_ERROR_FLAG)
         printf("%sCompiled Successfully: Input source code is syntactically correct.%s\n", KGRN, KNRM);
     else
         printf("%sInput source code has errors.%s\n", KRED, KNRM);
@@ -236,4 +238,39 @@ void printParseTree(parseTree PT, const char* outfile)
     fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, lexemeCurrentNode, space_small, lineno, space_small, token, space_small, valuelfNumber, space, parentNodeSymbol, space_small, isLeafNode, space, NodeSymbol);
     printParseTreeHelper(PT, fp);
     fclose(fp);
+}
+
+void displayParseTreeSTDOUT(parseTree PT)
+{
+    FILE* fp = stdout;
+    int space = 25;
+    int space_small = 15;
+    char lexemeCurrentNode[20] = "lexemeCurrentNode";
+    char lineno[20] = "lineno";
+    char token[20] = "token";
+    char valuelfNumber[20] = "valuelfNumber";
+    char parentNodeSymbol[20] = "parentNodeSymbol";
+    char isLeafNode[20] = "isLeafNode";
+    char NodeSymbol[20] = "NodeSymbol";
+    fprintf(fp, "%*s%*s%*s%*s%*s%*s%*s\n", 20, lexemeCurrentNode, space_small, lineno, space_small, token, space_small, valuelfNumber, space, parentNodeSymbol, space_small, isLeafNode, space, NodeSymbol);
+    printParseTreeHelper(PT, fp);
+    fclose(fp);
+}
+
+int getPTNodeCount(parseTree PT)
+{
+    if(PT == NULL)
+        return 0;
+    int nd_cnt = 1;
+    int i = 0;
+    for (i = 0; i < PT->child_cnt; ++i)
+        nd_cnt += getPTNodeCount(PT->children[i]);
+    return nd_cnt;
+}
+
+int getPTSize(parseTree PT)
+{
+    if(PT == NULL)
+        return 0;
+    return getPTNodeCount(PT) * sizeof(parseTreeNode);
 }

@@ -202,6 +202,11 @@ void runSemanticAnalyzer(ASTNode* AT)
             fprintf(stderr, "Line %d: The function %s is undefined.\n", getLineNumber(AT), AT->children[1]->tk.lexeme);
             return;
         }
+        if(func_table->identifier > local_table->identifier)
+        {
+            fprintf(stderr, "Line %d: The function %s has been declared after the function call statement.\n", getLineNumber(AT), AT->children[1]->tk.lexeme);
+            return;
+        }
         if(func_table->input_num > 0 && AT->children[2] == NULL)
         {
             fprintf(stderr, "Line %d: Too few input parameters received for function %s.\n", getLineNumber(AT), func_table->funcName);
