@@ -4,12 +4,12 @@ section .data
 	format db "%d", 10, 0
 b5 dq 0
 	d5cb34567 dq 0
-	d4.maths dq 0
 	d4.physics dq 0
 	d4.chemistry dq 0
 	b3c2.maths dq 0
 	b3c2.physics dq 0
 	b3c2.chemistry dq 0
+	d4.maths dq 0
 	temp0 dq 0
 	temp1 dq 0
 	temp2 dq 0
