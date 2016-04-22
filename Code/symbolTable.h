@@ -103,7 +103,7 @@ bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMIN
 recordTable* initializeRecordTable();
 GlobalTable* initalizeGlobalTable();
 funcIdTable* initalizeLocalTable();
-void displaySymbolTable(GlobalTable* t);
+void displaySymbolTable(GlobalTable* t,recordTable* rtb);
 void insertInputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,char* name,recordTable *currRecordTable);
 void insertOutputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,char* name,recordTable *currRecordTable);
 

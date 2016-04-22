@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
     ASTNode* AT = createASTfromPT(PT, ast_rule_list);
     displayAST(AT, "atree.txt");
     AT = makeASTSymbolTableLinks(AT);
-    displaySymbolTable(AT->global_table);
+    displaySymbolTable(AT->global_table,AT->record_table);
     runTypeCheckerAST(AT);
     runSemanticAnalyzer(AT);
     generateCode(AT,"code.asm");

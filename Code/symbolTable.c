@@ -12,7 +12,7 @@
 
 int func_num=0;
 
-void displaySymbolTable(GlobalTable* t)
+void displaySymbolTable(GlobalTable* t,recordTable* rtb)
 {
 	printf("GLOBAL SCOPE\n");
 	printf("--------------------\n");
@@ -28,7 +28,23 @@ void displaySymbolTable(GlobalTable* t)
 				char off[20];
 				sprintf(off,"%d",temp->offset);
 				int space = 30;
-				fprintf(stdout,"%*s%*s%*s%*s\n", space,temp->token.lexeme, space, getTerminalStr(temp->type), space, glb, space, off );
+				if( strcmp(getTerminalStr(temp->type),"TK_INT")==0 || strcmp(getTerminalStr(temp->type),"TK_REAL")==0 )
+					fprintf(stdout,"%*s%*s%*s%*s\n", space,temp->token.lexeme, space, getTerminalStr(temp->type), space, glb, space, off );
+				else
+				{
+					//printf("%s",getTerminalStr(temp->type));
+					entry* currEntry =  getRecordEntry(temp->type,rtb)->arr;
+					char name[200];
+					name[0]='\0';
+					while(currEntry!=NULL)
+					{
+						strcat(name,getTerminalStr(currEntry->type));
+						strcat(name," X ");
+						currEntry=currEntry->next;
+					}
+					fprintf(stdout,"%*s%*s%*s%*s\n", space,temp->token.lexeme, space, name, space, glb, space, off );
+				}
+
 				temp = temp->next;
 			}
 		}
@@ -52,7 +68,24 @@ void displaySymbolTable(GlobalTable* t)
 					int space = 30;
 					char off[20];
 					sprintf(off,"%d",temp4->offset);
-					fprintf(stdout,"%*s%*s%*s%*s\n", space,temp4->token.lexeme, space, getTerminalStr(temp4->type), space, temp3->funcName, space, off );
+					if( strcmp(getTerminalStr(temp4->type),"TK_INT")==0 || strcmp(getTerminalStr(temp4->type),"TK_REAL")==0 )
+						fprintf(stdout,"%*s%*s%*s%*s\n", space,temp4->token.lexeme, space, getTerminalStr(temp4->type), space, temp3->funcName, space, off );
+					else
+					{
+						//printf("%s\n",getTerminalStr(temp4->type));
+						entry* currEntry =  getRecordEntry(temp4->type,rtb)->arr;
+						char name[200];
+						name[0]='\0';
+						while(currEntry!=NULL)
+						{
+							strcat(name,getTerminalStr(currEntry->type));
+							strcat(name," X ");
+							currEntry=currEntry->next;
+						}
+						fprintf(stdout,"%*s%*s%*s%*s\n", space,temp4->token.lexeme, space, name, space, temp3->funcName, space, off );
+						//fprintf(stdout,"%*s%*s%*s%*s\n", space,temp->token.lexeme, space, name, space, glb, space, off );
+					
+					}					
 					temp4=temp4->next;
 				}
 			}
@@ -149,6 +182,7 @@ bool insertGlobalId(GlobalTable* table , tokenInfo temp,TERMINAL type)
 	new_entry->token = temp;
 	new_entry->type = type;
 	new_entry->next = NULL;
+	new_entry->recordType[0] = '\0';
 	if(type== TK_INT)
 		new_entry->offset = INTSPACE;
 	else
@@ -226,7 +260,7 @@ bool insertGlobalRecord(GlobalTable* table,tokenInfo temp,TERMINAL type, char* r
 	new_entry->token = temp;
 	new_entry->type = findRecordEntry(recordtype,record_table)->identifier;
 	new_entry->next =NULL;
-
+	new_entry->recordType[0]='\0';
 	strcpy( new_entry->recordType,recordtype);
 
 
@@ -287,6 +321,8 @@ funcIdTable* insertFuncIdTable(GlobalTable* table , char* funcName)
 	curr_funcidtable->next = NULL;
 	func_num++;
 	strcpy(curr_funcidtable->funcName,funcName);
+	curr_funcidtable->inputParameterList = NULL;
+	curr_funcidtable->outputParameterList=NULL;
 	int k = computeHashVal(funcName);
 
 	if(curr->funcTableArray[k]==NULL )
@@ -348,7 +384,7 @@ bool insertLocalId(GlobalTable* global_table,funcIdTable* function_table,tokenIn
 		new_entry->offset = INTSPACE;
 	else
 		new_entry->offset = REALSPACE;
-
+	new_entry->recordType[0]='\0';
 
 	int k=computeHashVal(new_entry->token.lexeme);
 
@@ -408,7 +444,7 @@ bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMIN
 	new_entry = (entry*) malloc(sizeof(entry));
 	new_entry->token = temp;
 	new_entry->type = findRecordEntry(recordtype,record_table)->identifier;
-
+	new_entry->next = NULL;
 	strcpy( new_entry->recordType,recordtype);
 
 
@@ -462,6 +498,8 @@ void insertInputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,ch
 	entry* temp1 = (entry*) malloc(sizeof(entry));
 	temp1->token =tk ;
 	temp1->type = type;
+	temp1->next=NULL;
+	temp1->recordType[0]='\0';
 
 
 	entry* temp2 = temp->inputParameterList;
@@ -505,6 +543,8 @@ void insertOutputParameterRecord(GlobalTable *g,funcIdTable* temp,tokenInfo tk,c
 	entry* temp1 = (entry*) malloc(sizeof(entry));
 	temp1->token =tk ;
 	temp1->type = type;
+	temp1->next=NULL;
+	temp1->recordType[0]='\0';
 
 	entry* temp2 = temp->outputParameterList;
 	if(temp2==NULL)
@@ -570,6 +610,8 @@ void insertOutputParameter(GlobalTable *g,funcIdTable* temp,tokenInfo tk,TERMINA
 	entry* temp1 = (entry*) malloc(sizeof(entry));
 	temp1->token =tk ;
 	temp1->type = type;
+	temp1->next=NULL;
+	temp1->recordType[0]='\0';
 	if(type==TK_INT)
 		temp1->offset = INTSPACE;
 	else
@@ -593,18 +635,32 @@ recordTable* initializeRecordTable()
 {
 	recordTable* t = (recordTable*) malloc(sizeof(recordTable));
 	t->next_identifer =RECORD_OFFSET;
+	t->arr[0]=NULL;t->arr[1]=NULL; t->arr[2]=NULL; t->arr[3]=NULL;t->arr[4]=NULL;
+	t->arr[5]=NULL;t->arr[6]=NULL;
+	
+	
 	return t;
 }
 
 GlobalTable* initalizeGlobalTable()
 {
 	GlobalTable* t = (GlobalTable*) malloc(sizeof(GlobalTable));
+	int i;
+	for(i=0;i<997;i++)
+		t->entryArray[i]=NULL;
 	return t;
 }
 
 funcIdTable* initalizeLocalTable()
 {
 	funcIdTable* f = (funcIdTable*) malloc(sizeof(funcIdTable));
+	f->funcName[0]='\0';
+	f->inputParameterList=NULL;
+	f->outputParameterList=NULL;
+	f->next=NULL;
+	f->input_num=0;
+	f->output_num=0;
+	f->identifier=0;
 	return f;
 }
 
@@ -685,19 +741,14 @@ recordEntry* findRecordEntry(char* name,recordTable* curr)
 
 
 	recordEntry* temp = curr->arr[k];
-
 	while(temp!=NULL)
 	{
+		//printf("okay\n");
 		if( strcmp(temp->name,name)==0   )
 		{
-			entry* temp2 = temp->arr;
-			while(temp2!=NULL)
-			{
-				//printf(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,%s\n",temp2->token.lexeme);
-				temp2=temp2->next;
-			}
 			return temp;
 		}
+		temp=temp->next;
 	}
 	return NULL;
 }

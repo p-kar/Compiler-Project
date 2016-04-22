@@ -91,7 +91,7 @@ int main(int argc, char const *argv[])
             AT = createASTfromPT(PT, ast_rule_list);
             AT = makeASTSymbolTableLinks(AT);
             if(AT != NULL)
-                displaySymbolTable(AT->global_table);
+                displaySymbolTable(AT->global_table,AT->record_table);
             else
                 printf("Cannot print symbol table. AST is NULL.\n");
             break;
