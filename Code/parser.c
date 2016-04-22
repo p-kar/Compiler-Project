@@ -186,7 +186,7 @@ parseTree parseInputSourceCode(const char *testcaseFile, grammar rulelist, table
     if(!PARSING_ERROR_FLAG)
         printf("%sCompiled Successfully: Input source code is syntactically correct.%s\n", KGRN, KNRM);
     else
-        printf("%sInput source code has errors.%s\n", KRED, KNRM);
+        printf("%sInput source code has parsing errors.%s\n", KRED, KNRM);
     return pTree;
 }
 

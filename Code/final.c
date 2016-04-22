@@ -93,7 +93,7 @@ int main(int argc, char const *argv[])
             if(AT != NULL)
                 displaySymbolTable(AT->global_table,AT->record_table);
             else
-                printf("Cannot print symbol table. AST is NULL.\n");
+                printf("%sCannot print symbol table. AST is NULL.%s\n", KRED, KNRM);
             break;
         case 6:
             PT = parseInputSourceCode(src_filename, rulelist, T);
@@ -102,7 +102,15 @@ int main(int argc, char const *argv[])
             AT = createASTfromPT(PT, ast_rule_list);
             AT = makeASTSymbolTableLinks(AT);
             runTypeCheckerAST(AT);
+            if(TYPECHECKER_ERROR)
+                printf("%sInput source code has type errors.%s\n", KRED, KNRM);
+            else
+                printf("%sInput source code does not have type errors.%s\n", KGRN, KNRM);
             runSemanticAnalyzer(AT);
+            if(SEMANTIC_ERROR)
+                printf("%sInput source code has semantic errors.%s\n", KRED, KNRM);
+            else
+                printf("%sInput source code does not have semantic errors.%s\n", KGRN, KNRM);
             break;
         case 7:
             PT = parseInputSourceCode(src_filename, rulelist, T);
@@ -110,8 +118,20 @@ int main(int argc, char const *argv[])
                 return 0;
             AT = createASTfromPT(PT, ast_rule_list);
             AT = makeASTSymbolTableLinks(AT);
-            runTypeCheckerAST(AT);
+            if(TYPECHECKER_ERROR)
+                printf("%sInput source code has type errors.%s\n", KRED, KNRM);
+            else
+                printf("%sInput source code does not have type errors.%s\n", KGRN, KNRM);
             runSemanticAnalyzer(AT);
+            if(SEMANTIC_ERROR)
+                printf("%sInput source code has semantic errors.%s\n", KRED, KNRM);
+            else
+                printf("%sInput source code does not have semantic errors.%s\n", KGRN, KNRM);
+            if(TYPECHECKER_ERROR || SEMANTIC_ERROR)
+            {
+                printf("%sSemantic and/or type checking errors found hence code generation not done.%s\n", KRED, KNRM);
+                return 0;
+            }
             generateCode(AT, argv[2]);
             break;
     }

@@ -213,21 +213,27 @@ void runTypeCheckerAST(ASTNode* AT)
         Type t1 = getType(AT->children[0]);
         Type t2 = getType(AT->children[1]);
         if(t1 != t2)
+        {
             fprintf(stderr, "Line %d: Type mismatch in assignment statement.\n", getLineNumber(AT));
-        TYPECHECKER_ERROR = true;
+            TYPECHECKER_ERROR = true;
+        }
         return;
     }
     else if(getNonTerminalfromStr("<iterativeStmt>") == AT->nodeid)
     {
         if(getType(AT->children[1]) != TYPE_BOOL)
+        {
             fprintf(stderr, "Line %d: Condition inside while statement is not of boolean type.\n", getLineNumber(AT));
-        TYPECHECKER_ERROR = true;
+            TYPECHECKER_ERROR = true;
+        }
     }
     else if(getNonTerminalfromStr("<conditionalStmt>") == AT->nodeid)
     {
         if(getType(AT->children[1]) != TYPE_BOOL)
+        {
             fprintf(stderr, "Line %d: Condition inside if statement is not of boolean type.\n", getLineNumber(AT));
-        TYPECHECKER_ERROR = true;
+            TYPECHECKER_ERROR = true;
+        }
     }
     else if(getNonTerminalfromStr("<ioStmt>") == AT->nodeid)
     {

@@ -4,7 +4,7 @@
 * @Email:     f2013029@pilani.bits-pilani.ac.in,
 *             f2013028@pilani.bits-pilani.ac.in
 * @Gp Number: 52
-* @File Name: typeChecker.h
+* @File Name: symbolTable.c
 * @Date:      2016-03-29 10:44:42
 */
 
@@ -317,7 +317,7 @@ funcIdTable* insertFuncIdTable(GlobalTable* table , char* funcName)
 	funcIdTable* curr_funcidtable  = (funcIdTable*) malloc(sizeof(funcIdTable));
 	curr_funcidtable->input_num=0;
 	curr_funcidtable->output_num=0;
-	curr_funcidtable->identifier = func_num; 
+	curr_funcidtable->identifier = func_num;
 	curr_funcidtable->next = NULL;
 	func_num++;
 	strcpy(curr_funcidtable->funcName,funcName);
@@ -436,7 +436,7 @@ bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMIN
 	}
 	if( findGlobalId(t,temp.lexeme)!=NULL)
 	{
-		fprintf(stderr, "Line %d , Redeclaration Error.The record variable has already been declared in global scope <%s>\n",temp.lineNum,temp.lexeme);	
+		fprintf(stderr, "Line %d , Redeclaration Error.The record variable has already been declared in global scope <%s>\n",temp.lineNum,temp.lexeme);
 		//fprintf(stderr, "Error ,also declared locally Line Num:%d\n", temp.lineNum);
 		return 0;
 	}
@@ -764,7 +764,7 @@ recordEntry* getRecordEntry(int identifier,recordTable *table)
 		{
 			if(temp->identifier==identifier)
 				return temp;
-			temp=temp->next; 
+			temp=temp->next;
 		}
 	}
 	return NULL;

@@ -4,7 +4,7 @@
 * @Email:     f2013029@pilani.bits-pilani.ac.in,
 *             f2013028@pilani.bits-pilani.ac.in
 * @Gp Number: 52
-* @File Name: typeChecker.h
+* @File Name: codeGen.h
 * @Date:      2016-03-29 10:44:42
 */
 

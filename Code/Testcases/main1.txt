@@ -9,8 +9,6 @@ _main
 
 	b3 <--- b2 + c2 + d2;
 	write(b3);
-
-	b3<--- b3 + 40;
 	return;
 end
 

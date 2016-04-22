@@ -4,7 +4,7 @@
 * @Email:     f2013029@pilani.bits-pilani.ac.in,
 *             f2013028@pilani.bits-pilani.ac.in
 * @Gp Number: 52
-* @File Name: typeChecker.h
+* @File Name: assemblyGen.c
 * @Date:      2016-03-29 10:44:42
 */
 
@@ -47,7 +47,7 @@ void readDirective(int option, triple t,FILE* fp)
 	fprintf(fp, ";read begin\n");
 	fprintf(fp, "push rbp\n");
 	if(option==0)
-		fprintf(fp, "mov rsi,%s\n",t.op);	
+		fprintf(fp, "mov rsi,%s\n",t.op);
 	else
 		fprintf(fp, "mov rsi,%d\n",t.val1);
 	fprintf(fp, "mov rdi,format_inp\n");
@@ -62,7 +62,7 @@ void writeDirective(int option, triple t,FILE* fp)
 	fprintf(fp,";write begin\n");
 	fprintf(fp, "push rbp\n");
 	if(option==0)
-		fprintf(fp, "mov rsi,[%s]\n",t.op);	
+		fprintf(fp, "mov rsi,[%s]\n",t.op);
 	else
 		fprintf(fp, "mov rsi,%d\n",t.val1);
 	fprintf(fp, "mov rdi,format\n");
@@ -78,7 +78,7 @@ void assignDirectiveZero(char* a,char* b ,FILE* fp)
 	fprintf(fp,"MOV rax,[%s]\n",b);
 	fprintf(fp,"MOV [%s],rax\n",a);
 	fprintf(fp,"; assign op ends\n");
-}	
+}
 void assignDirectiveOne(char* a,int b ,FILE* fp)
 {
 	fprintf(fp,"; assign op\n");
@@ -97,7 +97,7 @@ void arithDirective(char* op , int option , char* ans , char* val1,char* val2 , 
 			fprintf(fp,"MOV [%s],rax\n",ans);
 			fprintf(fp,"%s [%s],rbx\n",op,ans);
 			fprintf(fp,";end of operation\n\n");
-			break;		
+			break;
 		case 1:
 			fprintf(fp,"MOV rax,[%s]\n",val1);
 			fprintf(fp,"MOV rbx,%s\n",val2);
@@ -119,8 +119,8 @@ void arithDirective(char* op , int option , char* ans , char* val1,char* val2 , 
 			fprintf(fp,"%s [%s],rbx\n",op,ans);
 			fprintf(fp,";end of operation\n\n");
 			break;
-		
-	} 
+
+	}
 }
 
 void compareDirective(int option,char* op,int jump_label,char* val1,char* val2,FILE* fp)
@@ -149,7 +149,7 @@ void compareDirective(int option,char* op,int jump_label,char* val1,char* val2,F
 			break;
 	}
 
-	
+
 	fprintf(fp,"%s label%d\n",op,jump_label);
 
 }
@@ -161,7 +161,7 @@ void labelDirective(int label_index,FILE* fp)
 
 void jumpDirective(int label_index,FILE* fp)
 {
-	fprintf(fp,"JMP label%d\n",label_index);	
+	fprintf(fp,"JMP label%d\n",label_index);
 }
 
 void combineCode(const char* asmFile)
@@ -183,13 +183,13 @@ void combineCode(const char* asmFile)
 	}
 	fprintf(finalcode,"section .text\n");
 	fprintf(finalcode,"\tglobal main\n");
-	fprintf(finalcode,"\tmain:\n");	
+	fprintf(finalcode,"\tmain:\n");
 	while( (ch=fgetc(temp2))!=EOF)
 	{
 		fputc(ch, finalcode);
 		if(ch=='\n')
 			fputc('\t', finalcode);
-	}	
+	}
 	fprintf(finalcode,"call exit\n");
 	fclose(temp);
 	fclose(temp2);
@@ -211,7 +211,7 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 	for(i=0;i<len;i++)
 	{
 		//printf("!!!!!!!!!!!!!!!!! %d\n",i);
-		if(strcmp(currTriple[i].op,"read") == 0) 
+		if(strcmp(currTriple[i].op,"read") == 0)
 		{
 			int a = currTriple[i].val1;
 			//printf("Read %d\n",i);
@@ -220,7 +220,7 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 			else
 				readDirective(0,currTriple[a], codeseg);
 		}
-		else if(strcmp(currTriple[i].op,"write")==0) 
+		else if(strcmp(currTriple[i].op,"write")==0)
 		{
 			int a = currTriple[i].val1;
 			//printf("Write %d\n",i);
@@ -254,12 +254,12 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 				strcpy(new_op,"MUL");
 			else if(strcmp(currTriple[i].op,"/")==0 )
 				strcpy(new_op,"DIV");
-			
+
 			temp_arr[i]=1;
 			strcpy(temp_arr2[i],"temp");
 			char temp[100];
 			//itoa(temp_index,temp,10);
-			sprintf(temp,"%d",temp_index); 
+			sprintf(temp,"%d",temp_index);
 			strcat(temp_arr2[i],temp);
 			temp_index++;
 			fprintf(dataseg,"%s dq 0\n",temp_arr2[i]);
@@ -267,18 +267,18 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 			int a =currTriple[i].val1;
 			int b=currTriple[i].val2;
 
-			
+
 			if(temp_arr[a]==1 && temp_arr[b]==1)
 				arithDirective(new_op , 0,temp_arr2[i] , temp_arr2[a] , temp_arr2[b] , codeseg);
-			
+
 			else if(temp_arr[a]==0 && temp_arr[b]==1 && strcmp(currTriple[a].op,"NUM")!=0  )
 				arithDirective( new_op ,0,temp_arr2[i] , currTriple[a].op , temp_arr2[b] , codeseg);
-			
+
 			else if(temp_arr[a]==0 && temp_arr[b]==1 && strcmp(currTriple[a].op,"NUM")==0  )
 			{
 				char temp2[100];
 				//itoa(currTriple[a].val1,temp2,10);
-				sprintf(temp2,"%d",currTriple[a].val1); 
+				sprintf(temp2,"%d",currTriple[a].val1);
 				arithDirective(new_op ,2,temp_arr2[i] , temp2 , temp_arr2[b] , codeseg);
 			}
 			else if(temp_arr[a]==1 && temp_arr[b]==0  && strcmp(currTriple[b].op,"NUM")!=0  )
@@ -326,13 +326,13 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 					//itoa(currTriple[b].val1,temp2,10);
 					sprintf(temp2,"%d",currTriple[b].val1);
 					//itoa(currTriple[b].val1,temp3,10);
-					arithDirective(new_op ,1,temp_arr2[i] , currTriple[a].op ,temp2 , codeseg);		
+					arithDirective(new_op ,1,temp_arr2[i] , currTriple[a].op ,temp2 , codeseg);
 				}
 				else
 				{
 					arithDirective(new_op ,0,temp_arr2[i] , currTriple[a].op , currTriple[b].op , codeseg);
 
-					
+
 				}
 
 			}
@@ -342,7 +342,7 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 
 		else if(strcmp(currTriple[i].op,"Label")==0)
 		{
-			labelDirective(currTriple[i].mylabel,codeseg);	
+			labelDirective(currTriple[i].mylabel,codeseg);
 			//printf("..............%d\n",i);
 		}
 		else if(strcmp(currTriple[i].op,"Jump")==0)
@@ -354,7 +354,7 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 				strcmp(currTriple[i].op,">=")==0 ||
 				strcmp(currTriple[i].op,">")==0  ||
 				strcmp(currTriple[i].op,"!=")==0 ||
-				strcmp(currTriple[i].op,"==")==0 
+				strcmp(currTriple[i].op,"==")==0
 				)
 		{
 			char op[100];
@@ -382,8 +382,8 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 			{
 				strcpy(op,"JGE");
 			}
-		
-		
+
+
 			int a,b;
 			a = currTriple[i].val1;
 			b = currTriple[i].val2;
@@ -405,7 +405,7 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 					//char temp1[100];
 					sprintf(temp,"%d",currTriple[a].val1);
 					//sprintf(temp1,"%d",currTriple[b].val1);
-					compareDirective(1,op,jump_label,temp,currTriple[b].op,codeseg);	
+					compareDirective(1,op,jump_label,temp,currTriple[b].op,codeseg);
 
 				}
 			}
@@ -413,12 +413,12 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 			{
 				if( strcmp(currTriple[b].op,"NUM")==0)
 				{
-			
+
 					//char temp[100];
 					char temp1[100];
 						//sprintf(temp,"%d",currTriple[a].val1);
 					sprintf(temp1,"%d",currTriple[b].val1);
-					compareDirective(2,op,jump_label,currTriple[a].op,temp1,codeseg);	
+					compareDirective(2,op,jump_label,currTriple[a].op,temp1,codeseg);
 				}
 				else
 				{
@@ -433,7 +433,7 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 
 		}
 		else if( currTriple[i].val1 == INF &&
-					currTriple[i].val2 ==INF &&  
+					currTriple[i].val2 ==INF &&
 					currTriple[i].mylabel==0 &&
 					currTriple[i].jumplabel==0)
 		{
@@ -444,12 +444,12 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 				insert(currTriple[i].op);
 			}
 				//fprintf(dataseg,"%s dq 0\n",currTriple[i].op);
-				
+
 
 		}
 	}
 
-	
+
 	fclose(codeseg);
 	fclose(dataseg);
 
@@ -457,7 +457,7 @@ void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 	char ch;
 	while((ch=fgetc(temp))!=EOF)
 			printf("%c",ch);
-	fclose(temp);*/ 
+	fclose(temp);*/
 	combineCode(asmFile);
 	//fclose(finalcode);
 }

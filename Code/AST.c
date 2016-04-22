@@ -250,7 +250,6 @@ ASTNode* insertRecordDeclarations(ASTNode* AT, recordTable* record_table)
             AT->children[i] = insertRecordDeclarations(AT->children[i], record_table);
         return AT;
     }
-    printf("Inserting record %s\n", AT->children[1]->tk.lexeme);
     insertRecord(AT->children[1]->tk.lexeme, record_table);
     AT->children[2] = insertRecordEntries(AT->children[2], AT->children[1]->tk.lexeme, record_table);
     return AT;
