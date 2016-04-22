@@ -3,158 +3,306 @@
                 ----           ----           ----           ----                <program>             NO         <otherFunctions>
                 ----           ----            eps           ----         <otherFunctions>            YES                     ----
                 ----           ----           ----           ----                <program>             NO           <mainFunction>
-               _main              1        TK_MAIN           ----           <mainFunction>            YES                     ----
+               _main              2        TK_MAIN           ----           <mainFunction>            YES                     ----
                 ----           ----           ----           ----           <mainFunction>             NO                  <stmts>
                 ----           ----           ----           ----                  <stmts>             NO        <typeDefinitions>
+                ----           ----           ----           ----        <typeDefinitions>             NO         <typeDefinition>
+              record              3      TK_RECORD           ----         <typeDefinition>            YES                     ----
+              #marks              3    TK_RECORDID           ----         <typeDefinition>            YES                     ----
+                ----           ----           ----           ----         <typeDefinition>             NO       <fieldDefinitions>
+                ----           ----           ----           ----       <fieldDefinitions>             NO        <fieldDefinition>
+                type              4        TK_TYPE           ----        <fieldDefinition>            YES                     ----
+                ----           ----           ----           ----        <fieldDefinition>             NO      <primitiveDatatype>
+                 int              4         TK_INT           ----      <primitiveDatatype>            YES                     ----
+                   :              4       TK_COLON           ----        <fieldDefinition>            YES                     ----
+               maths              4     TK_FIELDID           ----        <fieldDefinition>            YES                     ----
+                   ;              4         TK_SEM           ----        <fieldDefinition>            YES                     ----
+                ----           ----           ----           ----       <fieldDefinitions>             NO        <fieldDefinition>
+                type              5        TK_TYPE           ----        <fieldDefinition>            YES                     ----
+                ----           ----           ----           ----        <fieldDefinition>             NO      <primitiveDatatype>
+                 int              5         TK_INT           ----      <primitiveDatatype>            YES                     ----
+                   :              5       TK_COLON           ----        <fieldDefinition>            YES                     ----
+             physics              5     TK_FIELDID           ----        <fieldDefinition>            YES                     ----
+                   ;              5         TK_SEM           ----        <fieldDefinition>            YES                     ----
+                ----           ----           ----           ----       <fieldDefinitions>             NO             <moreFields>
+                ----           ----           ----           ----             <moreFields>             NO        <fieldDefinition>
+                type              6        TK_TYPE           ----        <fieldDefinition>            YES                     ----
+                ----           ----           ----           ----        <fieldDefinition>             NO      <primitiveDatatype>
+                 int              6         TK_INT           ----      <primitiveDatatype>            YES                     ----
+                   :              6       TK_COLON           ----        <fieldDefinition>            YES                     ----
+           chemistry              6     TK_FIELDID           ----        <fieldDefinition>            YES                     ----
+                   ;              6         TK_SEM           ----        <fieldDefinition>            YES                     ----
+                ----           ----           ----           ----             <moreFields>             NO             <moreFields>
+                ----           ----            eps           ----             <moreFields>            YES                     ----
+           endrecord              7   TK_ENDRECORD           ----         <typeDefinition>            YES                     ----
+                   ;              7         TK_SEM           ----         <typeDefinition>            YES                     ----
+                ----           ----           ----           ----        <typeDefinitions>             NO        <typeDefinitions>
                 ----           ----            eps           ----        <typeDefinitions>            YES                     ----
                 ----           ----           ----           ----                  <stmts>             NO           <declarations>
                 ----           ----           ----           ----           <declarations>             NO            <declaration>
-                type              2        TK_TYPE           ----            <declaration>            YES                     ----
+                type              9        TK_TYPE           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO               <dataType>
-                ----           ----           ----           ----               <dataType>             NO      <primitiveDatatype>
-                 int              2         TK_INT           ----      <primitiveDatatype>            YES                     ----
-                   :              2       TK_COLON           ----            <declaration>            YES                     ----
-                  b3              2          TK_ID           ----            <declaration>            YES                     ----
+                ----           ----           ----           ----               <dataType>             NO    <constructedDatatype>
+              record              9      TK_RECORD           ----    <constructedDatatype>            YES                     ----
+              #marks              9    TK_RECORDID           ----    <constructedDatatype>            YES                     ----
+                   :              9       TK_COLON           ----            <declaration>            YES                     ----
+                  d4              9          TK_ID           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO          <global_or_not>
                 ----           ----            eps           ----          <global_or_not>            YES                     ----
-                   ;              2         TK_SEM           ----            <declaration>            YES                     ----
+                   ;              9         TK_SEM           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----           <declarations>             NO           <declarations>
                 ----           ----           ----           ----           <declarations>             NO            <declaration>
-                type              3        TK_TYPE           ----            <declaration>            YES                     ----
+                type             10        TK_TYPE           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO               <dataType>
                 ----           ----           ----           ----               <dataType>             NO      <primitiveDatatype>
-                 int              3         TK_INT           ----      <primitiveDatatype>            YES                     ----
-                   :              3       TK_COLON           ----            <declaration>            YES                     ----
-                  b2              3          TK_ID           ----            <declaration>            YES                     ----
+                 int             10         TK_INT           ----      <primitiveDatatype>            YES                     ----
+                   :             10       TK_COLON           ----            <declaration>            YES                     ----
+                  b5             10          TK_ID           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO          <global_or_not>
                 ----           ----            eps           ----          <global_or_not>            YES                     ----
-                   ;              3         TK_SEM           ----            <declaration>            YES                     ----
+                   ;             10         TK_SEM           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----           <declarations>             NO           <declarations>
                 ----           ----           ----           ----           <declarations>             NO            <declaration>
-                type              4        TK_TYPE           ----            <declaration>            YES                     ----
+                type             11        TK_TYPE           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO               <dataType>
                 ----           ----           ----           ----               <dataType>             NO      <primitiveDatatype>
-                 int              4         TK_INT           ----      <primitiveDatatype>            YES                     ----
-                   :              4       TK_COLON           ----            <declaration>            YES                     ----
-                  c2              4          TK_ID           ----            <declaration>            YES                     ----
+                 int             11         TK_INT           ----      <primitiveDatatype>            YES                     ----
+                   :             11       TK_COLON           ----            <declaration>            YES                     ----
+           d5cb34567             11          TK_ID           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO          <global_or_not>
                 ----           ----            eps           ----          <global_or_not>            YES                     ----
-                   ;              4         TK_SEM           ----            <declaration>            YES                     ----
+                   ;             11         TK_SEM           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----           <declarations>             NO           <declarations>
                 ----           ----           ----           ----           <declarations>             NO            <declaration>
-                type              5        TK_TYPE           ----            <declaration>            YES                     ----
+                type             12        TK_TYPE           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO               <dataType>
-                ----           ----           ----           ----               <dataType>             NO      <primitiveDatatype>
-                 int              5         TK_INT           ----      <primitiveDatatype>            YES                     ----
-                   :              5       TK_COLON           ----            <declaration>            YES                     ----
-                  d2              5          TK_ID           ----            <declaration>            YES                     ----
+                ----           ----           ----           ----               <dataType>             NO    <constructedDatatype>
+              record             12      TK_RECORD           ----    <constructedDatatype>            YES                     ----
+              #marks             12    TK_RECORDID           ----    <constructedDatatype>            YES                     ----
+                   :             12       TK_COLON           ----            <declaration>            YES                     ----
+                b3c2             12          TK_ID           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----            <declaration>             NO          <global_or_not>
                 ----           ----            eps           ----          <global_or_not>            YES                     ----
-                   ;              5         TK_SEM           ----            <declaration>            YES                     ----
+                   ;             12         TK_SEM           ----            <declaration>            YES                     ----
                 ----           ----           ----           ----           <declarations>             NO           <declarations>
                 ----           ----            eps           ----           <declarations>            YES                     ----
                 ----           ----           ----           ----                  <stmts>             NO             <otherStmts>
                 ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
-                ----           ----           ----           ----                   <stmt>             NO                 <ioStmt>
-                read              6        TK_READ           ----                 <ioStmt>            YES                     ----
-                   (              6          TK_OP           ----                 <ioStmt>            YES                     ----
-                ----           ----           ----           ----                 <ioStmt>             NO          <singleOrRecId>
-                  b2              6          TK_ID           ----          <singleOrRecId>            YES                     ----
-                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
-                ----           ----            eps           ----                 <new_24>            YES                     ----
-                   )              6          TK_CL           ----                 <ioStmt>            YES                     ----
-                   ;              6         TK_SEM           ----                 <ioStmt>            YES                     ----
-                ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
-                ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
                 ----           ----           ----           ----                   <stmt>             NO         <assignmentStmt>
                 ----           ----           ----           ----         <assignmentStmt>             NO          <singleOrRecId>
-                  c2              7          TK_ID           ----          <singleOrRecId>            YES                     ----
+                  b5             14          TK_ID           ----          <singleOrRecId>            YES                     ----
                 ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
                 ----           ----            eps           ----                 <new_24>            YES                     ----
-                <---              7    TK_ASSIGNOP           ----         <assignmentStmt>            YES                     ----
+                <---             14    TK_ASSIGNOP           ----         <assignmentStmt>            YES                     ----
                 ----           ----           ----           ----         <assignmentStmt>             NO   <arithmeticExpression>
                 ----           ----           ----           ----   <arithmeticExpression>             NO                   <term>
                 ----           ----           ----           ----                   <term>             NO                 <factor>
                 ----           ----           ----           ----                 <factor>             NO                 <allVar>
-                ----              7         TK_NUM             20                 <allVar>            YES                     ----
+                ----             14         TK_NUM              1                 <allVar>            YES                     ----
                 ----           ----           ----           ----                   <term>             NO              <termPrime>
                 ----           ----            eps           ----              <termPrime>            YES                     ----
                 ----           ----           ----           ----   <arithmeticExpression>             NO               <expPrime>
                 ----           ----            eps           ----               <expPrime>            YES                     ----
-                   ;              7         TK_SEM           ----         <assignmentStmt>            YES                     ----
+                   ;             14         TK_SEM           ----         <assignmentStmt>            YES                     ----
                 ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
                 ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
                 ----           ----           ----           ----                   <stmt>             NO                 <ioStmt>
-                read              8        TK_READ           ----                 <ioStmt>            YES                     ----
-                   (              8          TK_OP           ----                 <ioStmt>            YES                     ----
+                read             15        TK_READ           ----                 <ioStmt>            YES                     ----
+                   (             15          TK_OP           ----                 <ioStmt>            YES                     ----
                 ----           ----           ----           ----                 <ioStmt>             NO          <singleOrRecId>
-                  d2              8          TK_ID           ----          <singleOrRecId>            YES                     ----
+           d5cb34567             15          TK_ID           ----          <singleOrRecId>            YES                     ----
                 ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
                 ----           ----            eps           ----                 <new_24>            YES                     ----
-                   )              8          TK_CL           ----                 <ioStmt>            YES                     ----
-                   ;              8         TK_SEM           ----                 <ioStmt>            YES                     ----
+                   )             15          TK_CL           ----                 <ioStmt>            YES                     ----
+                   ;             15         TK_SEM           ----                 <ioStmt>            YES                     ----
                 ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
                 ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
                 ----           ----           ----           ----                   <stmt>             NO         <assignmentStmt>
                 ----           ----           ----           ----         <assignmentStmt>             NO          <singleOrRecId>
-                  b3             10          TK_ID           ----          <singleOrRecId>            YES                     ----
+                  d4             16          TK_ID           ----          <singleOrRecId>            YES                     ----
+                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
+                   .             16         TK_DOT           ----                 <new_24>            YES                     ----
+               maths             16     TK_FIELDID           ----                 <new_24>            YES                     ----
+                <---             16    TK_ASSIGNOP           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----         <assignmentStmt>             NO   <arithmeticExpression>
+                ----           ----           ----           ----   <arithmeticExpression>             NO                   <term>
+                ----           ----           ----           ----                   <term>             NO                 <factor>
+                ----           ----           ----           ----                 <factor>             NO                 <allVar>
+                ----             16         TK_NUM              0                 <allVar>            YES                     ----
+                ----           ----           ----           ----                   <term>             NO              <termPrime>
+                ----           ----            eps           ----              <termPrime>            YES                     ----
+                ----           ----           ----           ----   <arithmeticExpression>             NO               <expPrime>
+                ----           ----            eps           ----               <expPrime>            YES                     ----
+                   ;             16         TK_SEM           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
+                ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
+                ----           ----           ----           ----                   <stmt>             NO         <assignmentStmt>
+                ----           ----           ----           ----         <assignmentStmt>             NO          <singleOrRecId>
+                  d4             17          TK_ID           ----          <singleOrRecId>            YES                     ----
+                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
+                   .             17         TK_DOT           ----                 <new_24>            YES                     ----
+             physics             17     TK_FIELDID           ----                 <new_24>            YES                     ----
+                <---             17    TK_ASSIGNOP           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----         <assignmentStmt>             NO   <arithmeticExpression>
+                ----           ----           ----           ----   <arithmeticExpression>             NO                   <term>
+                ----           ----           ----           ----                   <term>             NO                 <factor>
+                ----           ----           ----           ----                 <factor>             NO                 <allVar>
+                ----             17         TK_NUM              0                 <allVar>            YES                     ----
+                ----           ----           ----           ----                   <term>             NO              <termPrime>
+                ----           ----            eps           ----              <termPrime>            YES                     ----
+                ----           ----           ----           ----   <arithmeticExpression>             NO               <expPrime>
+                ----           ----            eps           ----               <expPrime>            YES                     ----
+                   ;             17         TK_SEM           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
+                ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
+                ----           ----           ----           ----                   <stmt>             NO         <assignmentStmt>
+                ----           ----           ----           ----         <assignmentStmt>             NO          <singleOrRecId>
+                  d4             18          TK_ID           ----          <singleOrRecId>            YES                     ----
+                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
+                   .             18         TK_DOT           ----                 <new_24>            YES                     ----
+           chemistry             18     TK_FIELDID           ----                 <new_24>            YES                     ----
+                <---             18    TK_ASSIGNOP           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----         <assignmentStmt>             NO   <arithmeticExpression>
+                ----           ----           ----           ----   <arithmeticExpression>             NO                   <term>
+                ----           ----           ----           ----                   <term>             NO                 <factor>
+                ----           ----           ----           ----                 <factor>             NO                 <allVar>
+                ----             18         TK_NUM              0                 <allVar>            YES                     ----
+                ----           ----           ----           ----                   <term>             NO              <termPrime>
+                ----           ----            eps           ----              <termPrime>            YES                     ----
+                ----           ----           ----           ----   <arithmeticExpression>             NO               <expPrime>
+                ----           ----            eps           ----               <expPrime>            YES                     ----
+                   ;             18         TK_SEM           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
+                ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
+                ----           ----           ----           ----                   <stmt>             NO          <iterativeStmt>
+               while             19       TK_WHILE           ----          <iterativeStmt>            YES                     ----
+                   (             19          TK_OP           ----          <iterativeStmt>            YES                     ----
+                ----           ----           ----           ----          <iterativeStmt>             NO      <booleanExpression>
+                ----           ----           ----           ----      <booleanExpression>             NO                    <var>
+                  b5             19          TK_ID           ----                    <var>            YES                     ----
+                ----           ----           ----           ----      <booleanExpression>             NO           <relationalOp>
+                  <=             19          TK_LE           ----           <relationalOp>            YES                     ----
+                ----           ----           ----           ----      <booleanExpression>             NO                    <var>
+           d5cb34567             19          TK_ID           ----                    <var>            YES                     ----
+                   )             19          TK_CL           ----          <iterativeStmt>            YES                     ----
+                ----           ----           ----           ----          <iterativeStmt>             NO                   <stmt>
+                ----           ----           ----           ----                   <stmt>             NO                 <ioStmt>
+                read             20        TK_READ           ----                 <ioStmt>            YES                     ----
+                   (             20          TK_OP           ----                 <ioStmt>            YES                     ----
+                ----           ----           ----           ----                 <ioStmt>             NO          <singleOrRecId>
+                b3c2             20          TK_ID           ----          <singleOrRecId>            YES                     ----
+                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
+                   .             20         TK_DOT           ----                 <new_24>            YES                     ----
+               maths             20     TK_FIELDID           ----                 <new_24>            YES                     ----
+                   )             20          TK_CL           ----                 <ioStmt>            YES                     ----
+                   ;             20         TK_SEM           ----                 <ioStmt>            YES                     ----
+                ----           ----           ----           ----          <iterativeStmt>             NO             <otherStmts>
+                ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
+                ----           ----           ----           ----                   <stmt>             NO                 <ioStmt>
+                read             21        TK_READ           ----                 <ioStmt>            YES                     ----
+                   (             21          TK_OP           ----                 <ioStmt>            YES                     ----
+                ----           ----           ----           ----                 <ioStmt>             NO          <singleOrRecId>
+                b3c2             21          TK_ID           ----          <singleOrRecId>            YES                     ----
+                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
+                   .             21         TK_DOT           ----                 <new_24>            YES                     ----
+             physics             21     TK_FIELDID           ----                 <new_24>            YES                     ----
+                   )             21          TK_CL           ----                 <ioStmt>            YES                     ----
+                   ;             21         TK_SEM           ----                 <ioStmt>            YES                     ----
+                ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
+                ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
+                ----           ----           ----           ----                   <stmt>             NO                 <ioStmt>
+                read             22        TK_READ           ----                 <ioStmt>            YES                     ----
+                   (             22          TK_OP           ----                 <ioStmt>            YES                     ----
+                ----           ----           ----           ----                 <ioStmt>             NO          <singleOrRecId>
+                b3c2             22          TK_ID           ----          <singleOrRecId>            YES                     ----
+                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
+                   .             22         TK_DOT           ----                 <new_24>            YES                     ----
+           chemistry             22     TK_FIELDID           ----                 <new_24>            YES                     ----
+                   )             22          TK_CL           ----                 <ioStmt>            YES                     ----
+                   ;             22         TK_SEM           ----                 <ioStmt>            YES                     ----
+                ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
+                ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
+                ----           ----           ----           ----                   <stmt>             NO         <assignmentStmt>
+                ----           ----           ----           ----         <assignmentStmt>             NO          <singleOrRecId>
+                  d4             23          TK_ID           ----          <singleOrRecId>            YES                     ----
                 ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
                 ----           ----            eps           ----                 <new_24>            YES                     ----
-                <---             10    TK_ASSIGNOP           ----         <assignmentStmt>            YES                     ----
+                <---             23    TK_ASSIGNOP           ----         <assignmentStmt>            YES                     ----
                 ----           ----           ----           ----         <assignmentStmt>             NO   <arithmeticExpression>
                 ----           ----           ----           ----   <arithmeticExpression>             NO                   <term>
                 ----           ----           ----           ----                   <term>             NO                 <factor>
                 ----           ----           ----           ----                 <factor>             NO                 <allVar>
                 ----           ----           ----           ----                 <allVar>             NO          <singleOrRecId>
-                  b2             10          TK_ID           ----          <singleOrRecId>            YES                     ----
+                b3c2             23          TK_ID           ----          <singleOrRecId>            YES                     ----
                 ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
                 ----           ----            eps           ----                 <new_24>            YES                     ----
                 ----           ----           ----           ----                   <term>             NO              <termPrime>
                 ----           ----            eps           ----              <termPrime>            YES                     ----
                 ----           ----           ----           ----   <arithmeticExpression>             NO               <expPrime>
                 ----           ----           ----           ----               <expPrime>             NO <lowPrecedenceOperators>
-                   +             10        TK_PLUS           ---- <lowPrecedenceOperators>            YES                     ----
+                   +             23        TK_PLUS           ---- <lowPrecedenceOperators>            YES                     ----
                 ----           ----           ----           ----               <expPrime>             NO                   <term>
                 ----           ----           ----           ----                   <term>             NO                 <factor>
                 ----           ----           ----           ----                 <factor>             NO                 <allVar>
                 ----           ----           ----           ----                 <allVar>             NO          <singleOrRecId>
-                  c2             10          TK_ID           ----          <singleOrRecId>            YES                     ----
-                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
-                ----           ----            eps           ----                 <new_24>            YES                     ----
-                ----           ----           ----           ----                   <term>             NO              <termPrime>
-                ----           ----            eps           ----              <termPrime>            YES                     ----
-                ----           ----           ----           ----               <expPrime>             NO               <expPrime>
-                ----           ----           ----           ----               <expPrime>             NO <lowPrecedenceOperators>
-                   +             10        TK_PLUS           ---- <lowPrecedenceOperators>            YES                     ----
-                ----           ----           ----           ----               <expPrime>             NO                   <term>
-                ----           ----           ----           ----                   <term>             NO                 <factor>
-                ----           ----           ----           ----                 <factor>             NO                 <allVar>
-                ----           ----           ----           ----                 <allVar>             NO          <singleOrRecId>
-                  d2             10          TK_ID           ----          <singleOrRecId>            YES                     ----
+                  d4             23          TK_ID           ----          <singleOrRecId>            YES                     ----
                 ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
                 ----           ----            eps           ----                 <new_24>            YES                     ----
                 ----           ----           ----           ----                   <term>             NO              <termPrime>
                 ----           ----            eps           ----              <termPrime>            YES                     ----
                 ----           ----           ----           ----               <expPrime>             NO               <expPrime>
                 ----           ----            eps           ----               <expPrime>            YES                     ----
-                   ;             10         TK_SEM           ----         <assignmentStmt>            YES                     ----
+                   ;             23         TK_SEM           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
+                ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
+                ----           ----           ----           ----                   <stmt>             NO         <assignmentStmt>
+                ----           ----           ----           ----         <assignmentStmt>             NO          <singleOrRecId>
+                  b5             24          TK_ID           ----          <singleOrRecId>            YES                     ----
+                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
+                ----           ----            eps           ----                 <new_24>            YES                     ----
+                <---             24    TK_ASSIGNOP           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----         <assignmentStmt>             NO   <arithmeticExpression>
+                ----           ----           ----           ----   <arithmeticExpression>             NO                   <term>
+                ----           ----           ----           ----                   <term>             NO                 <factor>
+                ----           ----           ----           ----                 <factor>             NO                 <allVar>
+                ----           ----           ----           ----                 <allVar>             NO          <singleOrRecId>
+                  b5             24          TK_ID           ----          <singleOrRecId>            YES                     ----
+                ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
+                ----           ----            eps           ----                 <new_24>            YES                     ----
+                ----           ----           ----           ----                   <term>             NO              <termPrime>
+                ----           ----            eps           ----              <termPrime>            YES                     ----
+                ----           ----           ----           ----   <arithmeticExpression>             NO               <expPrime>
+                ----           ----           ----           ----               <expPrime>             NO <lowPrecedenceOperators>
+                   +             24        TK_PLUS           ---- <lowPrecedenceOperators>            YES                     ----
+                ----           ----           ----           ----               <expPrime>             NO                   <term>
+                ----           ----           ----           ----                   <term>             NO                 <factor>
+                ----           ----           ----           ----                 <factor>             NO                 <allVar>
+                ----             24         TK_NUM              1                 <allVar>            YES                     ----
+                ----           ----           ----           ----                   <term>             NO              <termPrime>
+                ----           ----            eps           ----              <termPrime>            YES                     ----
+                ----           ----           ----           ----               <expPrime>             NO               <expPrime>
+                ----           ----            eps           ----               <expPrime>            YES                     ----
+                   ;             24         TK_SEM           ----         <assignmentStmt>            YES                     ----
+                ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
+                ----           ----            eps           ----             <otherStmts>            YES                     ----
+            endwhile             25    TK_ENDWHILE           ----          <iterativeStmt>            YES                     ----
                 ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
                 ----           ----           ----           ----             <otherStmts>             NO                   <stmt>
                 ----           ----           ----           ----                   <stmt>             NO                 <ioStmt>
-               write             11       TK_WRITE           ----                 <ioStmt>            YES                     ----
-                   (             11          TK_OP           ----                 <ioStmt>            YES                     ----
+               write             26       TK_WRITE           ----                 <ioStmt>            YES                     ----
+                   (             26          TK_OP           ----                 <ioStmt>            YES                     ----
                 ----           ----           ----           ----                 <ioStmt>             NO                 <allVar>
                 ----           ----           ----           ----                 <allVar>             NO          <singleOrRecId>
-                  b3             11          TK_ID           ----          <singleOrRecId>            YES                     ----
+                  d4             26          TK_ID           ----          <singleOrRecId>            YES                     ----
                 ----           ----           ----           ----          <singleOrRecId>             NO                 <new_24>
                 ----           ----            eps           ----                 <new_24>            YES                     ----
-                   )             11          TK_CL           ----                 <ioStmt>            YES                     ----
-                   ;             11         TK_SEM           ----                 <ioStmt>            YES                     ----
+                   )             26          TK_CL           ----                 <ioStmt>            YES                     ----
+                   ;             26         TK_SEM           ----                 <ioStmt>            YES                     ----
                 ----           ----           ----           ----             <otherStmts>             NO             <otherStmts>
                 ----           ----            eps           ----             <otherStmts>            YES                     ----
                 ----           ----           ----           ----                  <stmts>             NO             <returnStmt>
-              return             12      TK_RETURN           ----             <returnStmt>            YES                     ----
+              return             27      TK_RETURN           ----             <returnStmt>            YES                     ----
                 ----           ----           ----           ----             <returnStmt>             NO         <optionalReturn>
                 ----           ----            eps           ----         <optionalReturn>            YES                     ----
-                   ;             12         TK_SEM           ----             <returnStmt>            YES                     ----
-                 end             13         TK_END           ----           <mainFunction>            YES                     ----
+                   ;             27         TK_SEM           ----             <returnStmt>            YES                     ----
+                 end             28         TK_END           ----           <mainFunction>            YES                     ----

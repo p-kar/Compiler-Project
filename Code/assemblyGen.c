@@ -1,7 +1,7 @@
 #include "assemblyGen.h"
 
 int temp_index=0;
-node* dup_list;
+node* dup_list=NULL;
 
 int searchEntry(char* temp)
 {
@@ -11,13 +11,16 @@ int searchEntry(char* temp)
 		if( strcmp(new_node->str,temp)==0 )
 			return 0;
 		new_node = new_node->next;
+		//printf("//////%s\n",new_node->str);
 	}
+	//printf("okay\n");
 	return 1;
 }
 void insert(char* temp)
 {
 	node* new_node =(node*) malloc(sizeof(node));
 	strcpy(new_node->str,temp);
+	new_node->next = NULL;
 	if(dup_list==NULL)
 		dup_list=new_node;
 	else
@@ -34,13 +37,9 @@ void readDirective(int option, triple t,FILE* fp)
 	fprintf(fp, ";read begin\n");
 	fprintf(fp, "push rbp\n");
 	if(option==0)
-	{
 		fprintf(fp, "mov rsi,%s\n",t.op);	
-	}
 	else
-	{
 		fprintf(fp, "mov rsi,%d\n",t.val1);
-	}
 	fprintf(fp, "mov rdi,format_inp\n");
 	fprintf(fp, "mov rax,0\n");
 	fprintf(fp, "call scanf\n");
@@ -53,13 +52,9 @@ void writeDirective(int option, triple t,FILE* fp)
 	fprintf(fp,";write begin\n");
 	fprintf(fp, "push rbp\n");
 	if(option==0)
-	{
 		fprintf(fp, "mov rsi,[%s]\n",t.op);	
-	}
 	else
-	{
 		fprintf(fp, "mov rsi,%d\n",t.val1);
-	}
 	fprintf(fp, "mov rdi,format\n");
 	fprintf(fp, "mov rax,0\n");
 	fprintf(fp, "call printf\n");
@@ -159,138 +154,83 @@ void jumpDirective(int label_index,FILE* fp)
 	fprintf(fp,"JMP label%d\n",label_index);	
 }
 
-void combineCode()
+void combineCode(const char* asmFile)
 {
 	FILE *temp = fopen("dataseg.txt","r");
 	FILE *temp2 = fopen("codeseg.txt","r");
-	FILE *finalcode = fopen("finalcode.asm","w+");
+	FILE *finalcode = fopen(asmFile,"w+");
 
 	fprintf(finalcode, "extern printf,exit,scanf\n");
 	fprintf(finalcode,"section .data\n");
-	//fprintf(finalcode,"\tformat db  \n, 10, 0\n");
-	//fprintf(finalcode,"\tformat_inp db "%d", 0\n");
 	fprintf(finalcode,"\tformat_inp db %c%cd%c, 0\n",'"','%','"');
 	fprintf(finalcode,"\tformat db %c%cd%c, 10, 0\n",'"','%','"');
 	char ch;
 	while( (ch=fgetc(temp))!=EOF)
 	{
-		//printf("%c",ch);
-		//fprintf(finalcode,"%c",ch);
 		fputc(ch, finalcode);
 		if(ch=='\n')
 			fputc('\t', finalcode);
 	}
-
 	fprintf(finalcode,"section .text\n");
 	fprintf(finalcode,"\tglobal main\n");
-	fprintf(finalcode,"\tmain:\n");
-		
+	fprintf(finalcode,"\tmain:\n");	
 	while( (ch=fgetc(temp2))!=EOF)
 	{
 		fputc(ch, finalcode);
 		if(ch=='\n')
 			fputc('\t', finalcode);
 	}	
-
 	fprintf(finalcode,"call exit\n");
 	fclose(temp);
 	fclose(temp2);
 	fclose(finalcode);
-
 }
 
 
 
 
-void generateAssemblyCode(triple* currTriple,int len)
+void generateAssemblyCode(triple* currTriple,int len,const char* asmFile)
 {
-	int j;
-	for(j=0;j<len;j++)
-	{
-		printf("%s \n",currTriple[j].op);
-	}printf("\n");
-
-	
-	printf("\n\n");
-
 	FILE *codeseg = fopen("codeseg.txt","w");
-	//fflush(stdout);
-	//fflush(stdin);
-	for(j=0;j<len;j++)
-	{
-		printf("%s \n",currTriple[j].op);
-	}printf("\n");
-
-
-
-	FILE *dataseg = fopen("dataseg.txt","w+");
-	printf("//////////////////////////// %d\n",len);
-	//writeConstant(finalcode);
-	//printf("%d\n",len);
-	//int len = sizeof(currTriple) / sizeof(triple) ;
-
+	FILE *dataseg = fopen("dataseg.txt","w");
 	int temp_arr[len];
-	
-
-
-
 	char temp_arr2[len][100];
-	
-
-
 	memset(temp_arr,0, sizeof(temp_arr));
 	memset(temp_arr2,'\0', sizeof(temp_arr2));
-
-
-
-	
 	int i;
 	for(i=0;i<len;i++)
 	{
-		printf("!!!!!!!!!!!!!!!!! %d\n",i);
+		//printf("!!!!!!!!!!!!!!!!! %d\n",i);
 		if(strcmp(currTriple[i].op,"read") == 0) 
 		{
-			printf("REad %d\n",i);
-			if(strcmp( currTriple[i-1].op,"NUM")==0 )
-			{
-
-				readDirective(1,currTriple[i-1], codeseg);
-			}
+			int a = currTriple[i].val1;
+			//printf("Read %d\n",i);
+			if(strcmp( currTriple[a].op,"NUM")==0 )
+				readDirective(1,currTriple[a], codeseg);
 			else
-			{
-				readDirective(0,currTriple[i-1], codeseg);
-			}
+				readDirective(0,currTriple[a], codeseg);
 		}
 		else if(strcmp(currTriple[i].op,"write")==0) 
 		{
-			printf("Write %d\n",i);
-			if(strcmp( currTriple[i-1].op,"NUM")==0 )
-			{
-				writeDirective(1,currTriple[i-1],codeseg);
-			}
+			int a = currTriple[i].val1;
+			//printf("Write %d\n",i);
+			if(strcmp( currTriple[a].op,"NUM")==0 )
+				writeDirective(1,currTriple[a],codeseg);
 			else
-			{
-				writeDirective(0,currTriple[i-1], codeseg);
-			}
+				writeDirective(0,currTriple[a], codeseg);
 		}
 		else if(strcmp(currTriple[i].op,"=")==0)
 		{
 			//int a = currTriple[i].val1;
 			int b = currTriple[i].val2;
 			int a = currTriple[i].val1;
-			printf("%d %d\n",b,temp_arr[b]);
+			//printf("%d %d\n",b,temp_arr[b]);
 			if(strcmp(currTriple[b].op,"NUM") ==0)
-			{
 				assignDirectiveOne(currTriple[a].op,currTriple[b].val1,codeseg);
-			}
 			else if(temp_arr[b]==1)
-			{
 				assignDirectiveZero(currTriple[a].op , temp_arr2[b],codeseg);
-			}
 			else
-			{
 				assignDirectiveZero(currTriple[a].op , currTriple[b].op,codeseg);
-			}
 		}
 		else if(strcmp(currTriple[i].op,"+")==0 || strcmp(currTriple[i].op,"-")==0 ||
 			strcmp(currTriple[i].op,"*")==0  || strcmp(currTriple[i].op,"/")==0   )
@@ -393,7 +333,7 @@ void generateAssemblyCode(triple* currTriple,int len)
 		else if(strcmp(currTriple[i].op,"Label")==0)
 		{
 			labelDirective(currTriple[i].mylabel,codeseg);	
-			printf("..............%d\n",i);
+			//printf("..............%d\n",i);
 		}
 		else if(strcmp(currTriple[i].op,"Jump")==0)
 		{
@@ -493,6 +433,9 @@ void generateAssemblyCode(triple* currTriple,int len)
 				fprintf(dataseg,"%s dq 0\n",currTriple[i].op);
 				insert(currTriple[i].op);
 			}
+				//fprintf(dataseg,"%s dq 0\n",currTriple[i].op);
+				
+
 		}
 	}
 
@@ -505,6 +448,6 @@ void generateAssemblyCode(triple* currTriple,int len)
 	while((ch=fgetc(temp))!=EOF)
 			printf("%c",ch);
 	fclose(temp);*/ 
-	combineCode();
+	combineCode(asmFile);
 	//fclose(finalcode);
 }

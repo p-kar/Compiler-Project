@@ -20,17 +20,9 @@ void displayTriple()
 
 int addTriple(char* op , int val1 , int val2)
 {
-	/*if(val1==INF && val2==INF)
-	{
-		printf("%s\n" , op);
-	}*/
-	//int curr_size = sizeof(currTriple) / sizeof(triple) ;
-	//if( curr_size < curr_index+1   )
-	//{
-		currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) ) ;
-        // realloc memory
-	//}
-	strcpy(currTriple[curr_index].op, op );
+	currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) ) ;
+    //printf("???????????????????%s\n",op);
+    strcpy(currTriple[curr_index].op, op );
 	currTriple[curr_index].val1 = val1;
 	currTriple[curr_index].val2 = val2;
 	curr_index++;
@@ -39,13 +31,9 @@ int addTriple(char* op , int val1 , int val2)
 
 void addTriple2(char* op,int val1,int val2,int mylabel,int jumplabel)
 {
-	//int curr_size = sizeof(currTriple) / sizeof(triple) ;
-	//if( curr_size < curr_index+1   )
-	//{
-		currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) );
-        // realloc memory
-	//}
-	strcpy(currTriple[curr_index].op, op );
+	currTriple = (triple*) realloc(currTriple , (curr_index+1)*sizeof(triple) );
+    //printf("???????????????????%s\n",op);
+    strcpy(currTriple[curr_index].op, op );
 	currTriple[curr_index].val1 = val1;
 	currTriple[curr_index].val2 = val2;
 	currTriple[curr_index].mylabel = mylabel;
@@ -64,7 +52,7 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 	if(curr->nodeid == getNonTerminalfromStr("<assignmentStmt>"))
 	{
 		//printf("%d %d\n",curr->children[1]->nodeid , getNonTerminalfromStr("<arithmeticExpression>"));
-		printf("Assignment Stmt ////\n");
+		//printf("Assignment Stmt ////\n");
 		//printf("%s\n", getIDStr(curr->children[1]->nodeid));
 		tuple* left = solveAssignmentStmt(curr->children[0]);
 		tuple* right = solveAssignmentStmt(curr->children[1]);
@@ -82,10 +70,10 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<arithmeticExpression>"))
 	{
-		printf("arithmetic expression\n");
+		//printf("arithmetic expression\n");
 		if(curr->children[1]==NULL)
 		{
-			printf("no second child\n");
+			//printf("no second child\n");
 			 return solveAssignmentStmt(curr->children[0]);
 		}
 		else
@@ -125,7 +113,7 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<term>"))
 	{
-		printf("term\n");
+		//printf("term\n");
 		if(curr->children[1]==NULL)
 		{
 			return solveAssignmentStmt(curr->children[0]);
@@ -202,7 +190,7 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<expPrime>"))
 	{
-		printf("exp prime\n");
+		//printf("exp prime\n");
 		if(curr->children[2]==NULL)
 		{
 			//printf("///////////okay\n");
@@ -243,12 +231,12 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<factor>"))
 	{
-		printf("factor\n");
+		//printf("factor\n");
 		return solveAssignmentStmt(curr->children[0]);
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<termPrime>"))
 	{
-		printf("term prime\n");
+		//printf("term prime\n");
 		if(curr->children[2] == NULL)
 		{
 			return solveAssignmentStmt(curr->children[1]);
@@ -323,8 +311,13 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 	}
 	else if(curr->nodeid == getNonTerminalfromStr("<singleOrRecId>"))
 	{
-		printf("singleor recordid\n");
+		//printf("singleor recordid\n");
 		int type = getType(curr);
+		/*if(curr->children[1] == NULL)
+			printf("Line %d: %s type = %d\n", getLineNumber(curr), curr->children[0]->tk.lexeme, type);
+		else
+			printf("Line %d: %s.%s type = %d\n", getLineNumber(curr), curr->children[0]->tk.lexeme, curr->children[1]->tk.lexeme, type);
+		*/
 		tuple* t = (tuple*) malloc(sizeof(tuple));
 		t->arr = NULL;
 		t->len = 0;
@@ -338,6 +331,8 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 				char identifier[100];
 				sprintf(identifier, "%s.%s", curr->children[0]->tk.lexeme, p->token.lexeme);
 				t->arr = (int*) realloc(t->arr, sizeof(int) * (t->len + 1));
+				//printf("??????????%s %s\n",curr->children[0]->tk.lexeme,p->token.lexeme);
+				//printf("?????????%s\n\n",identifier);
 				t->arr[t->len] = addTriple(identifier, INF, INF);
 				t->len++;
 				p = p->next;
@@ -345,11 +340,13 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 		}
 		else
 		{
+
 			char identifier[100];
 			if(curr->children[1] == NULL)
 				sprintf(identifier, "%s", curr->children[0]->tk.lexeme);
 			else
 				sprintf(identifier, "%s.%s", curr->children[0]->tk.lexeme, curr->children[1]->tk.lexeme);
+			//printf("??????????? %s\n",identifier);
 			t->arr = (int*) malloc(sizeof(int));
 			t->len = 1;
 			t->arr[0] = addTriple(identifier, INF, INF);
@@ -358,7 +355,7 @@ tuple* solveAssignmentStmt(ASTNode* curr)
 	}
 	else if(curr->tk.tokenType == TK_NUM)
 	{
-		printf("num\n");
+		//printf("num\n");
 		tuple* t = (tuple*) malloc(sizeof(tuple));
 		t->arr = (int*) malloc(sizeof(int));
 		t->len = 1;
@@ -399,14 +396,14 @@ void solveStmt(ASTNode* impStmtNode)
 			fprintf(stderr, " Statement Node Has only one child\n");
 		else if( stmtNode->nodeid == getNonTerminalfromStr("<iterativeStmt>"))
 		{
-			printf("\nIterative Stmt\n");
+			//printf("\nIterative Stmt\n");
 			solveIterative(stmtNode);
 			// while loop
 		}
 		else if(stmtNode->nodeid ==
 			getNonTerminalfromStr("<conditionalStmt>"))
 		{
-			printf("\n Conditional Stmt \n");
+			//printf("\n Conditional Stmt \n");
 			if(stmtNode->children[4]==NULL)
 				solveConditionalOne(stmtNode);
 			else
@@ -414,20 +411,22 @@ void solveStmt(ASTNode* impStmtNode)
 		}
 		else if(stmtNode->nodeid== getNonTerminalfromStr("<assignmentStmt>") )
 		{
-			printf("Assignment Stmt\n");
+			//printf("Assignment Stmt\n");
 			solveAssignmentStmt(stmtNode);
 			// assignment statement
 		}
 		else if(stmtNode->children[0]->tk.tokenType == TK_WRITE)
 		{
 
-			printf("Write Stmt\n");
+			//printf("Write Stmt\n");
 			tuple* t = solveAssignmentStmt(stmtNode->children[1]);
-			addTriple("write" , t->arr[0], INF);
+			int i;
+			for (i = 0; i < t->len; ++i)
+				addTriple("write" , t->arr[i], INF);
 		}
 		else if(stmtNode->children[0]->tk.tokenType == TK_READ)
 		{
-			printf("Read Stmt\n");
+			//printf("Read Stmt\n");
 			tuple* t = solveAssignmentStmt(stmtNode->children[1]);
 			addTriple("read" , t->arr[0] ,INF);
 		}
@@ -446,14 +445,14 @@ void solveStmtHelper(ASTNode* stmtNode , ASTNode* impStmtNode)
 {
 		if( stmtNode->nodeid == getNonTerminalfromStr("<iterativeStmt>"))
 		{
-			printf("Iterative Stmt\n");
+			//printf("Iterative Stmt\n");
 			solveIterative(stmtNode);
 			// while loop
 		}
 		else if(stmtNode->nodeid ==
 			getNonTerminalfromStr("<conditionalStmt>"))
 		{
-			printf("Conditional Stmt\n");
+			//printf("Conditional Stmt\n");
 			if(stmtNode->children[4]==NULL)
 				solveConditionalOne(stmtNode);
 			else
@@ -462,22 +461,24 @@ void solveStmtHelper(ASTNode* stmtNode , ASTNode* impStmtNode)
 		else if(stmtNode->nodeid== getNonTerminalfromStr("<assignmentStmt>") )
 		{
 
-			printf("Assignment Stmt\n");
+			//printf("Assignment Stmt\n");
 			solveAssignmentStmt(stmtNode);
 			// assignment statement
 		}
 		else if(stmtNode->children[0]->tk.tokenType == TK_WRITE)
 		{
 
-			printf("Write stmt\n");
-			addTriple(findVarName(stmtNode->children[1]->children[0]->tk.lexeme),INF,INF);
-			addTriple("write" , curr_index-1, INF  );
+			//printf("Write stmt\n");
+			tuple* t = solveAssignmentStmt(stmtNode->children[1]);
+			int i;
+			for (i = 0; i < t->len; ++i)
+				addTriple("write" , t->arr[i], INF);
 		}
 		else if(stmtNode->children[0]->tk.tokenType == TK_READ)
 		{
-			printf("Read stmt\n");
-			addTriple(findVarName(stmtNode->children[1]->children[0]->tk.lexeme),INF,INF);
-			addTriple("read" , curr_index-1 ,INF);
+			//printf("Read stmt\n");
+			tuple* t = solveAssignmentStmt(stmtNode->children[1]);
+			addTriple("read" , t->arr[0] ,INF);
 		}
 		else
 			fprintf(stderr, "Code generation cannot handle this case\n" );
@@ -614,7 +615,7 @@ void solveIterative(ASTNode* curr)
 
 
 
-void generateCode(ASTNode* t)
+void generateCode(ASTNode* t,const char* asmFile)
 {
 
 	curr_label = 0 ;
@@ -627,10 +628,11 @@ void generateCode(ASTNode* t)
 
 
 	solveStmt(impStmtNode);
-	printf("///////////////////\n");
-	displayTriple();
-	printf("starting assembly code gen\n");
-	generateAssemblyCode(currTriple,curr_index);
+	//printf("///////////////////\n");
+	//displayTriple();
+	printf("Starting assembly code gen... ");
+	generateAssemblyCode(currTriple,curr_index,asmFile);
+	printf("Done\n");
 }
 
 

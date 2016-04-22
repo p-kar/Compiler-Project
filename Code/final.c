@@ -112,7 +112,7 @@ int main(int argc, char const *argv[])
             AT = makeASTSymbolTableLinks(AT);
             runTypeCheckerAST(AT);
             runSemanticAnalyzer(AT);
-            generateCode(AT);
+            generateCode(AT, argv[2]);
             break;
     }
     return 0;

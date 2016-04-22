@@ -21,6 +21,6 @@ void solveBool(ASTNode* curr , int label_succ , int label_fail);
 void solveConditionalOne(ASTNode* curr);
 void solveConditionalTwo(ASTNode* curr);
 void solveIterative(ASTNode* curr);
-void generateCode(ASTNode* t);
+void generateCode(ASTNode* t,const char* asmFile);
 
 #endif

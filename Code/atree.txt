@@ -1,63 +1,132 @@
    lexemeCurrentNode         lineno          token  valuelfNumber     isLeafNode               NodeSymbol
                 ----           ----           ----           ----             NO                <program>
                 ----           ----           ----           ----             NO           <mainFunction>
-               _main              1        TK_MAIN           ----            YES                     ----
+               _main              2        TK_MAIN           ----            YES                     ----
                 ----           ----           ----           ----             NO                  <stmts>
-                ----           ----           ----           ----             NO           <declarations>
-                ----           ----           ----           ----             NO            <declaration>
-                 int              2         TK_INT           ----            YES                     ----
-                  b3              2          TK_ID           ----            YES                     ----
-                ----           ----           ----           ----             NO           <declarations>
-                ----           ----           ----           ----             NO            <declaration>
-                 int              3         TK_INT           ----            YES                     ----
-                  b2              3          TK_ID           ----            YES                     ----
-                ----           ----           ----           ----             NO           <declarations>
-                ----           ----           ----           ----             NO            <declaration>
+                ----           ----           ----           ----             NO        <typeDefinitions>
+                ----           ----           ----           ----             NO         <typeDefinition>
+              record              3      TK_RECORD           ----            YES                     ----
+              #marks              3    TK_RECORDID           ----            YES                     ----
+                ----           ----           ----           ----             NO       <fieldDefinitions>
+                ----           ----           ----           ----             NO        <fieldDefinition>
                  int              4         TK_INT           ----            YES                     ----
-                  c2              4          TK_ID           ----            YES                     ----
+               maths              4     TK_FIELDID           ----            YES                     ----
+                ----           ----           ----           ----             NO        <fieldDefinition>
+                 int              5         TK_INT           ----            YES                     ----
+             physics              5     TK_FIELDID           ----            YES                     ----
+                ----           ----           ----           ----             NO             <moreFields>
+                ----           ----           ----           ----             NO        <fieldDefinition>
+                 int              6         TK_INT           ----            YES                     ----
+           chemistry              6     TK_FIELDID           ----            YES                     ----
                 ----           ----           ----           ----             NO           <declarations>
                 ----           ----           ----           ----             NO            <declaration>
-                 int              5         TK_INT           ----            YES                     ----
-                  d2              5          TK_ID           ----            YES                     ----
-                ----           ----           ----           ----             NO             <otherStmts>
-                ----           ----           ----           ----             NO                 <ioStmt>
-                read              6        TK_READ           ----            YES                     ----
-                ----           ----           ----           ----             NO          <singleOrRecId>
-                  b2              6          TK_ID           ----            YES                     ----
+                ----           ----           ----           ----             NO    <constructedDatatype>
+              record              9      TK_RECORD           ----            YES                     ----
+              #marks              9    TK_RECORDID           ----            YES                     ----
+                  d4              9          TK_ID           ----            YES                     ----
+                ----           ----           ----           ----             NO           <declarations>
+                ----           ----           ----           ----             NO            <declaration>
+                 int             10         TK_INT           ----            YES                     ----
+                  b5             10          TK_ID           ----            YES                     ----
+                ----           ----           ----           ----             NO           <declarations>
+                ----           ----           ----           ----             NO            <declaration>
+                 int             11         TK_INT           ----            YES                     ----
+           d5cb34567             11          TK_ID           ----            YES                     ----
+                ----           ----           ----           ----             NO           <declarations>
+                ----           ----           ----           ----             NO            <declaration>
+                ----           ----           ----           ----             NO    <constructedDatatype>
+              record             12      TK_RECORD           ----            YES                     ----
+              #marks             12    TK_RECORDID           ----            YES                     ----
+                b3c2             12          TK_ID           ----            YES                     ----
                 ----           ----           ----           ----             NO             <otherStmts>
                 ----           ----           ----           ----             NO         <assignmentStmt>
                 ----           ----           ----           ----             NO          <singleOrRecId>
-                  c2              7          TK_ID           ----            YES                     ----
+                  b5             14          TK_ID           ----            YES                     ----
                 ----           ----           ----           ----             NO   <arithmeticExpression>
                 ----           ----           ----           ----             NO                   <term>
-                ----              7         TK_NUM             20            YES                     ----
+                ----             14         TK_NUM              1            YES                     ----
                 ----           ----           ----           ----             NO             <otherStmts>
                 ----           ----           ----           ----             NO                 <ioStmt>
-                read              8        TK_READ           ----            YES                     ----
+                read             15        TK_READ           ----            YES                     ----
                 ----           ----           ----           ----             NO          <singleOrRecId>
-                  d2              8          TK_ID           ----            YES                     ----
+           d5cb34567             15          TK_ID           ----            YES                     ----
                 ----           ----           ----           ----             NO             <otherStmts>
                 ----           ----           ----           ----             NO         <assignmentStmt>
                 ----           ----           ----           ----             NO          <singleOrRecId>
-                  b3             10          TK_ID           ----            YES                     ----
+                  d4             16          TK_ID           ----            YES                     ----
+               maths             16     TK_FIELDID           ----            YES                     ----
+                ----           ----           ----           ----             NO   <arithmeticExpression>
+                ----           ----           ----           ----             NO                   <term>
+                ----             16         TK_NUM              0            YES                     ----
+                ----           ----           ----           ----             NO             <otherStmts>
+                ----           ----           ----           ----             NO         <assignmentStmt>
+                ----           ----           ----           ----             NO          <singleOrRecId>
+                  d4             17          TK_ID           ----            YES                     ----
+             physics             17     TK_FIELDID           ----            YES                     ----
+                ----           ----           ----           ----             NO   <arithmeticExpression>
+                ----           ----           ----           ----             NO                   <term>
+                ----             17         TK_NUM              0            YES                     ----
+                ----           ----           ----           ----             NO             <otherStmts>
+                ----           ----           ----           ----             NO         <assignmentStmt>
+                ----           ----           ----           ----             NO          <singleOrRecId>
+                  d4             18          TK_ID           ----            YES                     ----
+           chemistry             18     TK_FIELDID           ----            YES                     ----
+                ----           ----           ----           ----             NO   <arithmeticExpression>
+                ----           ----           ----           ----             NO                   <term>
+                ----             18         TK_NUM              0            YES                     ----
+                ----           ----           ----           ----             NO             <otherStmts>
+                ----           ----           ----           ----             NO          <iterativeStmt>
+               while             19       TK_WHILE           ----            YES                     ----
+                ----           ----           ----           ----             NO      <booleanExpression>
+                  b5             19          TK_ID           ----            YES                     ----
+                  <=             19          TK_LE           ----            YES                     ----
+           d5cb34567             19          TK_ID           ----            YES                     ----
+                ----           ----           ----           ----             NO                 <ioStmt>
+                read             20        TK_READ           ----            YES                     ----
+                ----           ----           ----           ----             NO          <singleOrRecId>
+                b3c2             20          TK_ID           ----            YES                     ----
+               maths             20     TK_FIELDID           ----            YES                     ----
+                ----           ----           ----           ----             NO             <otherStmts>
+                ----           ----           ----           ----             NO                 <ioStmt>
+                read             21        TK_READ           ----            YES                     ----
+                ----           ----           ----           ----             NO          <singleOrRecId>
+                b3c2             21          TK_ID           ----            YES                     ----
+             physics             21     TK_FIELDID           ----            YES                     ----
+                ----           ----           ----           ----             NO             <otherStmts>
+                ----           ----           ----           ----             NO                 <ioStmt>
+                read             22        TK_READ           ----            YES                     ----
+                ----           ----           ----           ----             NO          <singleOrRecId>
+                b3c2             22          TK_ID           ----            YES                     ----
+           chemistry             22     TK_FIELDID           ----            YES                     ----
+                ----           ----           ----           ----             NO             <otherStmts>
+                ----           ----           ----           ----             NO         <assignmentStmt>
+                ----           ----           ----           ----             NO          <singleOrRecId>
+                  d4             23          TK_ID           ----            YES                     ----
                 ----           ----           ----           ----             NO   <arithmeticExpression>
                 ----           ----           ----           ----             NO                   <term>
                 ----           ----           ----           ----             NO          <singleOrRecId>
-                  b2             10          TK_ID           ----            YES                     ----
+                b3c2             23          TK_ID           ----            YES                     ----
                 ----           ----           ----           ----             NO               <expPrime>
-                   +             10        TK_PLUS           ----            YES                     ----
+                   +             23        TK_PLUS           ----            YES                     ----
                 ----           ----           ----           ----             NO                   <term>
                 ----           ----           ----           ----             NO          <singleOrRecId>
-                  c2             10          TK_ID           ----            YES                     ----
-                ----           ----           ----           ----             NO               <expPrime>
-                   +             10        TK_PLUS           ----            YES                     ----
+                  d4             23          TK_ID           ----            YES                     ----
+                ----           ----           ----           ----             NO             <otherStmts>
+                ----           ----           ----           ----             NO         <assignmentStmt>
+                ----           ----           ----           ----             NO          <singleOrRecId>
+                  b5             24          TK_ID           ----            YES                     ----
+                ----           ----           ----           ----             NO   <arithmeticExpression>
                 ----           ----           ----           ----             NO                   <term>
                 ----           ----           ----           ----             NO          <singleOrRecId>
-                  d2             10          TK_ID           ----            YES                     ----
+                  b5             24          TK_ID           ----            YES                     ----
+                ----           ----           ----           ----             NO               <expPrime>
+                   +             24        TK_PLUS           ----            YES                     ----
+                ----           ----           ----           ----             NO                   <term>
+                ----             24         TK_NUM              1            YES                     ----
                 ----           ----           ----           ----             NO             <otherStmts>
                 ----           ----           ----           ----             NO                 <ioStmt>
-               write             11       TK_WRITE           ----            YES                     ----
+               write             26       TK_WRITE           ----            YES                     ----
                 ----           ----           ----           ----             NO          <singleOrRecId>
-                  b3             11          TK_ID           ----            YES                     ----
+                  d4             26          TK_ID           ----            YES                     ----
                 ----           ----           ----           ----             NO             <returnStmt>
-              return             12      TK_RETURN           ----            YES                     ----
+              return             27      TK_RETURN           ----            YES                     ----

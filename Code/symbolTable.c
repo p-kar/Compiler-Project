@@ -15,7 +15,7 @@ void displaySymbolTable(GlobalTable* t)
 			entry* temp = t->entryArray[i];
 			while(temp != NULL)
 			{
-				printf("%s\t\t%s\n", temp->token.lexeme, getTerminalStr(temp->type));
+				printf("%s\t\t%s\t\tglobal\t\t%d\n", temp->token.lexeme, getTerminalStr(temp->type),temp->offset);
 				temp = temp->next;
 			}
 		}
@@ -36,7 +36,7 @@ void displaySymbolTable(GlobalTable* t)
 				while(temp4!=NULL)
 				{
 					//entry* temp4 = temp3->table.entryArray[i];
-					printf("%s\t\t%s\n",temp4->token.lexeme , getTerminalStr(temp4->type));
+					printf("%s\t\t%s\t\t%s\t\t%d\n",temp4->token.lexeme , getTerminalStr(temp4->type),temp3->funcName,temp4->offset);
 					temp4=temp4->next;
 				}
 			}
@@ -119,18 +119,20 @@ bool insertGlobalId(GlobalTable* table , tokenInfo temp,TERMINAL type)
 {
 	if(findGlobalId(table, temp.lexeme)!=NULL)
 	{
-		fprintf(stderr, "Redeclaration Error Line number:%d\n",temp.lineNum);
+		fprintf(stderr, "Line %d , Redeclaration Error <%s>\n",temp.lineNum,temp.lexeme);
 		return 0;
 	}
 	if( checkLocalDeclaration(table->finalFuncTable,temp.lexeme)==1)
 	{
-		fprintf(stderr, "Error ,also declared locally Line Num:%d\n", temp.lineNum);
+		fprintf(stderr, "Line %d , Redeclaration Error.Variable has already been declared in localscope <%s>\n",temp.lineNum,temp.lexeme);
+		//fprintf(stderr, "Error ,also declared locally Line Num:%d\n", temp.lineNum);
 		return 0;
 	}
 	entry* new_entry;
 	new_entry = (entry*) malloc(sizeof(entry));
 	new_entry->token = temp;
 	new_entry->type = type;
+	new_entry->next = NULL;
 	if(type== TK_INT)
 		new_entry->offset = INTSPACE;
 	else
@@ -189,13 +191,15 @@ bool insertGlobalRecord(GlobalTable* table,tokenInfo temp,TERMINAL type, char* r
 	//printf("*****************\n");
 	if(findGlobalId(table, temp.lexeme)!=NULL)
 	{
-		fprintf(stderr, "Redeclaration Error Line number:%d\n",temp.lineNum);
+		fprintf(stderr, "Line %d , Redeclaration Error.The record variable has already been declared. <%s>\n",temp.lineNum,temp.lexeme);
+		//fprintf(stderr, "Redeclaration Error Line number:%d\n",temp.lineNum);
 		return 0;
 	}
 	//printf("*****************\n");
 	if( checkLocalDeclaration(table->finalFuncTable,temp.lexeme)==1)
 	{
-		fprintf(stderr, "Error ,also declared locally Line Num:%d\n", temp.lineNum);
+		fprintf(stderr, "Line %d , Redeclaration Error.The record variable has already been declared in local scope. <%s>\n",temp.lineNum,temp.lexeme);
+		//fprintf(stderr, "Error ,also declared locally Line Num:%d\n", temp.lineNum);
 		return 0;
 	}
 	//printf("*****************\n");
@@ -205,6 +209,7 @@ bool insertGlobalRecord(GlobalTable* table,tokenInfo temp,TERMINAL type, char* r
 	new_entry = (entry*) malloc(sizeof(entry));
 	new_entry->token = temp;
 	new_entry->type = findRecordEntry(recordtype,record_table)->identifier;
+	new_entry->next =NULL;
 
 	strcpy( new_entry->recordType,recordtype);
 
@@ -253,7 +258,8 @@ funcIdTable* insertFuncIdTable(GlobalTable* table , char* funcName)
 	//printf("%d",)
 	if( checkFunctiondeclaration(table->finalFuncTable,funcName))
 	{
-		fprintf(stderr,"ERROR : Function redeclared  %s\n",funcName);
+		fprintf(stderr, "Line < > , Redeclaration Error.The function has already been decalred.<%s>\n",funcName);
+		//fprintf(stderr,"ERROR : Function redeclared  %s\n",funcName);
 		return NULL;
 	}
 	funcTable *curr = &table->finalFuncTable;
@@ -262,6 +268,7 @@ funcIdTable* insertFuncIdTable(GlobalTable* table , char* funcName)
 	curr_funcidtable->input_num=0;
 	curr_funcidtable->output_num=0;
 	curr_funcidtable->identifier = func_num; 
+	curr_funcidtable->next = NULL;
 	func_num++;
 	strcpy(curr_funcidtable->funcName,funcName);
 	int k = computeHashVal(funcName);
@@ -305,12 +312,14 @@ bool insertLocalId(GlobalTable* global_table,funcIdTable* function_table,tokenIn
 	IdTable *table = &function_table->table;
 	if(findLocalId(function_table, temp.lexeme)!=NULL)
 	{
-		fprintf(stderr, "Redeclaration Error in local table  Line number:%d\n",temp.lineNum);
+		fprintf(stderr, "Line %d , Redeclaration Error.The variable has already been declared in local scope <%s>\n",temp.lineNum,temp.lexeme);
+		//fprintf(stderr, "Redeclaration Error in local table  Line number:%d\n",temp.lineNum);
 		return 0;
 	}
 	if( findGlobalId(global_table,temp.lexeme)!=NULL)
 	{
-		fprintf(stderr, "Error ,also declared globally Line Num:%d\n", temp.lineNum);
+		fprintf(stderr, "Line %d , Redeclaration Error.The variable has already been declared in global scope <%s>\n",temp.lineNum,temp.lexeme);
+		//fprintf(stderr, "Error ,also declared globally Line Num:%d\n", temp.lineNum);
 		return 0;
 	}
 
@@ -318,6 +327,7 @@ bool insertLocalId(GlobalTable* global_table,funcIdTable* function_table,tokenIn
 	new_entry = (entry*) malloc(sizeof(entry));
 	new_entry->token = temp;
 	new_entry->type = type;
+	new_entry->next = NULL;
 	if(type== TK_INT)
 		new_entry->offset = INTSPACE;
 	else
@@ -368,12 +378,14 @@ bool insertLocalRecord(GlobalTable *t,funcIdTable *table , tokenInfo temp,TERMIN
 	int offset =0 ;
 	if(findLocalId(table,temp.lexeme)!=NULL)
 	{
-		fprintf(stderr, "Redeclaration Error Line number:%d\n",temp.lineNum);
+		fprintf(stderr, "Line %d , Redeclaration Error.The record variable has already been declared in local scope <%s>\n",temp.lineNum,temp.lexeme);
+		//fprintf(stderr, "Redeclaration Error Line number:%d\n",temp.lineNum);
 		return 0;
 	}
 	if( findGlobalId(t,temp.lexeme)!=NULL)
 	{
-		fprintf(stderr, "Error ,also declared locally Line Num:%d\n", temp.lineNum);
+		fprintf(stderr, "Line %d , Redeclaration Error.The record variable has already been declared in global scope <%s>\n",temp.lineNum,temp.lexeme);	
+		//fprintf(stderr, "Error ,also declared locally Line Num:%d\n", temp.lineNum);
 		return 0;
 	}
 	entry* new_entry;
@@ -586,6 +598,8 @@ void insertRecord(char* name,recordTable* curr)
 	k=k%7;
 
 	recordEntry* new_entry = (recordEntry*) malloc( sizeof(recordEntry)  );
+	new_entry->arr = NULL;
+	new_entry->next=NULL;
 
 	strcpy(new_entry->name,name);
 
@@ -610,6 +624,9 @@ void insertRecord(char* name,recordTable* curr)
 }
 void insertRecordEntry(char* name,recordTable* curr,tokenInfo tk , TERMINAL type)
 {
+
+	//printf("when do we call this ?? >>>>>>>>>>><<<<<<<<<<<<<\n");
+	//printf(">>>>>>>>>>>>>%s %s\n",name,tk.lexeme);
 	int k = computeHashVal(name);
 	k = k%7;
 
@@ -622,7 +639,7 @@ void insertRecordEntry(char* name,recordTable* curr,tokenInfo tk , TERMINAL type
 
 	entry* temp_entry = (entry*) malloc(sizeof(entry));
 
-
+	temp_entry->next = NULL;
 	temp_entry->type = type;
 	temp_entry->token = tk;
 	if(type==TK_INT)
@@ -657,6 +674,12 @@ recordEntry* findRecordEntry(char* name,recordTable* curr)
 	{
 		if( strcmp(temp->name,name)==0   )
 		{
+			entry* temp2 = temp->arr;
+			while(temp2!=NULL)
+			{
+				//printf(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,%s\n",temp2->token.lexeme);
+				temp2=temp2->next;
+			}
 			return temp;
 		}
 	}
