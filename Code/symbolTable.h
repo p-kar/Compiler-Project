@@ -1,3 +1,15 @@
+/*
+* @Author:    Pratyush Kar (2013A7PS029P),
+*             Ayush Kataria (2013A7PS028P)
+* @Email:     f2013029@pilani.bits-pilani.ac.in,
+*             f2013028@pilani.bits-pilani.ac.in
+* @Gp Number: 52
+* @File Name: typeChecker.h
+* @Date:      2016-03-29 10:44:42
+*/
+
+
+
 #ifndef _SYMBOL_TABLE_H_
 #define _SYMBOL_TABLE_H_
 #include <stdio.h>

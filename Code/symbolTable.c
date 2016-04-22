@@ -1,3 +1,12 @@
+/*
+* @Author:    Pratyush Kar (2013A7PS029P),
+*             Ayush Kataria (2013A7PS028P)
+* @Email:     f2013029@pilani.bits-pilani.ac.in,
+*             f2013028@pilani.bits-pilani.ac.in
+* @Gp Number: 52
+* @File Name: typeChecker.h
+* @Date:      2016-03-29 10:44:42
+*/
 
 #include "symbolTable.h"
 
@@ -15,7 +24,11 @@ void displaySymbolTable(GlobalTable* t)
 			entry* temp = t->entryArray[i];
 			while(temp != NULL)
 			{
-				printf("%s\t\t%s\t\tglobal\t\t%d\n", temp->token.lexeme, getTerminalStr(temp->type),temp->offset);
+				char glb[]="global";
+				char off[20];
+				sprintf(off,"%d",temp->offset);
+				int space = 30;
+				fprintf(stdout,"%*s%*s%*s%*s\n", space,temp->token.lexeme, space, getTerminalStr(temp->type), space, glb, space, off );
 				temp = temp->next;
 			}
 		}
@@ -36,7 +49,10 @@ void displaySymbolTable(GlobalTable* t)
 				while(temp4!=NULL)
 				{
 					//entry* temp4 = temp3->table.entryArray[i];
-					printf("%s\t\t%s\t\t%s\t\t%d\n",temp4->token.lexeme , getTerminalStr(temp4->type),temp3->funcName,temp4->offset);
+					int space = 30;
+					char off[20];
+					sprintf(off,"%d",temp4->offset);
+					fprintf(stdout,"%*s%*s%*s%*s\n", space,temp4->token.lexeme, space, getTerminalStr(temp4->type), space, temp3->funcName, space, off );
 					temp4=temp4->next;
 				}
 			}
