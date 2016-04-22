@@ -14,9 +14,14 @@ int func_num=0;
 
 void displaySymbolTable(GlobalTable* t,recordTable* rtb)
 {
-	printf("GLOBAL SCOPE\n");
-	printf("--------------------\n");
 	int i;
+	int space = 40;
+	int small_space = 20;
+	char* lexeme = "lexeme";
+	char* type = "type";
+	char* scope = "scope";
+	char* offsetstr = "offset";
+	fprintf(stdout, "%*s%*s%*s%*s\n", small_space, lexeme, space, type, small_space, scope, small_space, offsetstr);
 	for(i=0;i<997;i++)
 	{
 		if(t->entryArray[i]!=NULL)
@@ -27,9 +32,8 @@ void displaySymbolTable(GlobalTable* t,recordTable* rtb)
 				char glb[]="global";
 				char off[20];
 				sprintf(off,"%d",temp->offset);
-				int space = 30;
 				if( strcmp(getTerminalStr(temp->type),"TK_INT")==0 || strcmp(getTerminalStr(temp->type),"TK_REAL")==0 )
-					fprintf(stdout,"%*s%*s%*s%*s\n", space,temp->token.lexeme, space, getTerminalStr(temp->type), space, glb, space, off );
+					fprintf(stdout,"%*s%*s%*s%*s\n", small_space,temp->token.lexeme, space, getTerminalStr(temp->type), small_space, glb, small_space, off );
 				else
 				{
 					//printf("%s",getTerminalStr(temp->type));
@@ -39,10 +43,11 @@ void displaySymbolTable(GlobalTable* t,recordTable* rtb)
 					while(currEntry!=NULL)
 					{
 						strcat(name,getTerminalStr(currEntry->type));
-						strcat(name," X ");
+						if(currEntry->next != NULL)
+							strcat(name," X ");
 						currEntry=currEntry->next;
 					}
-					fprintf(stdout,"%*s%*s%*s%*s\n", space,temp->token.lexeme, space, name, space, glb, space, off );
+					fprintf(stdout,"%*s%*s%*s%*s\n", small_space,temp->token.lexeme, space, name, small_space, glb, small_space, off );
 				}
 
 				temp = temp->next;
@@ -56,8 +61,6 @@ void displaySymbolTable(GlobalTable* t,recordTable* rtb)
 		funcIdTable *temp3 = temp2->funcTableArray[i];
 		while(temp3!=NULL)
 		{
-			printf("LOCAL SCOPE %s\n",temp3->funcName );
-			printf("--------------------\n");
 			int j=0;
 			for(j=0;j<997;j++)
 			{
@@ -65,11 +68,11 @@ void displaySymbolTable(GlobalTable* t,recordTable* rtb)
 				while(temp4!=NULL)
 				{
 					//entry* temp4 = temp3->table.entryArray[i];
-					int space = 30;
+					int space = 40;
 					char off[20];
 					sprintf(off,"%d",temp4->offset);
 					if( strcmp(getTerminalStr(temp4->type),"TK_INT")==0 || strcmp(getTerminalStr(temp4->type),"TK_REAL")==0 )
-						fprintf(stdout,"%*s%*s%*s%*s\n", space,temp4->token.lexeme, space, getTerminalStr(temp4->type), space, temp3->funcName, space, off );
+						fprintf(stdout,"%*s%*s%*s%*s\n", small_space,temp4->token.lexeme, space, getTerminalStr(temp4->type), small_space, temp3->funcName, small_space, off );
 					else
 					{
 						//printf("%s\n",getTerminalStr(temp4->type));
@@ -79,10 +82,11 @@ void displaySymbolTable(GlobalTable* t,recordTable* rtb)
 						while(currEntry!=NULL)
 						{
 							strcat(name,getTerminalStr(currEntry->type));
-							strcat(name," X ");
+							if(currEntry->next != NULL)
+								strcat(name," X ");
 							currEntry=currEntry->next;
 						}
-						fprintf(stdout,"%*s%*s%*s%*s\n", space,temp4->token.lexeme, space, name, space, temp3->funcName, space, off );
+						fprintf(stdout,"%*s%*s%*s%*s\n", small_space,temp4->token.lexeme, space, name, small_space, temp3->funcName, small_space, off );
 						//fprintf(stdout,"%*s%*s%*s%*s\n", space,temp->token.lexeme, space, name, space, glb, space, off );
 					
 					}					
